@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.ResultSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -22,7 +23,10 @@ public class Main {
         //Runtime的availableProcessor()方法返回当前系统的CPU数目.
         executorService=Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()*POOL_SIZE);
         System.out.println("服务器启动");
+
     }
+
+
 
     public void service(){
         while(true){
@@ -46,6 +50,7 @@ public class Main {
 
 class Handler implements Runnable{
     private Socket socket;
+	int i = 0;
     public Handler(Socket socket){
         this.socket=socket;
     }
@@ -61,18 +66,42 @@ class Handler implements Runnable{
     public String echo(String msg){
         return "echo:"+msg;
     }
+
+	public int getvip(int i) {
+		try {
+			ResultSet rs = JDBC.query("select * from user_vip limit " + i
+					+ ",1");
+			// return 0;
+			while (rs.next() && rs != null) {
+				return rs.getInt("gameuid");
+			}
+		} catch (Exception e) {
+			System.out.println("[hero]" + e);
+		}
+		return 0;
+	}
+
     public void run(){
         try {
             System.out.println("New connection accepted "+socket.getInetAddress()+":"+socket.getPort());
-            BufferedReader br=getReader(socket);
+			// BufferedReader br = getReader(socket);
             PrintWriter pw=getWriter(socket);
-            String msg=null;
-            while((msg=br.readLine())!=null){
-                System.out.println(msg);
-                pw.println(echo(msg));
-                if(msg.equals("bye"))
-                    break;
-            }
+			// String msg = null;
+			while (true) {
+				pw.println(getvip(i++) + "");
+				// pw.println("1000");
+				try {
+					Thread.sleep(1000); // 由类名调用
+				} catch (Exception e) {
+					return;
+				}
+			}
+			// while((msg=br.readLine())!=null){
+			// System.out.println(msg);
+			// pw.println(echo(msg));
+			// if(msg.equals("bye"))
+			// break;
+			// }
         } catch (IOException e) {
             e.printStackTrace();
         }finally{
