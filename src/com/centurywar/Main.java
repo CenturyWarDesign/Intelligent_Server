@@ -9,8 +9,6 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -20,15 +18,13 @@ public class Main {
 	private ServerSocket serverSocket;
 	private ExecutorService executorService;
 	private final int POOL_SIZE = 10;
-	private Map<String, Socket> globalSocket = null;
-	private static List pool = new LinkedList();
+	private static Map<String, Socket> globalSocket = new HashMap<String, Socket>();
 
 	public Main() throws IOException {
 		serverSocket = new ServerSocket(port);
 		executorService = Executors.newFixedThreadPool(Runtime.getRuntime()
 				.availableProcessors() * POOL_SIZE);
 		System.out.println("连接服务器");
-		globalSocket = new HashMap<String, Socket>();
 	}
 
 	public void service() {
@@ -47,14 +43,39 @@ public class Main {
 					break;
 				}
 				User us = new User(sec);
-				System.out.println("welcome:" + us.getUserInfo().userName);
-
-				// executorService.execute(new Handler(socket));
-				// globalSocket.put("tem1", socket);
+				if (us.userName.equals("")) {
+					System.out.println(sec + " has not init");
+					break;
+				}
+				OutputStream socketOut = socket.getOutputStream();
+				PrintWriter pw = new PrintWriter(socketOut, true);
+				pw.println("welcome " + us.userName);
+				executorService.execute(new Handler(socket, us.gameuid));
+				globalSocket.put(us.gameuid + "", socket);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public static boolean socketWrite(int gameuid, String content) {
+		if (globalSocket.containsKey(gameuid + "")) {
+			Socket socket = globalSocket.get(gameuid + "");
+			try {
+				OutputStream socketOut = socket.getOutputStream();
+				PrintWriter pw = new PrintWriter(socketOut, true);
+				pw.println(content);
+				return true;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+
+	public static boolean socketRead(int gameuid, String content) {
+		System.out.println(gameuid + "get" + content);
+		return true;
 	}
 
 	public static void main(String[] args) throws IOException {
@@ -65,10 +86,11 @@ public class Main {
 
 class Handler implements Runnable {
 	private Socket socket;
-	int i = 0;
+	int id = 0;
 
-	public Handler(Socket socket) {
+	public Handler(Socket socket, int id) {
 		this.socket = socket;
+		this.id = id;
 	}
 
 	private PrintWriter getWriter(Socket socket) throws IOException {
@@ -85,43 +107,13 @@ class Handler implements Runnable {
 		return "echo:" + msg;
 	}
 
-	// public int getvip(int i) {
-	// try {
-	// ResultSet rs = JDBC.query("select * from user_vip limit " + i
-	// + ",1");
-	// // return 0;
-	// while (rs.next() && rs != null) {
-	// return rs.getInt("gameuid");
-	// }
-	// } catch (Exception e) {
-	// System.out.println("[hero]" + e);
-	// }
-	// return 0;
-	// }
-
 	public void run() {
 		try {
-			System.out.println("New connection accepted "
-					+ socket.getInetAddress() + ":" + socket.getPort());
-			// BufferedReader br = getReader(socket);
-			PrintWriter pw = getWriter(socket);
-			// String msg = null;
-			while (true) {
-				// pw.println(getvip(i++) + "");
-				System.out.println("1000-server");
-				pw.println("1000");
-				try {
-					Thread.sleep(1000);
-				} catch (Exception e) {
-					return;
-				}
+			BufferedReader br = getReader(socket);
+			String msg = null;
+			while ((msg = br.readLine()) != null) {
+				Main.socketRead(id, msg);
 			}
-			// while((msg=br.readLine())!=null){
-			// System.out.println(msg);
-			// pw.println(echo(msg));
-			// if(msg.equals("bye"))
-			// break;
-			// }
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
