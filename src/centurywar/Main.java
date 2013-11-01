@@ -15,24 +15,19 @@ import java.util.concurrent.Executors;
 public class Main {
 	private int port = 8080;
     private ServerSocket serverSocket;
-    private ExecutorService executorService;//Ïß³Ì³Ø
-    private final int POOL_SIZE=10;//µ¥¸öCPUÏß³Ì³Ø´óĞ¡
+    private ExecutorService executorService;
+    private final int POOL_SIZE=10;
 
 	public Main() throws IOException {
         serverSocket=new ServerSocket(port);
-        //RuntimeµÄavailableProcessor()·½·¨·µ»Øµ±Ç°ÏµÍ³µÄCPUÊıÄ¿.
         executorService=Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()*POOL_SIZE);
-        System.out.println("·şÎñÆ÷Æô¶¯");
+        System.out.println("è¿æ¥æœåŠ¡å™¨");
 
     }
-
-
-
     public void service(){
         while(true){
             Socket socket=null;
             try {
-                //½ÓÊÕ¿Í»§Á¬½Ó,Ö»Òª¿Í»§½øĞĞÁËÁ¬½Ó,¾Í»á´¥·¢accept();´Ó¶ø½¨Á¢Á¬½Ó
                 socket=serverSocket.accept();
                 executorService.execute(new Handler(socket));
 
@@ -91,7 +86,7 @@ class Handler implements Runnable{
 				pw.println(getvip(i++) + "");
 				// pw.println("1000");
 				try {
-					Thread.sleep(1000); // ÓÉÀàÃûµ÷ÓÃ
+					Thread.sleep(1000); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				} catch (Exception e) {
 					return;
 				}
