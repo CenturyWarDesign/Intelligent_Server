@@ -83,10 +83,11 @@ class Handler implements Runnable{
             PrintWriter pw=getWriter(socket);
 			// String msg = null;
 			while (true) {
-				pw.println(getvip(i++) + "");
-				// pw.println("1000");
+				//pw.println(getvip(i++) + "");
+				System.out.println("1000-server");
+				 pw.println("1000");
 				try {
-					Thread.sleep(1000); // ���������
+					Thread.sleep(1000); 
 				} catch (Exception e) {
 					return;
 				}
