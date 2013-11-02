@@ -10,6 +10,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -68,7 +69,11 @@ public class Main {
 			try {
 				OutputStream socketOut = socket.getOutputStream();
 				PrintWriter pw = new PrintWriter(socketOut, true);
-				// Thread.sleep(1000);
+				// Thread.sleep(5000);
+				// pw.println(content);
+				// Thread.sleep(5000);
+				// pw.println(content);
+				// Thread.sleep(5000);
 				pw.println(content);
 				return true;
 			} catch (Exception e) {
@@ -118,7 +123,9 @@ class Handler implements Runnable {
 			String msg = null;
 			while ((msg = br.readLine()) != null) {
 				Main.socketRead(id, msg.trim().substring(0));
-				Main.socketWrite(id, msg.trim().substring(0));
+				Random r = new Random();
+				int tem = Math.abs(r.nextInt() % 2);
+				// Main.socketWrite(id, "10_1_" + tem + "_0");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
