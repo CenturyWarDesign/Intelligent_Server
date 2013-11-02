@@ -24,7 +24,7 @@ public class Main {
 		serverSocket = new ServerSocket(port);
 		executorService = Executors.newFixedThreadPool(Runtime.getRuntime()
 				.availableProcessors() * POOL_SIZE);
-		System.out.println("连接服务器");
+		System.out.println("waiting for");
 	}
 
 	public void service() {
@@ -39,12 +39,15 @@ public class Main {
 				BufferedReader br = new BufferedReader(new InputStreamReader(
 						socketIn));
 				sec = br.readLine();
+				System.out.println("Sec:" + sec);
 				if (sec.length() != 32) {
+					socket.close();
 					break;
 				}
 				User us = new User(sec);
 				if (us.userName.equals("")) {
 					System.out.println(sec + " has not init");
+					socket.close();
 					break;
 				}
 				OutputStream socketOut = socket.getOutputStream();
@@ -54,6 +57,7 @@ public class Main {
 				globalSocket.put(us.gameuid + "", socket);
 			} catch (Exception e) {
 				e.printStackTrace();
+				System.out.println(e.toString());
 			}
 		}
 	}
@@ -64,6 +68,7 @@ public class Main {
 			try {
 				OutputStream socketOut = socket.getOutputStream();
 				PrintWriter pw = new PrintWriter(socketOut, true);
+				// Thread.sleep(1000);
 				pw.println(content);
 				return true;
 			} catch (Exception e) {
@@ -74,7 +79,7 @@ public class Main {
 	}
 
 	public static boolean socketRead(int gameuid, String content) {
-		System.out.println(gameuid + "get" + content);
+		System.out.println(gameuid + " get " + content.trim());
 		return true;
 	}
 
@@ -112,7 +117,8 @@ class Handler implements Runnable {
 			BufferedReader br = getReader(socket);
 			String msg = null;
 			while ((msg = br.readLine()) != null) {
-				Main.socketRead(id, msg);
+				Main.socketRead(id, msg.trim().substring(0));
+				Main.socketWrite(id, msg.trim().substring(0));
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
