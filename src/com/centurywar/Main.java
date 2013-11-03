@@ -10,7 +10,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -42,8 +41,8 @@ public class Main {
 				sec = br.readLine();
 				System.out.println("Sec:" + sec);
 				if (sec.length() != 32) {
-					socket.close();
-					break;
+					// socket.close();
+					// break;
 				}
 				User us = new User(sec);
 				if (us.userName.equals("")) {
@@ -53,8 +52,10 @@ public class Main {
 				}
 				OutputStream socketOut = socket.getOutputStream();
 				PrintWriter pw = new PrintWriter(socketOut, true);
+				System.out.println("welcome " + us.userName);
 				pw.println("welcome " + us.userName);
-				executorService.execute(new Handler(socket, us.gameuid));
+				executorService.execute(new Handler(socket, us.gameuid,
+						us.client));
 				globalSocket.put(us.gameuid + "", socket);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -97,10 +98,12 @@ public class Main {
 class Handler implements Runnable {
 	private Socket socket;
 	int id = 0;
+	int client_id = 0;
 
-	public Handler(Socket socket, int id) {
+	public Handler(Socket socket, int id, int client_id) {
 		this.socket = socket;
 		this.id = id;
+		this.client_id = client_id;
 	}
 
 	private PrintWriter getWriter(Socket socket) throws IOException {
@@ -123,9 +126,10 @@ class Handler implements Runnable {
 			String msg = null;
 			while ((msg = br.readLine()) != null) {
 				Main.socketRead(id, msg.trim().substring(0));
-				Random r = new Random();
-				int tem = Math.abs(r.nextInt() % 2);
-				// Main.socketWrite(id, "10_1_" + tem + "_0");
+				if (this.client_id > 0) {
+					Main.socketWrite(client_id, msg);
+					System.out.println(client_id + " write " + msg);
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

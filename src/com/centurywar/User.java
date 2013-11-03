@@ -8,6 +8,7 @@ public class User {
 	public String userName = "";
 	public String ip = "0.0.0.0";
 	public int port = 80;
+	public int client = 0;
 	public User(String sec) {
 		secGameuid = sec;
 		getUserInfo();
@@ -20,6 +21,7 @@ public class User {
 			while (rs.next() && rs != null) {
 				userName = rs.getString("username");
 				gameuid = rs.getInt("id");
+				client = rs.getInt("client_id");
 				return this;
 			}
 		} catch (Exception e) {
