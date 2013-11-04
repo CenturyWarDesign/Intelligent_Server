@@ -27,13 +27,13 @@ public class TimingTask extends TimerTask {
 			Behave tembe = needsend.get(i);
 			System.out.println("正在发送：" + tembe.behaveString);
 			if (Main.socketWrite(tembe.gameuid, tembe.fromgameuid,
-					tembe.behaveString)) {
+					tembe.behaveString, true)) {
 				hasSend.add(tembe.id);
 				System.out.println("发送成功：" + tembe.behaveString + "id:"
 						+ tembe.id);
 			}
 		}
 		be.delInfo(hasSend);
-		System.out.println("备份程序运行……");
+		System.out.println("延迟操作发送中……");
 	}
 }

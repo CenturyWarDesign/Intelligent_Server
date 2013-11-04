@@ -77,28 +77,38 @@ public class Main {
 	}
 
 	public static boolean socketWrite(int gameuid, int fromgameuid,
-			String content) {
+			String content, boolean resend) {
 		if (globalSocket.containsKey(gameuid + "")) {
 			Socket socket = globalSocket.get(gameuid + "");
+
 			try {
 				OutputStream socketOut = socket.getOutputStream();
 				PrintWriter pw = new PrintWriter(socketOut, true);
-				// Thread.sleep(5000);
-				// pw.println(content);
-				// Thread.sleep(5000);
-				// pw.println(content);
-				// Thread.sleep(5000);
 				pw.println(content);
-				// be.de
 				return true;
 			} catch (Exception e) {
 				// 记录失败的程序
-				Behave errorBehave = new Behave(0);
-				errorBehave.newInfo(gameuid, fromgameuid, 0, content);
 				e.printStackTrace();
+				// 把socket给移除
+				cleanSocket(gameuid);
 			}
 		}
+		if (!resend) {
+			Behave errorBehave = new Behave(0);
+			errorBehave.newInfo(gameuid, fromgameuid, 0, content);
+		}
 		return false;
+	}
+
+	public static void cleanSocket(int id) {
+		Socket socket = globalSocket.get(id + "");
+		try {
+			socket.close();
+			socket = null;
+			globalSocket.remove(id + "");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static boolean socketRead(int gameuid, String content) {
@@ -118,7 +128,7 @@ class Handler implements Runnable {
 	private Socket socket;
 	int id = 0;
 	int client_id = 0;
-
+	boolean enable = true;
 	public Handler(Socket socket, int id, int client_id) {
 		this.socket = socket;
 		this.id = id;
@@ -146,16 +156,21 @@ class Handler implements Runnable {
 			while ((msg = br.readLine()) != null) {
 				Main.socketRead(id, msg.trim().substring(0));
 				if (this.client_id > 0) {
-					Main.socketWrite(client_id, id, msg);
-					System.out.println(client_id + " write " + msg);
+					if (Main.socketWrite(client_id, id, msg, false)) {
+						System.out.println(client_id + " write " + msg);
+					}
 				}
 			}
 		} catch (IOException e) {
+			System.out.println("断开连接了");
+			enable = false;
 			e.printStackTrace();
 		} finally {
 			try {
-				if (socket != null)
+				if (socket != null) {
 					socket.close();
+					Main.cleanSocket(id);
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
