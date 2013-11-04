@@ -58,10 +58,6 @@ public class Main {
 				SimpleDateFormat df = new SimpleDateFormat(
 						"yyyy-MM-dd HH:mm:ss");// 设置日期格式
 				System.out.println(df.format(new Date()));// new Date()为获取当前系统时间
-				
-				Date date = new Date();
-				System.out.println(date.getTime());
-
 				OutputStream socketOut = socket.getOutputStream();
 				PrintWriter pw = new PrintWriter(socketOut, true);
 				System.out.println("welcome " + us.userName);
@@ -78,9 +74,11 @@ public class Main {
 
 	public static boolean socketWrite(int gameuid, int fromgameuid,
 			String content, boolean resend) {
+		if (gameuid <= 0) {
+			return false;
+		}
 		if (globalSocket.containsKey(gameuid + "")) {
 			Socket socket = globalSocket.get(gameuid + "");
-
 			try {
 				OutputStream socketOut = socket.getOutputStream();
 				PrintWriter pw = new PrintWriter(socketOut, true);
@@ -111,8 +109,21 @@ public class Main {
 		}
 	}
 
-	public static boolean socketRead(int gameuid, String content) {
-		System.out.println(gameuid + " get " + content.trim());
+	/**
+	 * 取得命令行，可以是手机，也可以是板子
+	 * 
+	 * @param gameuid
+	 * @param content
+	 * @return
+	 */
+	public static boolean socketRead(
+			String content,int gameuid, int fromgameuid) {
+		String messreturn = MessageControl.MessageControl(content, gameuid,
+				fromgameuid);
+		if (messreturn.length() > 0) {
+			socketWrite(gameuid, fromgameuid, messreturn, false);
+		}
+		System.out.println(fromgameuid + " send " + content);
 		return true;
 	}
 
@@ -154,12 +165,12 @@ class Handler implements Runnable {
 			BufferedReader br = getReader(socket);
 			String msg = null;
 			while ((msg = br.readLine()) != null) {
-				Main.socketRead(id, msg.trim().substring(0));
-				if (this.client_id > 0) {
-					if (Main.socketWrite(client_id, id, msg, false)) {
-						System.out.println(client_id + " write " + msg);
-					}
-				}
+				Main.socketRead(msg.trim().substring(0), client_id, id);
+				// if (this.client_id > 0) {
+				// if (Main.socketWrite(client_id, id, msg, false)) {
+				// System.out.println(client_id + " write " + msg);
+				// }
+				// }
 			}
 		} catch (IOException e) {
 			System.out.println("断开连接了");

@@ -110,10 +110,14 @@ public class Behave {
 			if (sendtime == 0) {
 				sendtime = time;
 			}
+			if (sendtime < 0) {
+				sendtime = time - sendtime;
+			}
 			return JDBC
 					.query(String
-					.format("insert into send_log(gameuid,fromgameuid,time,sendtime,status,behaveString) values (%d,%d,%d,%d,0,'%s');",
-							gameuid, fromgameuid, sendtime, time, behaveString));
+							.format("insert into send_log(gameuid,fromgameuid,time,sendtime,status,behaveString) values (%d,%d,%d,%d,0,'%s');",
+									gameuid, fromgameuid, sendtime, time,
+									behaveString));
 		} catch (Exception e) {
 			System.out.println("[send_log]" + e);
 		}
