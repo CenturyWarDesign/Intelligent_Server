@@ -12,6 +12,25 @@ public class MessageControl {
 		if (temp[0].equals("r")) {
 			return "";
 		}
+		
+		/*
+		 * 2013年11月4日 jlcao
+		 */
+		
+		if (temp[0].equals("control")) {
+			 controlBetch(temp[1],message,gameuid,fromgameuid);
+			 return "";
+		}
+		
+		
+		//control_cup_username_password
+		
+		
+		
+		
+		
+		
+		
 		if (temp.length < 4) {
 			System.out.println("参数输入错误：" + message);
 			return "";
@@ -34,5 +53,13 @@ public class MessageControl {
 
 	public static String getBehaver(int type, int pik, int commmand, int value) {
 		return String.format("%d_%d_%d_%d", type, pik, commmand, value);
+	}
+	
+	public static void controlBetch(String command,String control,int gameuid,int fromgameuid){
+		if(command.equals("cup")){
+			CheckPassword.betch(String.format("%s_%d_%d", control,gameuid,fromgameuid));
+		}
+		
+		
 	}
 }
