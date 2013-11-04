@@ -8,8 +8,11 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -25,6 +28,8 @@ public class Main {
 		executorService = Executors.newFixedThreadPool(Runtime.getRuntime()
 				.availableProcessors() * POOL_SIZE);
 		System.out.println("waiting for");
+		Timer timer = new Timer();
+		timer.schedule(new TimingTask(), 6000, 10000);
 	}
 
 	public void service() {
@@ -50,6 +55,13 @@ public class Main {
 					socket.close();
 					break;
 				}
+				SimpleDateFormat df = new SimpleDateFormat(
+						"yyyy-MM-dd HH:mm:ss");// 设置日期格式
+				System.out.println(df.format(new Date()));// new Date()为获取当前系统时间
+				
+				Date date = new Date();
+				System.out.println(date.getTime());
+
 				OutputStream socketOut = socket.getOutputStream();
 				PrintWriter pw = new PrintWriter(socketOut, true);
 				System.out.println("welcome " + us.userName);
@@ -64,7 +76,8 @@ public class Main {
 		}
 	}
 
-	public static boolean socketWrite(int gameuid, String content) {
+	public static boolean socketWrite(int gameuid, int fromgameuid,
+			String content) {
 		if (globalSocket.containsKey(gameuid + "")) {
 			Socket socket = globalSocket.get(gameuid + "");
 			try {
@@ -76,8 +89,12 @@ public class Main {
 				// pw.println(content);
 				// Thread.sleep(5000);
 				pw.println(content);
+				// be.de
 				return true;
 			} catch (Exception e) {
+				// 记录失败的程序
+				Behave errorBehave = new Behave(0);
+				errorBehave.newInfo(gameuid, fromgameuid, 0, content);
 				e.printStackTrace();
 			}
 		}
@@ -91,6 +108,8 @@ public class Main {
 
 	public static void main(String[] args) throws IOException {
 		new Main().service();
+
+		// 运行定时执行程序
 	}
 
 }
@@ -127,7 +146,7 @@ class Handler implements Runnable {
 			while ((msg = br.readLine()) != null) {
 				Main.socketRead(id, msg.trim().substring(0));
 				if (this.client_id > 0) {
-					Main.socketWrite(client_id, msg);
+					Main.socketWrite(client_id, id, msg);
 					System.out.println(client_id + " write " + msg);
 				}
 			}

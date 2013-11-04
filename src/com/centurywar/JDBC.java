@@ -10,19 +10,30 @@ import java.util.Map;
 
 public class JDBC {
 	static Connection conn;
-	static Statement st;
 	private static Map<String, Connection> connectpoll = new HashMap<String, Connection>();
 
-	public static ResultSet query(String sql) {
+	public static ResultSet select(String sql) {
 		conn = getConnection("127.0.0.1:3306/intelligent", "root", "");
 		ResultSet rs = null;
 		try {
+			Statement st;
 			st = (Statement) conn.createStatement();
 			rs = st.executeQuery(sql);
 		} catch (SQLException e) {
-			System.out.println("[Error]" + sql);
+			System.out.println("[Error]" + sql + e.toString());
 		}
 		return rs;
+	}
+
+	public static boolean query(String sql) {
+		conn = getConnection("127.0.0.1:3306/intelligent", "root", "");
+		try {
+			Statement st = (Statement) conn.createStatement();
+			return st.execute(sql);
+		} catch (SQLException e) {
+			System.out.println("[Error]" + sql + e.toString());
+		}
+		return false;
 	}
 
 	public static Connection getConnection(String host, String username,

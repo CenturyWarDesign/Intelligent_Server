@@ -16,7 +16,7 @@ public class User {
 
 	private User getUserInfo() {
 		try {
-			ResultSet rs = JDBC.query(String.format(
+			ResultSet rs = JDBC.select(String.format(
 					"select * from users where password='%s'", secGameuid));
 			while (rs.next() && rs != null) {
 				userName = rs.getString("username");
