@@ -23,8 +23,12 @@ public class CheckPassword {
 		int uid=checkPassword(username,password);
 		Random r=new Random();
 		int temp1=r.nextInt();
-		String sec =EncoderPwdByMd5(String.format("Intelligent%d%d", temp1,uid));
-		Main.socketWrite(gameuid, gameuid, sec, false);
+		try{
+			String sec =EncoderPwdByMd5(String.format("Intelligent%d%d", temp1,uid));
+			Main.socketWrite(gameuid, gameuid, sec, false);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 	public static final String EncoderPwdByMd5(String str) throws NoSuchAlgorithmException, UnsupportedEncodingException {
 		// 确定计算方法
@@ -41,10 +45,6 @@ public class CheckPassword {
 					"select id from users where username='%s' and password='%s' limit 1", username,password));
 			while (rs.next() && rs != null) {
 				return rs.getInt("id");
-//				userName = rs.getString("username");
-//				gameuid = rs.getInt("id");
-//				client = rs.getInt("client_id");
-//				return this;
 			}
 		} catch (Exception e) {
 			System.out.println("[hero]" + e);
