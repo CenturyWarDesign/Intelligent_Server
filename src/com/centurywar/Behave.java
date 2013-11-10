@@ -2,10 +2,9 @@ package com.centurywar;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-public class Behave {
+public class Behave extends BaseModel {
 	public int id;
 	public int gameuid;
 	public int fromgameuid;
@@ -124,8 +123,5 @@ public class Behave {
 		return false;
 	}
 
-	private int getTime() {
-		Date date = new Date();
-		return (int) (date.getTime() / 1000);
-	}
+
 }

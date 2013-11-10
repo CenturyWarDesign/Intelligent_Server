@@ -13,6 +13,19 @@ public class MessageControl {
 			return "";
 		}
 		
+		if (temp[0].equals("30"))
+ {
+			double temValue = 0.0;
+			temValue = Integer.parseInt(temp[2]) + Float.parseFloat(temp[3])
+					/ 100;
+			// 温度计返回值
+			if (gameuid == 0) {
+				gameuid = fromgameuid;
+			}
+			User u = new User(gameuid);
+			u.updateTemperature(temValue, 1);
+		}
+
 		/*
 		 * 2013年11月4日 jlcao
 		 */
@@ -24,11 +37,6 @@ public class MessageControl {
 		
 		
 		//control_cup_username_password
-		
-		
-		
-		
-		
 		
 		
 		if (temp.length < 4) {

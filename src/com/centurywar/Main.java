@@ -29,7 +29,7 @@ public class Main {
 				.availableProcessors() * POOL_SIZE);
 		System.out.println("waiting for");
 		Timer timer = new Timer();
-		timer.schedule(new TimingTask(), 6000, 10000);
+		timer.schedule(new TimingTask(), 6000, 20000);
 	}
 
 	public void service() {

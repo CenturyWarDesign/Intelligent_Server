@@ -12,8 +12,9 @@ public class JDBC {
 	static Connection conn;
 	private static Map<String, Connection> connectpoll = new HashMap<String, Connection>();
 
+
 	public static ResultSet select(String sql) {
-		conn = getConnection("42.121.123.185:3306/intelligent", "root",
+		conn = getConnection("127.0.0.1:3306/intelligent", "root",
 				"abc123");
 		ResultSet rs = null;
 		try {
@@ -27,7 +28,7 @@ public class JDBC {
 	}
 
 	public static boolean query(String sql) {
-		conn = getConnection("42.121.123.185:3306/intelligent", "root",
+		conn = getConnection("127.0.0.1:3306/intelligent", "root",
 				"abc123");
 		try {
 			Statement st = (Statement) conn.createStatement();
