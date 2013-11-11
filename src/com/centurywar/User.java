@@ -53,6 +53,12 @@ public class User extends BaseModel {
 
 	}
 
+	/**
+	 * 更新温度。
+	 * @param value
+	 * @param port
+	 * @return
+	 */
 	public boolean updateTemperature(double value, int port) {
 		try {
 			int time = getTime();

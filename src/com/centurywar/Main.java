@@ -72,6 +72,14 @@ public class Main {
 		}
 	}
 
+	/**
+	 * 输出。
+	 * @param gameuid
+	 * @param fromgameuid
+	 * @param content
+	 * @param resend
+	 * @return
+	 */
 	public static boolean socketWrite(int gameuid, int fromgameuid,
 			String content, boolean resend) {
 		if (gameuid <= 0) {

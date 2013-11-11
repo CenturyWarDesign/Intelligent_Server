@@ -1,5 +1,10 @@
 package com.centurywar;
 
+/**
+ * @author Administrator
+ * 接收板子的请求字符串，进行数据分发组装。
+ * message格式：传感器类型_引脚_值_附加位（若值是温度20.5，则值为20，附加位为5）
+ */
 public class MessageControl {
 	public static String MessageControl(String message, int gameuid,int fromgameuid) {
 		String[] temp = null;
