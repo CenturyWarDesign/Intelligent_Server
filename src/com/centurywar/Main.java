@@ -62,9 +62,9 @@ public class Main {
 				PrintWriter pw = new PrintWriter(socketOut, true);
 				System.out.println("welcome " + us.userName);
 				pw.println("welcome " + us.userName);
-				executorService.execute(new Handler(socket, us.gameuid,
+				executorService.execute(new Handler(socket, us.getGameuid(),
 						us.client));
-				globalSocket.put(us.gameuid + "", socket);
+				globalSocket.put(us.getGameuid() + "", socket);
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.out.println(e.toString());

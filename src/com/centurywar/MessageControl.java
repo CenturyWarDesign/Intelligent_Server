@@ -28,6 +28,7 @@ public class MessageControl {
 				gameuid = fromgameuid;
 			}
 			User u = new User(gameuid);
+			u.setFromgameuid(fromgameuid);
 			u.updateTemperature(temValue, 1);
 		}
 

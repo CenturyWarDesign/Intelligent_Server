@@ -3,6 +3,7 @@ package com.centurywar;
 import java.util.Date;
 
 public class BaseModel {
+	private int fromgameuid	= 0;
 	public int getTime() {
 		Date date = new Date();
 		return (int) (date.getTime() / 1000);
@@ -17,6 +18,15 @@ public class BaseModel {
 	 * @return
 	 */
 	public boolean sendToPush(int gameuid, String content) {
+		
 		return true;
+	}
+
+	public int getFromgameuid() {
+		return fromgameuid;
+	}
+
+	public void setFromgameuid(int fromgameuid) {
+		this.fromgameuid = fromgameuid;
 	}
 }

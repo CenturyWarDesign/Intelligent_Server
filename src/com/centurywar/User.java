@@ -3,7 +3,9 @@ package com.centurywar;
 import java.sql.ResultSet;
 
 public class User extends BaseModel {
-	public int gameuid = 0;
+	public final static double LIMIT = 30;
+	private int gameuid = 0;
+	
 	private String secGameuid = "";
 	public String userName = "";
 	public String ip = "0.0.0.0";
@@ -36,6 +38,15 @@ public class User extends BaseModel {
 
 	}
 
+	public int getGameuid() {
+		return gameuid;
+	}
+
+	public void setGameuid(int gameuid) {
+		this.gameuid = gameuid;
+	}
+
+
 	private User getUserInfo() {
 		try {
 			ResultSet rs = JDBC.select(String.format(
@@ -67,6 +78,9 @@ public class User extends BaseModel {
 							value, time, gameuid, port);
 			System.out.println(sql);
 			JDBC.query(sql);
+			if(value>LIMIT){
+				sendToPush(this.gameuid,"现在的温度是"+value+"请知晓！");
+			}
 		} catch (Exception e) {
 
 		}
