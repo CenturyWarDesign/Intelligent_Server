@@ -74,6 +74,7 @@ public class Main {
 
 	/**
 	 * 输出。
+	 * 
 	 * @param gameuid
 	 * @param fromgameuid
 	 * @param content

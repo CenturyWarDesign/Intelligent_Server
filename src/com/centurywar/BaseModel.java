@@ -2,6 +2,10 @@ package com.centurywar;
 
 import java.util.Date;
 
+import cn.jpush.api.ErrorCodeEnum;
+import cn.jpush.api.JPushClient;
+import cn.jpush.api.MessageResult;
+
 public class BaseModel {
 	private int fromgameuid	= 0;
 	public int getTime() {
@@ -18,7 +22,22 @@ public class BaseModel {
 	 * @return
 	 */
 	public boolean sendToPush(int gameuid, String content) {
-		
+		JPushClient jpush = new JPushClient("68c01e4660be175e19844c47",
+				"550943fb320cf916b5a78c41");
+		MessageResult msgResult = jpush.sendCustomMessageWithAlias(11221,
+				"caojunling", "content", "content");
+		if (null != msgResult) {
+			if (msgResult.getErrcode() == ErrorCodeEnum.NOERROR.value()) {
+				System.out.println("发送成功， sendNo=" + msgResult.getSendno());
+			} else {
+				System.out.println("发送失败， 错误代码=" + msgResult.getErrcode()
+						+ ", 错误消息=" + msgResult.getErrmsg());
+				return false;
+			}
+		} else {
+			System.out.println("无法获取数据");
+			return false;
+		}
 		return true;
 	}
 
@@ -28,5 +47,11 @@ public class BaseModel {
 
 	public void setFromgameuid(int fromgameuid) {
 		this.fromgameuid = fromgameuid;
+
+	}
+
+	public BaseModel() {
+		// TODO Auto-generated constructor stub'
+		sendToPush(1, "getti");
 	}
 }

@@ -20,6 +20,7 @@ public class TimingTask extends TimerTask {
 	}
 
 	public void run() {
+		System.out.println("jpush");
 		Behave be = new Behave(0);
 		List<Behave> needsend = be.getNeedRunInfo();
 		List<Integer> hasSend = new ArrayList<Integer>();
