@@ -52,6 +52,5 @@ public class BaseModel {
 
 	public BaseModel() {
 		// TODO Auto-generated constructor stub'
-		sendToPush(1, "getti");
 	}
 }
