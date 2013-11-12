@@ -20,8 +20,7 @@ public class MessageControl {
 		if (temp[0].equals("30"))
  {
 			double temValue = 0.0;
-			temValue = Integer.parseInt(temp[2]) + Float.parseFloat(temp[3])
-					/ 100;
+			temValue = Float.parseFloat(temp[2]+"."+temp[3])/ 100;
 			// 温度计返回值
 			if (gameuid == 0) {
 				gameuid = fromgameuid;
@@ -45,7 +44,8 @@ public class MessageControl {
 			Main.socketWrite(fromgameuid, gameuid, "error message", false);
 			return "";
 		}
-
+		
+		System.out.println("收到的参数是："+temp[0]+"_"+temp[1]+"_"+temp[2]+"_"+temp[3]+"_");
 		type = Integer.parseInt(temp[0]);
 		pik = Integer.parseInt(temp[1]);
 		command = Integer.parseInt(temp[2]);
