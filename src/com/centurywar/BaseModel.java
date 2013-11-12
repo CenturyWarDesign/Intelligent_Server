@@ -21,11 +21,11 @@ public class BaseModel {
 	 * @param content
 	 * @return
 	 */
-	public boolean sendToPush(int gameuid, String content) {
+	public boolean sendToPush(int gameuid,String title, String content) {
 		JPushClient jpush = new JPushClient("68c01e4660be175e19844c47",
 				"550943fb320cf916b5a78c41");
-		MessageResult msgResult = jpush.sendCustomMessageWithAlias(11221,
-				"caojunling", "content", "content");
+		MessageResult msgResult = jpush.sendNotificationWithAlias(11221,
+				"caojunling", title, content);
 		if (null != msgResult) {
 			if (msgResult.getErrcode() == ErrorCodeEnum.NOERROR.value()) {
 				System.out.println("发送成功， sendNo=" + msgResult.getSendno());

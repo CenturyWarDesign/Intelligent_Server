@@ -79,7 +79,7 @@ public class User extends BaseModel {
 			System.out.println(sql);
 			JDBC.query(sql);
 			if(value>LIMIT){
-				sendToPush(this.gameuid,"现在的温度是"+value+"请知晓！");
+				sendToPush(this.gameuid,"温度提醒","现在的温度是"+value+"请知晓！");
 			}
 		} catch (Exception e) {
 
