@@ -138,8 +138,6 @@ public class Main {
 
 	public static void main(String[] args) throws IOException {
 		new Main().service();
-
-		// 运行定时执行程序
 	}
 
 }
@@ -175,11 +173,6 @@ class Handler implements Runnable {
 			String msg = null;
 			while ((msg = br.readLine()) != null) {
 				Main.socketRead(msg.trim().substring(0), client_id, id);
-				// if (this.client_id > 0) {
-				// if (Main.socketWrite(client_id, id, msg, false)) {
-				// System.out.println(client_id + " write " + msg);
-				// }
-				// }
 			}
 		} catch (IOException e) {
 			System.out.println("断开连接了");
