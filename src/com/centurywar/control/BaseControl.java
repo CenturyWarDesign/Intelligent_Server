@@ -22,10 +22,13 @@ public class BaseControl {
 	}
 
 	public static void main(String[] args) throws IOException {
-		Map<String, Boolean> ate = new HashMap<String, Boolean>();
-		ate.put("name", false);
-		JSONObject.fromObject(ate).toString();
-		System.out.println(JSONObject.fromObject(ate).toString());
+//		Map<String, Boolean> ate = new HashMap<String, Boolean>();
+//		ate.put("name", false);
+//		JSONObject.fromObject(ate).toString();
+//		System.out.println(JSONObject.fromObject(ate).toString());
+		
+		JSONObject getJson = JSONObject.fromObject("{23:10_3_3_0}");
+		System.out.println(getJson.toString());
 	}
 
 	public static boolean sendToSocket(JSONObject jsonArray, String command) {
@@ -48,5 +51,9 @@ public class BaseControl {
 	public static int getTime() {
 		Date date = new Date();
 		return (int) (date.getTime() / 1000);
+	}
+
+	public static String getBehaver(int type, int pik, int commmand, int value) {
+		return String.format("%d_%d_%d_%d", type, pik, commmand, value);
 	}
 }

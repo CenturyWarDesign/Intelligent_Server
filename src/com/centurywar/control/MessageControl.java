@@ -1,8 +1,8 @@
 package com.centurywar.control;
 
-import java.io.IOException;
 
-import com.centurywar.Behave;
+import net.sf.json.JSONObject;
+
 import com.centurywar.Main;
 import com.centurywar.User;
 
@@ -10,77 +10,77 @@ import com.centurywar.User;
  * @author Administrator 接收板子的请求字符串，进行数据分发组装。
  *         message格式：传感器类型_引脚_值_附加位（若值是温度20.5，则值为20，附加位为5）
  */
-public class MessageControl extends BaseControl {
-	public MessageControl() throws IOException {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
+/**
+ * @author Administrator
+ * 
+ */
+public class MessageControl {
 	public static String MessageControl(String message, int gameuid,
 			int fromgameuid) {
-		String[] temp = null;
-		temp = message.trim().split("_");
-		int type = 0;
-		int pik = 0;
-		int command = 0;
-		int value = 0;
-		// 4个是标准输入
-		if (temp[0].equals("r")) {
-			return "";
+		// 如果是板子返回的信息
+		if (message.substring(0, 1).equals("r")) {
+			return controlReturn(message);
 		}
-
-		if (temp[0].equals("30")) {
-			double temValue = 0.0;
-			temValue = Float.parseFloat(temp[2]+"."+temp[3])/ 100;
-			// 温度计返回值
-			if (gameuid == 0) {
-				gameuid = fromgameuid;
+		// 如果是板子发来的信息，进行处理
+		if (Integer.parseInt(message.substring(0, 2)) > 0) {
+			String[] temp = null;
+			temp = message.trim().split("_");
+			// 4个是标准输入
+			if (temp[0].equals("r")) {
+				return "";
 			}
-			User u = new User(gameuid);
-			u.setFromgameuid(fromgameuid);
-			u.updateTemperature(temValue, 1);
+			if (temp.length < 4) {
+				System.out.println("参数输入错误：" + message);
+				Main.socketWrite(fromgameuid, gameuid, "error message", false);
+				return "";
+			}
+			if (temp[0].equals("30")) {
+				double temValue = 0.0;
+				temValue = Float.parseFloat(temp[2] + "." + temp[3]) / 100;
+				// 温度计返回值
+				if (gameuid == 0) {
+					gameuid = fromgameuid;
+				}
+				User u = new User(gameuid);
+				u.setFromgameuid(fromgameuid);
+				u.updateTemperature(temValue, 1);
+			}
 		}
 
-		/*
-		 * 2013年11月4日 jlcao
-		 */
-		
-		if (temp[0].equals("control")) {
-			 controlBetch(temp[1],message,gameuid,fromgameuid);
-			 return "";
+		JSONObject getJson = null;
+		try {
+			getJson = JSONObject.fromObject(message);
+			controlBetch(getJson);
+		} catch (Exception e) {
+			System.out.println("Json Formate Error:" + message);
+			return "Error Send" + message;
 		}
-		//control_cup_username_password
-		if (temp.length < 4) {
-			System.out.println("参数输入错误：" + message);
-			Main.socketWrite(fromgameuid, gameuid, "error message", false);
-			return "";
-		}
-		
-		System.out.println("收到的参数是："+temp[0]+"_"+temp[1]+"_"+temp[2]+"_"+temp[3]+"_");
-		type = Integer.parseInt(temp[0]);
-		pik = Integer.parseInt(temp[1]);
-		command = Integer.parseInt(temp[2]);
-		value = Integer.parseInt(temp[3]);
-		// 有延时的开关
-		if (type == 10 && value > 0) {
-			Behave be = new Behave(0);
-			be.newInfo(gameuid, fromgameuid, -value,
-					getBehaver(type, pik, command, value));
-			return "";
-		}
-		return getBehaver(type, pik, command, 0);
-
+		return "";
 	}
 
-	public static String getBehaver(int type, int pik, int commmand, int value) {
-		return String.format("%d_%d_%d_%d", type, pik, commmand, value);
-	}
-	
-	public static void controlBetch(String command,String control,int gameuid,int fromgameuid){
-		if(command.equals("cup")){
-			CheckPassword.betch(String.format("%s_%d_%d", control,gameuid,fromgameuid));
+	/**
+	 * 处理安卓发来的信息,进行分发
+	 * 
+	 * @param command
+	 * @param control
+	 * @param gameuid
+	 * @param fromgameuid
+	 */
+	public static void controlBetch(JSONObject jsonObj) {
+		if (jsonObj.getString("control").equals("cup")) {
+			CheckPassword.betch(jsonObj);
+		} else if (jsonObj.getString("control").equals("sst")) {
+			SetStatus.betch(jsonObj);
 		}
-		
-		
+	}
+
+	/**
+	 * 处理板子返回的信息
+	 * 
+	 * @param command
+	 * @return
+	 */
+	public static String controlReturn(String command) {
+		return "";
 	}
 }
