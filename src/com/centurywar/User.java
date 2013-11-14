@@ -3,7 +3,7 @@ package com.centurywar;
 import java.sql.ResultSet;
 
 public class User extends BaseModel {
-	public final static double LIMIT = 23;
+	public final static double LIMIT = 15;
 	private int gameuid = 0;
 	
 	private String secGameuid = "";

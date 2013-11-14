@@ -24,11 +24,17 @@ public class CheckPassword {
 		password=temp[3];
 		gameuid= Integer.parseInt(temp[4]);
 		int uid=checkPassword(username,password);
+		if(uid ==0){
+			System.out.println("登陆失败");
+			Main.socketWrite(6, gameuid, "Login fail", false);
+			return;
+		}
 		Random r=new Random();
 		int temp1=r.nextInt();
 		try{
 			String sec =EncoderPwdByMd5(String.format("Intelligent%d%d", temp1,uid));
-			Main.socketWrite(gameuid, gameuid, sec, false);
+			System.out.println(sec);
+			Main.socketWrite(6, gameuid, sec, false);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
