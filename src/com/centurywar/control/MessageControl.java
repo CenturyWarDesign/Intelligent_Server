@@ -3,6 +3,7 @@ package com.centurywar.control;
 import java.io.IOException;
 
 import com.centurywar.Behave;
+import com.centurywar.Main;
 import com.centurywar.User;
 
 /**
