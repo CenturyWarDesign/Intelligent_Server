@@ -2,8 +2,17 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/gson-2.2.2.jar"/>
-	<classpathentry kind="lib" path="lib/jpush-api-v2.0.3.jar"/>
-	<classpathentry kind="lib" path="lib/jdbc-mysql.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gson-2.2.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jpush-api-v2.0.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jdbc-mysql.jar"/>
+	<classpathentry kind="lib" path="lib/commons-codec-1.5.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang-2.4.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/json_simple-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/json-lib-2.4-jdk15.jar"/>
+	<classpathentry kind="lib" path="lib/ezmorph-1.0.6.jar"/>
+	<classpathentry kind="lib" path="lib/commons-collections-3.2.1-1.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/httpclient-4.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-beanutils-1.8.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

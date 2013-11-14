@@ -1,4 +1,4 @@
-package com.centurywar;
+package com.centurywar.control;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -6,6 +6,9 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.ResultSet;
 import java.util.Date;
 import java.util.Random;
+
+import com.centurywar.JDBC;
+import com.centurywar.Main;
 
 import sun.misc.BASE64Encoder;
 

@@ -14,8 +14,8 @@ public class JDBC {
 
 
 	public static ResultSet select(String sql) {
-//		conn = getConnection("127.0.0.1:3306/intelligent", "root","abc123");
-		conn = getConnection("127.0.0.1:3306/intelligent", "root","");
+		conn = getConnection("42.121.123.185:3306/intelligent", "root","abc123"); 
+//		conn = getConnection("127.0.0.1:3306/intelligent", "root","");
 		ResultSet rs = null;
 		try {
 			Statement st;
@@ -28,8 +28,8 @@ public class JDBC {
 	}
 
 	public static boolean query(String sql) {
-//		conn = getConnection("127.0.0.1:3306/intelligent", "root","abc123");
-		conn = getConnection("127.0.0.1:3306/intelligent", "root","");
+		conn = getConnection("42.121.123.185:3306/intelligent", "root","abc123");
+//		conn = getConnection("127.0.0.1:3306/intelligent", "root","");
 		try {
 			Statement st = (Statement) conn.createStatement();
 			return st.execute(sql);
