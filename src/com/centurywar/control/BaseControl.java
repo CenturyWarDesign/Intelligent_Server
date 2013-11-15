@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import redis.clients.jedis.Jedis;
 import sun.misc.BASE64Encoder;
 
 import com.centurywar.Main;
@@ -16,7 +17,10 @@ import net.sf.json.JSONObject;
 
 public class BaseControl {
 	protected static int gameuid = 0;
-
+	
+	//Redis,缓存数据库，对于一些频繁的查询要用
+	protected static Jedis redis = new Jedis("127.0.0.1", 6379);
+	
 	public BaseControl() throws IOException {
 
 	}
@@ -55,5 +59,25 @@ public class BaseControl {
 
 	public static String getBehaver(int type, int pik, int commmand, int value) {
 		return String.format("%d_%d_%d_%d", type, pik, commmand, value);
+	}
+	
+	/**
+	 * 设置字段至Redis
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public static String setToRedis(String key, String value) {
+		return redis.set(key, value);
+	}
+	
+	/**
+	 * 从Redis读取
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public static String getFromRedis(String key) {
+		return redis.get(key);
 	}
 }
