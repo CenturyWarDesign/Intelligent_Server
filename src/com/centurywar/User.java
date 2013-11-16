@@ -1,9 +1,15 @@
 package com.centurywar;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONException;
+import net.sf.json.JSONObject;
 
 public class User extends BaseModel {
-	public final static double LIMIT = 15;
+	public final static double LIMIT = 50;
 	private int gameuid = 0;
 	
 	private String secGameuid = "";
@@ -61,11 +67,23 @@ public class User extends BaseModel {
 			System.out.println("[hero]" + e);
 		}
 		return this;
+	}
 
+	public JSONArray getUserDevice(int clientid) {
+		try {
+			ResultSet rs = JDBC.select(String.format(
+					"select * from user_device where client='%s'", clientid));
+			JSONArray jsarray = resultSetToJson(rs);
+			return jsarray;
+		} catch (Exception e) {
+			System.out.println("[hero]" + e);
+		}
+		return null;
 	}
 
 	/**
 	 * 更新温度。
+	 * 
 	 * @param value
 	 * @param port
 	 * @return
@@ -79,11 +97,42 @@ public class User extends BaseModel {
 			System.out.println(sql);
 			JDBC.query(sql);
 			if(value>LIMIT){
-				sendToPush(this.gameuid,"温度提醒","现在的温度是"+value+"请知晓！");
+				sendToPush(this.gameuid, "温度提醒", "现在的温度是" + value + "请知晓！");
 			}
 		} catch (Exception e) {
 
 		}
 		return false;
+	}
+
+	/**
+	 * 把resultset 转发化JSON
+	 * 
+	 * @param rs
+	 * @return
+	 * @throws SQLException
+	 * @throws JSONException
+	 */
+	public JSONArray resultSetToJson(ResultSet rs) throws SQLException,
+			JSONException {
+		// json数组
+		JSONArray array = new JSONArray();
+		// 获取列数
+		ResultSetMetaData metaData = rs.getMetaData();
+		int columnCount = metaData.getColumnCount();
+
+		// 遍历ResultSet中的每条数据
+		while (rs.next()) {
+			JSONObject jsonObj = new JSONObject();
+
+			// 遍历每一列
+			for (int i = 1; i <= columnCount; i++) {
+				String columnName = metaData.getColumnLabel(i);
+				String value = rs.getString(columnName);
+				jsonObj.put(columnName, value);
+			}
+			array.add(jsonObj);
+		}
+		return array;
 	}
 }

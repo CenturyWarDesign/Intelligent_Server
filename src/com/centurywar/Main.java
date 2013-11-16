@@ -84,7 +84,8 @@ public class Main {
 	 * @return
 	 */
 	public static boolean socketWrite(int gameuid, int fromgameuid,
-			String content, boolean resend) {
+			String content,
+			boolean resend) {
 		if (gameuid <= 0) {
 			return false;
 		}
@@ -94,13 +95,18 @@ public class Main {
 				OutputStream socketOut = socket.getOutputStream();
 				PrintWriter pw = new PrintWriter(socketOut, true);
 				pw.println(content);
+				System.out.println("[send to client]" + content);
 				return true;
 			} catch (Exception e) {
 				// 记录失败的程序
 				e.printStackTrace();
 				// 把socket给移除
 				cleanSocket(gameuid);
+				System.out.println(String.format("[send to client %d error]",
+						gameuid));
 			}
+		} else {
+
 		}
 		if (!resend) {
 			Behave errorBehave = new Behave(0);
@@ -127,14 +133,9 @@ public class Main {
 	 * @param content
 	 * @return
 	 */
-	public static boolean socketRead(
-			String content,int gameuid, int fromgameuid) {
-		String messreturn = MessageControl.MessageControl(content, gameuid,
-				fromgameuid);
-		if (messreturn.length() > 0) {
-			socketWrite(gameuid, fromgameuid, messreturn, false);
-		}
-		System.out.println(fromgameuid + " send " + content);
+	public static boolean socketRead(String content, int gameuid,
+			int fromgameuid) {
+		MessageControl.MessageControl(content, gameuid, fromgameuid);
 		return true;
 	}
 

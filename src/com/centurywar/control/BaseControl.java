@@ -5,42 +5,42 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import redis.clients.jedis.Jedis;
 import sun.misc.BASE64Encoder;
 
 import com.centurywar.Main;
 
-import net.sf.json.JSONObject;
-
 public class BaseControl {
 	protected static int gameuid = 0;
 	
-	//Redis,缓存数据库，对于一些频繁的查询要用
+	// Redis,缓存数据库，对于一些频繁的查询要用
 	protected static Jedis redis = new Jedis("127.0.0.1", 6379);
 	
 	public BaseControl() throws IOException {
 
 	}
 
-	public static void main(String[] args) throws IOException {
-//		Map<String, Boolean> ate = new HashMap<String, Boolean>();
-//		ate.put("name", false);
-//		JSONObject.fromObject(ate).toString();
-//		System.out.println(JSONObject.fromObject(ate).toString());
-		
-		JSONObject getJson = JSONObject.fromObject("{23:10_3_3_0}");
-		System.out.println(getJson.toString());
+	public static boolean sendToSocket(JSONObject jsonObj, String command) {
+		if (!jsonObj.containsKey("gameuid")) {
+			return false;
+		}
+		int gameuid = jsonObj.getInt("gameuid");
+		if (!jsonObj.containsKey("sendTime")) {
+			jsonObj.put("sendTime", getTime());
+		}
+		jsonObj.put("control", command);
+		Main.socketWrite(gameuid, gameuid, jsonObj.toString(), false);
+		return false;
 	}
 
-	public static boolean sendToSocket(JSONObject jsonArray, String command) {
-		if (!jsonArray.containsKey("sendTime")) {
-			jsonArray.put("sendTime", getTime());
-		}
-		Main.socketWrite(gameuid, gameuid, jsonArray.toString(), false);
-		return false;
+	public static boolean sendToSocket(JSONArray jsonArray, String command) {
+		JSONObject obj = new JSONObject();
+		obj.put("data", jsonArray);
+		obj.put("gameuid", 6);
+		return sendToSocket(obj, command);
 	}
 
 	public static final String EncoderPwdByMd5(String str)
@@ -63,6 +63,7 @@ public class BaseControl {
 	
 	/**
 	 * 设置字段至Redis
+	 * 
 	 * @param key
 	 * @param value
 	 * @return
@@ -73,6 +74,7 @@ public class BaseControl {
 	
 	/**
 	 * 从Redis读取
+	 * 
 	 * @param key
 	 * @param value
 	 * @return
