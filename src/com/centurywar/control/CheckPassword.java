@@ -1,9 +1,10 @@
 package com.centurywar.control;
 
 import java.io.IOException;
-import java.sql.ResultSet;
 import java.util.Random;
+
 import net.sf.json.JSONObject;
+
 import com.centurywar.JDBC;
 import com.centurywar.Main;
 
@@ -37,16 +38,12 @@ public class CheckPassword extends BaseControl {
 	}
 
 	public static int checkPassword(String username, String password) {
-		try {
-			ResultSet rs = JDBC
-					.select(String
-							.format("select id from users where username='%s' and password='%s' limit 1",
-									username, password));
-			while (rs.next() && rs != null) {
-				return rs.getInt("id");
-			}
-		} catch (Exception e) {
-			System.out.println("[hero]" + e);
+		JSONObject obj = JDBC
+				.selectOne(String
+						.format("select id from users where username='%s' and password='%s' limit 1",
+								username, password));
+		if (!obj.isEmpty()) {
+			return obj.getInt("id");
 		}
 		return 0;
 	}
