@@ -2,7 +2,6 @@ package com.centurywar;
 
 import java.util.Date;
 
-import redis.clients.jedis.Jedis;
 import cn.jpush.api.ErrorCodeEnum;
 import cn.jpush.api.JPushClient;
 import cn.jpush.api.MessageResult;

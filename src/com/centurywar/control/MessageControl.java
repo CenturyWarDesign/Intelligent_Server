@@ -1,6 +1,5 @@
 package com.centurywar.control;
 
-
 import net.sf.json.JSONObject;
 
 import com.centurywar.Main;
@@ -18,44 +17,29 @@ public class MessageControl {
 	public static String MessageControl(String message, int gameuid,
 			int fromgameuid) {
 		// 如果是板子返回的信息
+		if (message.length() == 0) {
+			return "";
+		}
 		if (message.substring(0, 1).equals("r")) {
 			return controlReturn(message);
 		}
-		// 如果是板子发来的信息，进行处理
-		if (Integer.parseInt(message.substring(0, 2)) > 0) {
-			String[] temp = null;
-			temp = message.trim().split("_");
-			// 4个是标准输入
-			if (temp[0].equals("r")) {
-				return "";
+		System.out.println("[get from client]" + message);
+		if (message.substring(0, 1).equals("[")
+				|| message.substring(0, 1).equals("{")) {
+			JSONObject getJson = null;
+			try {
+				getJson = JSONObject.fromObject(message);
+				controlBetch(getJson);
+			} catch (Exception e) {
+				System.out.println("Json Formate Error:" + message);
+				return "Error Send" + message;
 			}
-			if (temp.length < 4) {
-				System.out.println("参数输入错误：" + message);
-				Main.socketWrite(fromgameuid, gameuid, "error message", false);
-				return "";
-			}
-			if (temp[0].equals("30")) {
-				double temValue = 0.0;
-				temValue = Float.parseFloat(temp[2] + "." + temp[3]) / 100;
-				// 温度计返回值
-				if (gameuid == 0) {
-					gameuid = fromgameuid;
-				}
-				User u = new User(gameuid);
-				u.setFromgameuid(fromgameuid);
-				u.updateTemperature(temValue, 1);
-			}
-		}
-
-		JSONObject getJson = null;
-		try {
-			getJson = JSONObject.fromObject(message);
-			controlBetch(getJson);
-		} catch (Exception e) {
-			System.out.println("Json Formate Error:" + message);
-			return "Error Send" + message;
+		} else {
+			controlArduinoSend(message, gameuid, fromgameuid);
+			return "";
 		}
 		return "";
+
 	}
 
 	/**
@@ -67,11 +51,56 @@ public class MessageControl {
 	 * @param fromgameuid
 	 */
 	public static void controlBetch(JSONObject jsonObj) {
-		if (jsonObj.getString("control").equals("cup")) {
+		if (jsonObj.getString("control").equals(
+				ConstantControl.CHECK_USERNAME_PASSWORD)) {
 			CheckPassword.betch(jsonObj);
 		} else if (jsonObj.getString("control").equals("sst")) {
 			SetStatus.betch(jsonObj);
+		} else if (jsonObj.getString("control").equals(
+				ConstantControl.GET_USER_TEMPERATURE)) {
+			GetUserTemperaTure.betch(jsonObj);
 		}
+	}
+
+	public static String controlArduinoSend(String message, int gameuid,
+			int fromgameuid) {
+		String[] temp = null;
+		temp = message.trim().split("_");
+		// 4个是标准输入
+		if (temp[0].equals("r")) {
+			return "";
+		}
+		if (temp[0].equals(ConstantControl.DEVICE_TEMPERATURE)) {
+			double temValue = 0.0;
+			try {
+				temValue = Float.parseFloat(temp[2] + "." + temp[3]);
+				// 温度计返回值
+				if (gameuid == 0) {
+					gameuid = fromgameuid;
+				}
+				User u = new User(gameuid);
+				u.setFromgameuid(fromgameuid);
+				u.updateTemperature(temValue, 1);
+			} catch (Exception e) {
+
+			}
+		}
+		// 这是火焰报警器
+		if (temp[0].equals(ConstantControl.DEVICE_HUOJING)) {
+			if (temp.length < 4) {
+				System.out.println("参数输入错误：" + message);
+				Main.socketWrite(fromgameuid, gameuid, "error message", false);
+				return "";
+			}
+			try {
+				User u = new User(gameuid);
+				// u.sendToPush(fromgameuid, "着火了", "家里有可能着火了");
+			} catch (Exception e) {
+
+			}
+		}
+
+		return "";
 	}
 
 	/**
