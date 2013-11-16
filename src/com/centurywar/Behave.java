@@ -1,8 +1,10 @@
 package com.centurywar;
 
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 public class Behave extends BaseModel {
 	public int id;
@@ -20,41 +22,24 @@ public class Behave extends BaseModel {
 	}
 
 	private Behave getInfo() {
-		try {
-			ResultSet rs = JDBC.select(String.format(
-					"select * from send_log where id='%s'", id));
-			while (rs.next() && rs != null) {
-				behaveString = rs.getString("username");
-				gameuid = rs.getInt("gameuid");
-				fromgameuid = rs.getInt("fromgameuid");
-				time = rs.getInt("time");
-				sendtime = rs.getInt("sendtime");
-				status = rs.getInt("satus");
-				return this;
-			}
-		} catch (Exception e) {
-			System.out.println("[send_log]" + e);
+		JSONObject rs = JDBC.selectOne(String.format(
+				"select * from send_log where id='%s'", id));
+		if (!rs.isEmpty()) {
+			behaveString = rs.getString("username");
+			gameuid = rs.getInt("gameuid");
+			fromgameuid = rs.getInt("fromgameuid");
+			time = rs.getInt("time");
+			sendtime = rs.getInt("sendtime");
+			status = rs.getInt("satus");
 		}
 		return this;
 	}
 
 	public List<Behave> getNeedRunInfo() {
 		List<Behave> temlist = new ArrayList<Behave>();
-		try {
-			ResultSet rs = JDBC.select(String.format(
-					"select * from send_log where time<%d", getTime()));
-			while (rs.next() && rs != null) {
-				Behave tem = new Behave(0);
-				tem.id = rs.getInt("id");
-				tem.gameuid = rs.getInt("gameuid");
-				tem.fromgameuid = rs.getInt("fromgameuid");
-				tem.behaveString = rs.getString("behaveString");
-				tem.status = rs.getInt("status");
-				temlist.add(tem);
-			}
-		} catch (Exception e) {
-			System.out.println("[send_log]" + e);
-		}
+		JSONArray rs = JDBC.select(String.format(
+				"select * from send_log where time<%d", getTime()));
+		temlist = (List) JSONArray.toCollection(rs, Behave.class);
 		return temlist;
 	}
 

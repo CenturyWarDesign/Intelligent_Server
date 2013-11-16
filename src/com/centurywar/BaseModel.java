@@ -2,6 +2,8 @@ package com.centurywar;
 
 import java.util.Date;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import cn.jpush.api.ErrorCodeEnum;
 import cn.jpush.api.JPushClient;
 import cn.jpush.api.MessageResult;
@@ -54,5 +56,35 @@ public class BaseModel {
 		// TODO Auto-generated constructor stub'
 	}
 
+
+	/**
+	 * 返回数据集
+	 * 
+	 * @param sql
+	 * @return
+	 */
+	public static JSONArray select(String sql) {
+		return JDBC.select(sql);
+	}
+
+	/**
+	 * 返回一条记录
+	 * 
+	 * @param sql
+	 * @return
+	 */
+	public static JSONObject selectOne(String sql) {
+		return JDBC.selectOne(sql);
+	}
+
+	/**
+	 * 运行一条SQL update/delete
+	 * 
+	 * @param sql
+	 * @return
+	 */
+	public static boolean query(String sql) {
+		return JDBC.query(sql);
+	}
 
 }
