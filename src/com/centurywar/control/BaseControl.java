@@ -37,7 +37,7 @@ public class BaseControl {
 	}
 
 	public static boolean sendToSocketDevice(String command, int gameuid) {
-		Main.socketWrite(gameuid, gameuid, command, false);
+		Main.socketWrite(gameuid, gameuid, command, true);
 		return false;
 	}
 
