@@ -39,7 +39,7 @@ public class Behave extends BaseModel {
 		List<Behave> temlist = new ArrayList<Behave>();
 		JSONArray rs = JDBC.select(String.format(
 				"select * from send_log where time<%d", getTime()));
-		temlist = (List) JSONArray.toCollection(rs, Behave.class);
+//		temlist = (List) JSONArray.toCollection(rs, Behave.class);
 		return temlist;
 	}
 

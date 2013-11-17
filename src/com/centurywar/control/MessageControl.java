@@ -16,6 +16,8 @@ import com.centurywar.User;
 public class MessageControl {
 	public static String MessageControl(String message, int gameuid,
 			int fromgameuid) {
+		System.out.println("gameuid"+gameuid);
+		System.out.println("fromgameuid"+fromgameuid);
 		// 如果是板子返回的信息
 		if (message.length() == 0) {
 			return "";
@@ -24,11 +26,14 @@ public class MessageControl {
 			return controlReturn(message);
 		}
 		System.out.println("[get from client]" + message);
-		if (message.substring(0, 1).equals("[")
-				|| message.substring(0, 1).equals("{")) {
+		System.out.println(message.contains("{"));
+		if (message.contains("{")) {
+			System.out.println("1111");
 			JSONObject getJson = null;
 			try {
 				getJson = JSONObject.fromObject(message);
+				getJson.put("fromgameuid", fromgameuid);
+				getJson.put("gameuid", gameuid);
 				controlBetch(getJson);
 			} catch (Exception e) {
 				System.out.println(e.toString());
@@ -51,6 +56,7 @@ public class MessageControl {
 	 * @param fromgameuid
 	 */
 	public static void controlBetch(JSONObject jsonObj) {
+		System.out.println("control:"+jsonObj.getString("control"));
 		if (jsonObj.getString("control").equals(
 				ConstantControl.CHECK_USERNAME_PASSWORD)) {
 			CheckPassword.betch(jsonObj);
@@ -114,5 +120,14 @@ public class MessageControl {
 	 */
 	public static String controlReturn(String command) {
 		return "";
+	}
+	
+	
+	public static void main(String[] args) {
+		JSONObject json = new JSONObject();
+		json.put("username", "wanbin");
+		json.put("control", "cpd");
+		json.put("password", "7a941492a0dc743544ebc71c89370a64");
+		System.out.println(json.toString().contains("{"));
 	}
 }

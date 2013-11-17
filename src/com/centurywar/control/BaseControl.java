@@ -24,15 +24,18 @@ public class BaseControl {
 	}
 
 	public static boolean sendToSocket(JSONObject jsonObj, String command) {
-		if (!jsonObj.containsKey("gameuid")) {
-			return false;
-		}
-		int gameuid = jsonObj.getInt("gameuid");
+//		不需要判断是否存在，
+//		if (!jsonObj.containsKey("gameuid")) {
+//			System.out.println("BaseControl.class   +写回时候  缺少gameuid ");
+//			return false;
+//		}
+//		int gameuid = jsonObj.getInt("gameuid");
 		if (!jsonObj.containsKey("sendTime")) {
 			jsonObj.put("sendTime", getTime());
 		}
 		jsonObj.put("control", command);
-		Main.socketWrite(gameuid, gameuid, jsonObj.toString(), false);
+		System.out.println("写向android的报文为："+jsonObj.toString());
+		Main.socketWrite(jsonObj.getInt("fromgameuid"), jsonObj.getInt("gameuid"), jsonObj.toString(), false);
 		return false;
 	}
 

@@ -83,9 +83,7 @@ public class Main {
 	 * @param resend
 	 * @return
 	 */
-	public static boolean socketWrite(int gameuid, int fromgameuid,
-			String content,
-			boolean resend) {
+	public static boolean socketWrite(int gameuid, int fromgameuid,String content,boolean resend) {
 		if (gameuid <= 0) {
 			return false;
 		}
@@ -128,13 +126,13 @@ public class Main {
 
 	/**
 	 * 取得命令行，可以是手机，也可以是板子
-	 * 
 	 * @param gameuid
 	 * @param content
 	 * @return
 	 */
 	public static boolean socketRead(String content, int gameuid,
 			int fromgameuid) {
+		System.out.println("服务端收到的报文为："+content);
 		MessageControl.MessageControl(content, gameuid, fromgameuid);
 		return true;
 	}

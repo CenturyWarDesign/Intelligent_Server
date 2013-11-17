@@ -2,7 +2,6 @@ package com.duoguo.util;
 
 import java.io.IOException;
 import java.util.Date;
-
 import redis.clients.jedis.Jedis;
 import net.sf.json.JSONObject;
 

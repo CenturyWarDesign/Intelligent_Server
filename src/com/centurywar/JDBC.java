@@ -51,6 +51,18 @@ public class JDBC {
 	public static JSONObject selectOne(String sql) {
 		return (JSONObject) select(sql).get(0);
 	}
+	
+	/**
+	 * 运行一条SQL update/delete
+	 * 
+	 * @param sql
+	 * @return
+	 */
+	public static int update(String sql)throws Exception {
+		initConn();
+		Statement st = (Statement) conn.createStatement();
+		return st.executeUpdate(sql);
+	}
 
 	/**
 	 * 运行一条SQL update/delete
@@ -64,7 +76,7 @@ public class JDBC {
 			Statement st = (Statement) conn.createStatement();
 			return st.execute(sql);
 		} catch (SQLException e) {
-			System.out.println("[Error]" + sql + e.toString());
+			System.out.println("[Error]" + sql +"\n"+ e.toString());
 		}
 		return false;
 	}

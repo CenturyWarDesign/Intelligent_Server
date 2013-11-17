@@ -16,6 +16,7 @@ public class CheckPassword extends BaseControl {
 	}
 
 	public static void betch(JSONObject jsonObj) {
+		System.out.println("进入登录验证逻辑");
 		String username = jsonObj.getString("username");
 		String password = jsonObj.getString("password");
 		int gameuid = jsonObj.getInt("gameuid");
@@ -28,10 +29,17 @@ public class CheckPassword extends BaseControl {
 		Random r = new Random();
 		int temp1 = r.nextInt();
 		try {
-			String sec = EncoderPwdByMd5(String.format("Intelligent%d%d",
-					temp1, uid));
-			System.out.println(sec);
-			Main.socketWrite(6, gameuid, sec, false);
+			String sec = EncoderPwdByMd5(String.format("Intelligent%d%d",temp1, uid));
+			int isSuccess = JDBC.update(String
+					.format("update users set sec='%s' where id='%d'",
+							sec, uid));
+			if(isSuccess<1){
+				System.out.println("将新生成的验证码写入数据库失败，登录失败");
+				return;
+			}
+			jsonObj.put("sec", sec);
+//			Main.socketWrite(jsonObj.getInt("gameuid"), jsonObj.getInt("fromgameuid"), jsonObj.toString(), false);
+			sendToSocket(jsonObj, ConstantControl.ECHO_CHECK_USERNAME_PASSWORD);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
