@@ -6,3 +6,4 @@ CREATE  TABLE `intelligent`.`users` (
   `password` VARCHAR(100) NULL ,
   PRIMARY KEY (`id`) );
 alter table users add column client_id Int(11) default 0; 
+alter table users add column sec varchar(32) default "";
