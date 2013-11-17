@@ -24,4 +24,8 @@ public class ConstantControl {
 	public static String DEVICE_TEMPERATURE = "30";
 	// 火警传感器
 	public static String DEVICE_HUOJING = "31";
+
+	// 控制指令（必须要有以下内容；type,pik,value,data）
+	public static String CONTROL_DEVICE = "cd";
+	public static String ECHO_CONTROL_DEVICE = "ecd";
 }

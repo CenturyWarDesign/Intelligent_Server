@@ -36,6 +36,11 @@ public class BaseControl {
 		return false;
 	}
 
+	public static boolean sendToSocketDevice(String command, int gameuid) {
+		Main.socketWrite(gameuid, gameuid, command, false);
+		return false;
+	}
+
 	public static boolean sendToSocket(JSONArray jsonArray, String command) {
 		JSONObject obj = new JSONObject();
 		obj.put("data", jsonArray);
@@ -81,5 +86,28 @@ public class BaseControl {
 	 */
 	public static String getFromRedis(String key) {
 		return redis.get(key);
+	}
+
+	/**
+	 * 把JSONObject 转化为指令
+	 * 
+	 * @param obj
+	 * @return
+	 */
+	protected static String getSendStringFromJsonObject(JSONObject obj) {
+		if (!obj.has("type") || !obj.has("pik") || !obj.has("value")
+				|| !obj.has("data")) {
+			return "";
+		} else {
+			try {
+				return String.format("%d_%d_%d_%d", obj.getInt("type"),
+						obj.getInt("pik"), obj.getInt("value"),
+						obj.getInt("data"));
+			} catch (Exception e) {
+				System.out.print(e.toString());
+				return "";
+			}
+		}
+
 	}
 }

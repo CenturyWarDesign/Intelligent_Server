@@ -59,6 +59,9 @@ public class MessageControl {
 		} else if (jsonObj.getString("control").equals(
 				ConstantControl.GET_USER_TEMPERATURE)) {
 			GetUserTemperaTure.betch(jsonObj);
+		} else if (jsonObj.getString("control").equals(
+				ConstantControl.CONTROL_DEVICE)) {
+			ControlDevice.betch(jsonObj);
 		}
 	}
 
