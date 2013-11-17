@@ -31,8 +31,8 @@ public class MessageControl {
 				getJson = JSONObject.fromObject(message);
 				controlBetch(getJson);
 			} catch (Exception e) {
-				System.out.println("Json Formate Error:" + message);
-				return "Error Send" + message;
+				System.out.println(e.toString());
+				return "";
 			}
 		} else {
 			controlArduinoSend(message, gameuid, fromgameuid);

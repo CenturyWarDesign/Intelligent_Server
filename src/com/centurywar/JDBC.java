@@ -29,16 +29,17 @@ public class JDBC {
 	 */
 	public static JSONArray select(String sql) {
 		initConn();
+		JSONArray jsa = new JSONArray();
 		ResultSet rs = null;
 		try {
 			Statement st;
 			st = (Statement) conn.createStatement();
 			rs = st.executeQuery(sql);
-			return resultSetToJson(rs);
+			jsa = resultSetToJson(rs);
 		} catch (SQLException e) {
 			System.out.println("[Error]" + sql + e.toString());
 		}
-		return null;
+		return jsa;
 	}
 
 	/**

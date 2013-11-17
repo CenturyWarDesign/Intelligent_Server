@@ -18,8 +18,10 @@ public class User extends BaseModel {
 	}
 
 	public User(int gameuidsend) {
-		gameuid = gameuidsend;
-		getUserInfoFromGameuid();
+		if (gameuidsend > 0) {
+			gameuid = gameuidsend;
+			getUserInfoFromGameuid();
+		}
 	}
 
 	private User getUserInfoFromGameuid() {
