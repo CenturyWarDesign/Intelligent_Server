@@ -10,6 +10,13 @@ import cn.jpush.api.MessageResult;
 
 public class BaseModel {
 	private int fromgameuid	= 0;
+	protected String username = "";
+	private int gameuid = 0;
+	public static final int MAX = Integer.MAX_VALUE;
+	public static final int MIN = (int) MAX / 2;
+	private static JPushClient jpush = new JPushClient(
+			"68c01e4660be175e19844c47", "550943fb320cf916b5a78c41");
+
 	public int getTime() {
 		Date date = new Date();
 		return (int) (date.getTime() / 1000);
@@ -24,10 +31,8 @@ public class BaseModel {
 	 * @return
 	 */
 	public boolean sendToPush(int gameuid,String title, String content) {
-		JPushClient jpush = new JPushClient("68c01e4660be175e19844c47",
-				"550943fb320cf916b5a78c41");
 		MessageResult msgResult = jpush.sendNotificationWithAlias(11221,
-				"caojunling", title, content);
+				username, title, content);
 		if (null != msgResult) {
 			if (msgResult.getErrcode() == ErrorCodeEnum.NOERROR.value()) {
 				System.out.println("发送成功， sendNo=" + msgResult.getSendno());
@@ -41,6 +46,10 @@ public class BaseModel {
 			return false;
 		}
 		return true;
+	}
+
+	public static int getRandomSendNo() {
+		return (int) (MIN + Math.random() * (MAX - MIN));
 	}
 
 	public int getFromgameuid() {
