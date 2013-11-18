@@ -16,7 +16,12 @@ public class GetUserTemperaTure extends BaseControl {
 
 	public static void betch(JSONObject jsonObj) {
 		User us = new User(0);
-		JSONArray re = us.getUserDevice(5);
+		JSONArray re= null;
+		try {
+			re = us.getUserDevice(5);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		sendToSocket(re, ConstantControl.ECHO_GET_USER_TEMPERATURE);
 	}
 

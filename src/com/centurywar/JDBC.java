@@ -27,18 +27,14 @@ public class JDBC {
 	 * @param sql
 	 * @return
 	 */
-	public static JSONArray select(String sql) {
+	public static JSONArray select(String sql) throws Exception {
 		initConn();
 		JSONArray jsa = new JSONArray();
 		ResultSet rs = null;
-		try {
-			Statement st;
-			st = (Statement) conn.createStatement();
-			rs = st.executeQuery(sql);
-			jsa = resultSetToJson(rs);
-		} catch (SQLException e) {
-			System.out.println("[Error]" + sql + e.toString());
-		}
+		Statement st;
+		st = (Statement) conn.createStatement();
+		rs = st.executeQuery(sql);
+		jsa = resultSetToJson(rs);
 		return jsa;
 	}
 
@@ -47,8 +43,9 @@ public class JDBC {
 	 * 
 	 * @param sql
 	 * @return
+	 * @throws Exception 
 	 */
-	public static JSONObject selectOne(String sql) {
+	public static JSONObject selectOne(String sql) throws Exception {
 		return (JSONObject) select(sql).get(0);
 	}
 	

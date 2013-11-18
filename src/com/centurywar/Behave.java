@@ -22,8 +22,14 @@ public class Behave extends BaseModel {
 	}
 
 	private Behave getInfo() {
-		JSONObject rs = JDBC.selectOne(String.format(
-				"select * from send_log where id='%s'", id));
+		JSONObject rs =null;
+		try {
+			rs = JDBC.selectOne(String.format(
+					"select * from send_log where id='%s'", id));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if (!rs.isEmpty()) {
 			behaveString = rs.getString("username");
 			gameuid = rs.getInt("gameuid");
@@ -37,8 +43,12 @@ public class Behave extends BaseModel {
 
 	public List<Behave> getNeedRunInfo() {
 		List<Behave> temlist = new ArrayList<Behave>();
-		JSONArray rs = JDBC.select(String.format(
-				"select * from send_log where time<%d", getTime()));
+		try {
+			JSONArray rs = JDBC.select(String.format(
+					"select * from send_log where time<%d", getTime()));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 //		temlist = (List) JSONArray.toCollection(rs, Behave.class);
 		return temlist;
 	}

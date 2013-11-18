@@ -14,17 +14,25 @@ public class User extends BaseModel {
 	public int client = 0;
 	public User(String sec) {
 		secGameuid = sec;
-		getUserInfoFromPassword();
+		try{
+			getUserInfoFromPassword();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public User(int gameuidsend) {
 		if (gameuidsend > 0) {
 			gameuid = gameuidsend;
-			getUserInfoFromGameuid();
+			try {
+				getUserInfoFromGameuid();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
-	private User getUserInfoFromGameuid() {
+	private User getUserInfoFromGameuid() throws Exception {
 		JSONObject obj = JDBC.selectOne(String.format(
 				"select * from users where id=%d", gameuid));
 		if (!obj.isEmpty()) {
@@ -44,7 +52,7 @@ public class User extends BaseModel {
 	}
 
 
-	private User getUserInfoFromPassword() {
+	private User getUserInfoFromPassword() throws Exception {
 		JSONObject obj = JDBC.selectOne(String.format(
 				"select * from users where password='%s'", secGameuid));
 		if (!obj.isEmpty()) {
@@ -55,7 +63,7 @@ public class User extends BaseModel {
 		return this;
 	}
 
-	public JSONArray getUserDevice(int clientid) {
+	public JSONArray getUserDevice(int clientid) throws Exception {
 		String sql = String.format(
 				"select * from user_device where client='%s'", clientid);
 		return JDBC.select(sql);

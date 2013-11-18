@@ -71,8 +71,9 @@ public class BaseModel {
 	 * 
 	 * @param sql
 	 * @return
+	 * @throws Exception 
 	 */
-	public static JSONArray select(String sql) {
+	public static JSONArray select(String sql) throws Exception {
 		return JDBC.select(sql);
 	}
 
@@ -81,8 +82,9 @@ public class BaseModel {
 	 * 
 	 * @param sql
 	 * @return
+	 * @throws Exception 
 	 */
-	public static JSONObject selectOne(String sql) {
+	public static JSONObject selectOne(String sql) throws Exception {
 		return JDBC.selectOne(sql);
 	}
 
