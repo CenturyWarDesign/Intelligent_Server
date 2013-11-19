@@ -3,6 +3,7 @@ package com.centurywar.control;
 import net.sf.json.JSONObject;
 
 import com.centurywar.Main;
+import com.centurywar.Redis;
 import com.centurywar.User;
 
 /**
@@ -22,8 +23,10 @@ public class MessageControl {
 		if (message.length() == 0) {
 			return "";
 		}
+		//服务器反馈处理，从缓存中删除
 		if (message.substring(0, 1).equals("r")) {
-			return controlReturn(message);
+			controlReturn(message,gameuid);
+			return "";
 		}
 		System.out.println("[get from client]" + message);
 		System.out.println(message.contains("{"));
@@ -115,11 +118,13 @@ public class MessageControl {
 	/**
 	 * 处理板子返回的信息
 	 * 
-	 * @param command
+	 * @param message
 	 * @return
 	 */
-	public static String controlReturn(String command) {
-		return "";
+	public static long controlReturn(String message,int gameuid) {
+		String originCommand = message.substring(2);
+		System.out.print(gameuid+":"+originCommand+"命令已经删除");
+		return Redis.del(gameuid+message);
 	}
 	
 	

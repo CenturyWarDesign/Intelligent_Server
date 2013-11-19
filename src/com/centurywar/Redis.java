@@ -25,6 +25,16 @@ public class Redis {
 		initRedis();
 		return redis.set(key, value);
 	}
+	
+	/**
+	 * 删除key
+	 * @param key
+	 * @return
+	 */
+	public static long del(String key){
+		initRedis();
+		return redis.del(key);
+	}
 
 	/**
 	 * 从Redis读取
