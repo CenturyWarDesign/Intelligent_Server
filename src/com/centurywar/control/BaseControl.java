@@ -16,8 +16,7 @@ import com.centurywar.Main;
 public class BaseControl {
 	protected static int gameuid = 0;
 	
-	// Redis,缓存数据库，对于一些频繁的查询要用
-	protected static Jedis redis = new Jedis("127.0.0.1", 6379);
+	
 	
 	public BaseControl() throws IOException {
 
@@ -69,27 +68,7 @@ public class BaseControl {
 		return String.format("%d_%d_%d_%d", type, pik, commmand, value);
 	}
 	
-	/**
-	 * 设置字段至Redis
-	 * 
-	 * @param key
-	 * @param value
-	 * @return
-	 */
-	public static String setToRedis(String key, String value) {
-		return redis.set(key, value);
-	}
 	
-	/**
-	 * 从Redis读取
-	 * 
-	 * @param key
-	 * @param value
-	 * @return
-	 */
-	public static String getFromRedis(String key) {
-		return redis.get(key);
-	}
 
 	/**
 	 * 把JSONObject 转化为指令
