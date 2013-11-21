@@ -123,8 +123,9 @@ public class MessageControl {
 	 */
 	public static long controlReturn(String message,int gameuid) {
 		String originCommand = message.substring(2);
-		System.out.print(gameuid+":"+originCommand+"命令已经删除");
-		return Redis.del(gameuid+message);
+		System.out.print("得到反馈，删除缓存："+gameuid+originCommand);
+		String key = gameuid+":"+message;
+		return Redis.hdel("cachedCommands",key);
 	}
 	
 	

@@ -2,6 +2,8 @@ package com.centurywar.control;
 
 import java.io.IOException;
 
+import com.centurywar.Redis;
+
 import net.sf.json.JSONObject;
 
 //控制板子指令
@@ -19,6 +21,12 @@ public class ControlDevice extends BaseControl {
 			sendToSocketDevice(control, gameuid);
 			System.out.println(String.format("[send to device %d]%s", gameuid,
 					control));
+			
+			//存入缓存
+			String key = gameuid+":"+control;
+			Integer time = new Integer((int) (System.currentTimeMillis()/1000));
+			Redis.hset("cachedCommands",key,time.toString());
+			System.out.println("缓存至："+key+",等待板子反馈");
 		}
 	}
 

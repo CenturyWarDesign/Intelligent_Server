@@ -93,11 +93,6 @@ public class Main {
 				OutputStream socketOut = socket.getOutputStream();
 				PrintWriter pw = new PrintWriter(socketOut, true);
 				pw.println(content);
-				
-				//存入缓存
-				String key = gameuid+content;
-				Integer time = new Integer((int) (System.currentTimeMillis()/1000));
-				Redis.set(key,time.toString());
 				System.out.println("[send to client]" + content);
 				return true;
 			} catch (Exception e) {
