@@ -9,14 +9,12 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class MainHandler implements Runnable {
-	private Socket socket;
+	public Socket socket;
 	int id = 0;
-	int client_id = 0;
-	boolean enable = true;
-	public MainHandler(Socket socket, int id, int client_id) {
+
+	public MainHandler(Socket socket, int id) {
 		this.socket = socket;
 		this.id = id;
-		this.client_id = client_id;
 	}
 
 	private PrintWriter getWriter(Socket socket) throws IOException {
@@ -38,11 +36,10 @@ public class MainHandler implements Runnable {
 			BufferedReader br = getReader(socket);
 			String msg = null;
 			while ((msg = br.readLine()) != null) {
-				Main.socketRead(msg.trim().substring(0), client_id, id,this);
+				Main.socketRead(msg.trim().substring(0), id);
 			}
 		} catch (IOException e) {
 			System.out.println("断开连接了");
-			enable = false;
 			e.printStackTrace();
 		} finally {
 			try {

@@ -21,7 +21,7 @@ public class CheckPassword extends BaseControl {
 		String password = jsonObj.getString("password");
 		int gameuid = jsonObj.getInt("gameuid");
 		int uid = checkPassword(username, password);
-		System.out.println("用户的ID为："+uid);
+		System.out.println("用户的ID为：" + uid);
 		try {
 			if (uid == 0) {
 				System.out.println("登陆失败");
@@ -44,9 +44,9 @@ public class CheckPassword extends BaseControl {
 					jsonObj.put("sec", sec);
 					jsonObj.put("retCode", "0000");
 					jsonObj.put("memo", "登陆成功");
-					Main.globalSocket
-							.put(uid + "", Main.temSocket.get(gameuid));
-					Main.temSocket.remove(gameuid);
+					Main.globalHandler.put(uid + "",
+							Main.temHandler.get(gameuid));
+					Main.temHandler.remove(gameuid);
 					System.out.println("登陆验证完成：" + jsonObj);
 				}
 			}
@@ -68,7 +68,7 @@ public class CheckPassword extends BaseControl {
 			e.printStackTrace();
 			return 0;
 		}
-		System.out.println("登陆验证，查询数据库的结果："+obj);
+		System.out.println("登陆验证，查询数据库的结果：" + obj);
 		if (!obj.isEmpty()) {
 			return obj.getInt("id");
 		}

@@ -23,8 +23,8 @@ public class Main {
 	private ServerSocket serverSocket;
 	private ExecutorService executorService;
 	private final int POOL_SIZE = 10;
-	public static Map<String, Socket> globalSocket = new HashMap<String, Socket>();
-	public static Map<String,Socket> temSocket= new HashMap<String, Socket>();
+	public static Map<String, MainHandler> globalHandler = new HashMap<String, MainHandler>();
+	public static Map<String, MainHandler> temHandler = new HashMap<String, MainHandler>();
 	private static int MaxTem=0;
 	
 	public Main() throws IOException {
@@ -49,12 +49,12 @@ public class Main {
 						socketIn));
 				sec = br.readLine();
 				System.out.println("Sec:" + sec);
-
 				SimpleDateFormat df = new SimpleDateFormat(
 						"yyyy-MM-dd HH:mm:ss");// 设置日期格式
 				System.out.println(df.format(new Date()));// new Date()为获取当前系统时间
-				executorService.execute(new MainHandler(socket, MaxTem, MaxTem));
-				temSocket.put(MaxTem + "", socket);
+				MainHandler temr = new MainHandler(socket, MaxTem);
+				executorService.execute(temr);
+				temHandler.put(MaxTem + "", temr);
 				MaxTem++;
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -72,47 +72,49 @@ public class Main {
 	 * @param resend
 	 * @return
 	 */
-	public static boolean socketWrite(int gameuid, int fromgameuid,String content,boolean resend) {
-		if (gameuid <= 0) {
+	public static boolean socketWrite(int id, int fromid, String content,
+			boolean resend) {
+		if (id <= 0) {
 			return false;
 		}
-		if (globalSocket.containsKey(gameuid + "")) {
-			Socket socket = globalSocket.get(gameuid + "");
+		if (globalHandler.containsKey(id + "")) {
+			MainHandler temHandler = globalHandler.get(id);
 			try {
-				OutputStream socketOut = socket.getOutputStream();
+				OutputStream socketOut = temHandler.socket.getOutputStream();
 				PrintWriter pw = new PrintWriter(socketOut, true);
 				pw.println(content);
-				
-				//存入缓存
-				String key = gameuid+content;
-				Integer time = new Integer((int) (System.currentTimeMillis()/1000));
-				Redis.set(key,time.toString());
+
+				// 存入缓存
+				String key = id + content;
+				Integer time = new Integer(
+						(int) (System.currentTimeMillis() / 1000));
+				Redis.set(key, time.toString());
 				System.out.println("[send to client]" + content);
 				return true;
 			} catch (Exception e) {
 				// 记录失败的程序
 				e.printStackTrace();
 				// 把socket给移除
-				cleanSocket(gameuid);
+				cleanSocket(id);
 				System.out.println(String.format("[send to client %d error]",
-						gameuid));
+						id));
 			}
 		} else {
 			System.out.println("No gameuid in globalSockets");
 		}
 		if (!resend) {
 			Behave errorBehave = new Behave(0);
-			errorBehave.newInfo(gameuid, fromgameuid, 0, content);
+			errorBehave.newInfo(id, fromid, 0, content);
 		}
 		return false;
 	}
 
 	public static void cleanSocket(int id) {
-		Socket socket = globalSocket.get(id + "");
+		Socket socket = globalHandler.get(id + "").socket;
 		try {
 			socket.close();
 			socket = null;
-			globalSocket.remove(id + "");
+			globalHandler.remove(id + "");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -120,14 +122,14 @@ public class Main {
 
 	/**
 	 * 取得命令行，可以是手机，也可以是板子
+	 * 
 	 * @param gameuid
 	 * @param content
 	 * @return
 	 */
-	public static boolean socketRead(String content, int gameuid,
-			int fromgameuid, MainHandler handler) {
-		System.out.println("服务端收到的报文为："+content);
-		MessageControl.MessageControl(content, gameuid, fromgameuid,handler);
+	public static boolean socketRead(String content, int id) {
+		System.out.println("服务端收到的报文为：" + content);
+		MessageControl.MessageControl(content, id, id);
 		return true;
 	}
 

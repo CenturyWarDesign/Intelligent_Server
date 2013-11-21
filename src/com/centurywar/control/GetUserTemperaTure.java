@@ -5,7 +5,7 @@ import java.io.IOException;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-import com.centurywar.User;
+import com.centurywar.ArduinoModle;
 
 public class GetUserTemperaTure extends BaseControl {
 
@@ -15,7 +15,7 @@ public class GetUserTemperaTure extends BaseControl {
 	}
 
 	public static void betch(JSONObject jsonObj) {
-		User us = new User(0);
+		ArduinoModle us = new ArduinoModle(0);
 		JSONArray re= null;
 		try {
 			re = us.getUserDevice(5);

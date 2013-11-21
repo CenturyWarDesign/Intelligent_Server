@@ -3,7 +3,7 @@ package com.centurywar;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-public class User extends BaseModel {
+public class PhoneModel extends BaseModel {
 	public final static double LIMIT = 50;
 	private int gameuid = 0;
 	
@@ -12,7 +12,7 @@ public class User extends BaseModel {
 	public String ip = "0.0.0.0";
 	public int port = 80;
 	public int client = 0;
-	public User(String sec) {
+	public PhoneModel(String sec) {
 		secGameuid = sec;
 		try{
 			getUserInfoFromPassword();
@@ -21,7 +21,7 @@ public class User extends BaseModel {
 		}
 	}
 
-	public User(int gameuidsend) {
+	public PhoneModel(int gameuidsend) {
 		if (gameuidsend > 0) {
 			gameuid = gameuidsend;
 			try {
@@ -32,7 +32,7 @@ public class User extends BaseModel {
 		}
 	}
 
-	private User getUserInfoFromGameuid() throws Exception {
+	private PhoneModel getUserInfoFromGameuid() throws Exception {
 		JSONObject obj = JDBC.selectOne(String.format(
 				"select * from users where id=%d", gameuid));
 		if (!obj.isEmpty()) {
@@ -52,7 +52,7 @@ public class User extends BaseModel {
 	}
 
 
-	private User getUserInfoFromPassword() throws Exception {
+	private PhoneModel getUserInfoFromPassword() throws Exception {
 		JSONObject obj = JDBC.selectOne(String.format(
 				"select * from users where password='%s'", secGameuid));
 		if (!obj.isEmpty()) {
