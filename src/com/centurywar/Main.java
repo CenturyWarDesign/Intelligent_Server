@@ -23,8 +23,10 @@ public class Main {
 	private ServerSocket serverSocket;
 	private ExecutorService executorService;
 	private final int POOL_SIZE = 10;
-	private static Map<String, Socket> globalSocket = new HashMap<String, Socket>();
-
+	public static Map<String, Socket> globalSocket = new HashMap<String, Socket>();
+	public static Map<String,Socket> temSocket= new HashMap<String, Socket>();
+	private static int MaxTem=0;
+	
 	public Main() throws IOException {
 		serverSocket = new ServerSocket(port);
 		executorService = Executors.newFixedThreadPool(Runtime.getRuntime()
@@ -47,26 +49,13 @@ public class Main {
 						socketIn));
 				sec = br.readLine();
 				System.out.println("Sec:" + sec);
-				if (sec.length() != 32) {
-					// socket.close();
-					// break;
-				}
-				User us = new User(sec);
-				if (us.userName.equals("")) {
-					System.out.println(sec + " has not init");
-					socket.close();
-					break;
-				}
+
 				SimpleDateFormat df = new SimpleDateFormat(
 						"yyyy-MM-dd HH:mm:ss");// 设置日期格式
 				System.out.println(df.format(new Date()));// new Date()为获取当前系统时间
-				OutputStream socketOut = socket.getOutputStream();
-				PrintWriter pw = new PrintWriter(socketOut, true);
-				System.out.println("welcome " + us.userName);
-				pw.println("welcome " + us.userName);
-				executorService.execute(new Handler(socket, us.getGameuid(),
-						us.client));
-				globalSocket.put(us.getGameuid() + "", socket);
+				executorService.execute(new MainHandler(socket, MaxTem, MaxTem));
+				temSocket.put(MaxTem + "", socket);
+				MaxTem++;
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.out.println(e.toString());
@@ -136,9 +125,9 @@ public class Main {
 	 * @return
 	 */
 	public static boolean socketRead(String content, int gameuid,
-			int fromgameuid) {
+			int fromgameuid, MainHandler handler) {
 		System.out.println("服务端收到的报文为："+content);
-		MessageControl.MessageControl(content, gameuid, fromgameuid);
+		MessageControl.MessageControl(content, gameuid, fromgameuid,handler);
 		return true;
 	}
 
@@ -148,51 +137,3 @@ public class Main {
 
 }
 
-class Handler implements Runnable {
-	private Socket socket;
-	int id = 0;
-	int client_id = 0;
-	boolean enable = true;
-	public Handler(Socket socket, int id, int client_id) {
-		this.socket = socket;
-		this.id = id;
-		this.client_id = client_id;
-	}
-
-	private PrintWriter getWriter(Socket socket) throws IOException {
-		OutputStream socketOut = socket.getOutputStream();
-		return new PrintWriter(socketOut, true);
-	}
-
-	private BufferedReader getReader(Socket socket) throws IOException {
-		InputStream socketIn = socket.getInputStream();
-		return new BufferedReader(new InputStreamReader(socketIn));
-	}
-
-	public String echo(String msg) {
-		return "echo:" + msg;
-	}
-
-	public void run() {
-		try {
-			BufferedReader br = getReader(socket);
-			String msg = null;
-			while ((msg = br.readLine()) != null) {
-				Main.socketRead(msg.trim().substring(0), client_id, id);
-			}
-		} catch (IOException e) {
-			System.out.println("断开连接了");
-			enable = false;
-			e.printStackTrace();
-		} finally {
-			try {
-				if (socket != null) {
-					socket.close();
-					Main.cleanSocket(id);
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-}

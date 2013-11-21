@@ -5,7 +5,7 @@ import net.sf.json.JSONObject;
 import com.centurywar.Main;
 import com.centurywar.Redis;
 import com.centurywar.User;
-
+import com.centurywar.MainHandler;
 /**
  * @author Administrator 接收板子的请求字符串，进行数据分发组装。
  *         message格式：传感器类型_引脚_值_附加位（若值是温度20.5，则值为20，附加位为5）
@@ -16,7 +16,7 @@ import com.centurywar.User;
  */
 public class MessageControl {
 	public static String MessageControl(String message, int gameuid,
-			int fromgameuid) {
+			int fromgameuid,MainHandler handler) {
 		System.out.println("gameuid"+gameuid);
 		System.out.println("fromgameuid"+fromgameuid);
 		// 如果是板子返回的信息

@@ -25,7 +25,7 @@ public class CheckPassword extends BaseControl {
 		try {
 			if (uid == 0) {
 				System.out.println("登陆失败");
-				Main.socketWrite(6, gameuid, "Login fail", false);
+				Main.socketWrite(gameuid, gameuid, "Login fail", false);
 				jsonObj.put("retCode", "1111");
 				jsonObj.put("memo", "用户名密码错误,登陆失败");
 				
@@ -40,14 +40,16 @@ public class CheckPassword extends BaseControl {
 					System.out.println("将新生成的验证码写入数据库失败，登录失败");
 					jsonObj.put("retCode", "1112");
 					jsonObj.put("memo", "登陆失败,请重试");
-				}else{
+				} else {
 					jsonObj.put("sec", sec);
 					jsonObj.put("retCode", "0000");
 					jsonObj.put("memo", "登陆成功");
-					System.out.println("登陆验证完成："+jsonObj);
+					Main.globalSocket
+							.put(uid + "", Main.temSocket.get(gameuid));
+					Main.temSocket.remove(gameuid);
+					System.out.println("登陆验证完成：" + jsonObj);
 				}
 			}
-//			Main.socketWrite(jsonObj.getInt("gameuid"), jsonObj.getInt("fromgameuid"), jsonObj.toString(), false);
 			sendToSocket(jsonObj, ConstantControl.ECHO_CHECK_USERNAME_PASSWORD);
 		} catch (Exception e) {
 			e.printStackTrace();
