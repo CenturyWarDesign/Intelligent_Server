@@ -2,9 +2,9 @@ package com.centurywar.control;
 
 import net.sf.json.JSONObject;
 
+import com.centurywar.ArduinoModle;
 import com.centurywar.Main;
 import com.centurywar.Redis;
-import com.centurywar.User;
 
 /**
  * @author Administrator 接收板子的请求字符串，进行数据分发组装。
@@ -15,35 +15,34 @@ import com.centurywar.User;
  * 
  */
 public class MessageControl {
-	public static String MessageControl(String message, int gameuid,
-			int fromgameuid) {
-		System.out.println("gameuid"+gameuid);
-		System.out.println("fromgameuid"+fromgameuid);
+	public static String MessageControl(String message, int id, int fromid,
+			boolean tem) {
+		System.out.println("gameuid" + id);
 		// 如果是板子返回的信息
 		if (message.length() == 0) {
 			return "";
 		}
-		//服务器反馈处理，从缓存中删除
+		// 服务器反馈处理，从缓存中删除
 		if (message.substring(0, 1).equals("r")) {
-			controlReturn(message,gameuid);
+			controlReturn(message, id);
 			return "";
 		}
-		System.out.println("[get from client]" + message);
 		System.out.println(message.contains("{"));
 		if (message.contains("{")) {
 			System.out.println("1111");
 			JSONObject getJson = null;
 			try {
 				getJson = JSONObject.fromObject(message);
-				getJson.put("fromgameuid", fromgameuid);
-				getJson.put("gameuid", gameuid);
+				getJson.put("gameuid", id);
+				getJson.put("fromgameuid", fromid);
+				getJson.put("tem", tem);
 				controlBetch(getJson);
 			} catch (Exception e) {
 				System.out.println(e.toString());
 				return "";
 			}
 		} else {
-			controlArduinoSend(message, gameuid, fromgameuid);
+			controlArduinoSend(message, id, fromid);
 			return "";
 		}
 		return "";
@@ -74,8 +73,7 @@ public class MessageControl {
 		}
 	}
 
-	public static String controlArduinoSend(String message, int gameuid,
-			int fromgameuid) {
+	public static String controlArduinoSend(String message, int id, int fromid) {
 		String[] temp = null;
 		temp = message.trim().split("_");
 		// 4个是标准输入
@@ -87,11 +85,7 @@ public class MessageControl {
 			try {
 				temValue = Float.parseFloat(temp[2] + "." + temp[3]);
 				// 温度计返回值
-				if (gameuid == 0) {
-					gameuid = fromgameuid;
-				}
-				User u = new User(gameuid);
-				u.setFromgameuid(fromgameuid);
+				ArduinoModle u = new ArduinoModle(id);
 				u.updateTemperature(temValue, 1);
 			} catch (Exception e) {
 
@@ -101,11 +95,11 @@ public class MessageControl {
 		if (temp[0].equals(ConstantControl.DEVICE_HUOJING)) {
 			if (temp.length < 4) {
 				System.out.println("参数输入错误：" + message);
-				Main.socketWrite(fromgameuid, gameuid, "error message", false);
+				Main.socketWrite(id, id, "error message", false);
 				return "";
 			}
 			try {
-				User u = new User(gameuid);
+				ArduinoModle u = new ArduinoModle(fromid);
 				// u.sendToPush(fromgameuid, "着火了", "家里有可能着火了");
 			} catch (Exception e) {
 
@@ -123,8 +117,9 @@ public class MessageControl {
 	 */
 	public static long controlReturn(String message,int gameuid) {
 		String originCommand = message.substring(2);
-		System.out.print(gameuid+":"+originCommand+"命令已经删除");
-		return Redis.del(gameuid+message);
+		System.out.print("得到反馈，删除缓存：" + gameuid + originCommand);
+		String key = gameuid+":"+message;
+		return Redis.hdel("cachedCommands",key);
 	}
 	
 	

@@ -25,14 +25,18 @@ public class Main {
 	private ServerSocket serverSocket;
 	private ExecutorService executorService;
 	private final int POOL_SIZE = 10;
-	private static Map<String, Socket> globalSocket = new HashMap<String, Socket>();
-
+	public static Map<String, MainHandler> globalHandler = new HashMap<String, MainHandler>();
+	public static Map<String, MainHandler> arduinoHandler = new HashMap<String, MainHandler>();
+	public static Map<String, MainHandler> temHandler = new HashMap<String, MainHandler>();
+	private static int MaxTem = 1;
+	
 	public Main() throws IOException {
 		serverSocket = new ServerSocket(port);
 		executorService = Executors.newFixedThreadPool(Runtime.getRuntime()
 				.availableProcessors() * POOL_SIZE);
 		Log.info("服务启动，等待请求！");
 		System.out.println("waiting for");
+		// 注册定期运行任务
 		Timer timer = new Timer();
 		timer.schedule(new TimingTask(), 6000, 20000);
 	}
@@ -50,36 +54,62 @@ public class Main {
 				BufferedReader br = new BufferedReader(new InputStreamReader(
 						socketIn));
 				sec = br.readLine();
-				System.out.println("Sec:" + sec);
-				Log.info("收到的验证码,sec为--"+sec);
-				if (sec.length() != 32) {
-					// socket.close();
-					// break;
-				}
-				User us = new User(sec);
-				if (us.userName.equals("")) {
-					System.out.println(sec + " has not init");
-					Log.info("请求失败,没有找到该用户的信息");
-					socket.close();
-					break;
-				}
+				//  判断是否为Ardnino登录
 				SimpleDateFormat df = new SimpleDateFormat(
 						"yyyy-MM-dd HH:mm:ss");// 设置日期格式
 				System.out.println(df.format(new Date()));// new Date()为获取当前系统时间
-				OutputStream socketOut = socket.getOutputStream();
-				PrintWriter pw = new PrintWriter(socketOut, true);
-				System.out.println("welcome " + us.userName);
-				pw.println("welcome " + us.userName);
-				Log.info("用户连接成功,用户名为："+ us.userName);
-				executorService.execute(new Handler(socket, us.getGameuid(),
-						us.client));
-				globalSocket.put(us.getGameuid() + "", socket);
+				if (sec.length() == 32) {
+					System.out.println("Sec:" + sec);
+					ArduinoModle arduinoModel = new ArduinoModle(sec);
+					MainHandler temr = new MainHandler(socket,
+							arduinoModel.getGameuid(), false);
+					executorService.execute(temr);
+					arduinoHandler.put(MaxTem + "", temr);
+				} else {
+					MainHandler temr = new MainHandler(socket, MaxTem, true);
+					executorService.execute(temr);
+					System.out.println("put into tem:" + MaxTem);
+					temHandler.put(MaxTem + "", temr);
+					MaxTem++;
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.out.println(e.toString());
 				Log.error("用户发起连接出现异常",e);
 			}
 		}
+	}
+
+	public static boolean socketWriteTem(int id, String content) {
+		if (id <= 0) {
+			return false;
+		}
+		if (temHandler.containsKey(id + "")) {
+			MainHandler tem = temHandler.get(id + "");
+			try {
+				OutputStream socketOut = tem.socket.getOutputStream();
+				PrintWriter pw = new PrintWriter(socketOut, true);
+				pw.println(content);
+
+				// 存入缓存
+				String key = id + content;
+				Integer time = new Integer(
+						(int) (System.currentTimeMillis() / 1000));
+				Redis.set(key, time.toString());
+				System.out.println("[send to client]" + content);
+				return true;
+			} catch (Exception e) {
+				// 记录失败的程序
+				e.printStackTrace();
+				// 把socket给移除
+				cleanSocket(id);
+				System.out.println(String.format("[send to client %d error]",
+						id));
+			}
+		} else {
+			System.out.println("No gameuid in globalSockets");
+		}
+		return false;
 	}
 
 	/**
@@ -91,21 +121,23 @@ public class Main {
 	 * @param resend
 	 * @return
 	 */
-	public static boolean socketWrite(int gameuid, int fromgameuid,String content,boolean resend) {
-		if (gameuid <= 0) {
+	public static boolean socketWrite(int id, int fromid, String content,
+			boolean resend) {
+		if (id <= 0) {
 			return false;
 		}
-		if (globalSocket.containsKey(gameuid + "")) {
-			Socket socket = globalSocket.get(gameuid + "");
+		if (globalHandler.containsKey(id + "")) {
+			MainHandler temHandler = globalHandler.get(id + "");
 			try {
-				OutputStream socketOut = socket.getOutputStream();
+				OutputStream socketOut = temHandler.socket.getOutputStream();
 				PrintWriter pw = new PrintWriter(socketOut, true);
 				pw.println(content);
-				
-				//存入缓存
-				String key = gameuid+content;
-				Integer time = new Integer((int) (System.currentTimeMillis()/1000));
-				Redis.set(key,time.toString());
+
+				// 存入缓存
+				String key = id + content;
+				Integer time = new Integer(
+						(int) (System.currentTimeMillis() / 1000));
+				Redis.set(key, time.toString());
 				System.out.println("[send to client]" + content);
 				Log.info("服务启动，等待请求！");
 				return true;
@@ -113,26 +145,26 @@ public class Main {
 				// 记录失败的程序
 				e.printStackTrace();
 				// 把socket给移除
-				cleanSocket(gameuid);
+				cleanSocket(id);
 				System.out.println(String.format("[send to client %d error]",
-						gameuid));
+						id));
 			}
 		} else {
 			System.out.println("No gameuid in globalSockets");
 		}
 		if (!resend) {
 			Behave errorBehave = new Behave(0);
-			errorBehave.newInfo(gameuid, fromgameuid, 0, content);
+			errorBehave.newInfo(id, fromid, 0, content);
 		}
 		return false;
 	}
 
 	public static void cleanSocket(int id) {
-		Socket socket = globalSocket.get(id + "");
+		Socket socket = globalHandler.get(id + "").socket;
 		try {
 			socket.close();
 			socket = null;
-			globalSocket.remove(id + "");
+			globalHandler.remove(id + "");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -140,14 +172,15 @@ public class Main {
 
 	/**
 	 * 取得命令行，可以是手机，也可以是板子
+	 * 
 	 * @param gameuid
 	 * @param content
 	 * @return
 	 */
-	public static boolean socketRead(String content, int gameuid,
-			int fromgameuid) {
-		Log.info("服务端收到的报文为："+content);
-		MessageControl.MessageControl(content, gameuid, fromgameuid);
+	public static boolean socketRead(String content, int id, int fromid,
+			boolean tem) {
+		System.out.println("服务端收到的报文为：" + content);
+		MessageControl.MessageControl(content, id, fromid, tem);
 		return true;
 	}
 
@@ -155,53 +188,13 @@ public class Main {
 		new Main().service();
 	}
 
-}
-
-class Handler implements Runnable {
-	private Socket socket;
-	int id = 0;
-	int client_id = 0;
-	boolean enable = true;
-	public Handler(Socket socket, int id, int client_id) {
-		this.socket = socket;
-		this.id = id;
-		this.client_id = client_id;
-	}
-
-	private PrintWriter getWriter(Socket socket) throws IOException {
-		OutputStream socketOut = socket.getOutputStream();
-		return new PrintWriter(socketOut, true);
-	}
-
-	private BufferedReader getReader(Socket socket) throws IOException {
-		InputStream socketIn = socket.getInputStream();
-		return new BufferedReader(new InputStreamReader(socketIn));
-	}
-
-	public String echo(String msg) {
-		return "echo:" + msg;
-	}
-
-	public void run() {
-		try {
-			BufferedReader br = getReader(socket);
-			String msg = null;
-			while ((msg = br.readLine()) != null) {
-				Main.socketRead(msg.trim().substring(0), client_id, id);
-			}
-		} catch (IOException e) {
-			System.out.println("断开连接了");
-			enable = false;
-			e.printStackTrace();
-		} finally {
-			try {
-				if (socket != null) {
-					socket.close();
-					Main.cleanSocket(id);
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+	public static boolean moveSocketInGlobal(String temName, String globalName) {
+		temHandler.get(temName).tem = false;
+		globalHandler.put(globalName, temHandler.get(temName));
+		temHandler.remove(temName);
+		System.out.println("globalCount:" + globalHandler.size());
+		System.out.println("temCount:" + temHandler.size());
+		return true;
 	}
 }
+

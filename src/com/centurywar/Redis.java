@@ -1,5 +1,7 @@
 package com.centurywar;
 
+import java.util.Set;
+
 import redis.clients.jedis.Jedis;
 
 
@@ -26,6 +28,43 @@ public class Redis {
 		return redis.set(key, value);
 	}
 	
+	/**
+	 * 缓存至集合
+	 * @param set
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public static long hset(String set,String key,String value){
+		initRedis();
+		return redis.hset(set, key, value);
+	}
+	
+	/**
+	 * 获取一个集合中所有的keys
+	 * @param set
+	 * @return
+	 */
+	public static Set<String> hkeys(String set){
+		initRedis();
+		return redis.hkeys(set);
+	}
+	
+	public static String hget(String set,String key){
+		initRedis();
+		return redis.hget(set, key);
+	}
+	
+	/**
+	 * 删除集合中一个或多个值
+	 * @param set
+	 * @param key
+	 * @return
+	 */
+	public static long hdel(String set,String key){
+		initRedis();
+		return redis.hdel(set, key);
+	}
 	/**
 	 * 删除key
 	 * @param key

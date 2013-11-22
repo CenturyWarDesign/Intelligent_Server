@@ -8,7 +8,6 @@ import java.util.Date;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import redis.clients.jedis.Jedis;
 import sun.misc.BASE64Encoder;
 
 import com.centurywar.Main;
@@ -23,9 +22,9 @@ public class BaseControl {
 	}
 
 	public static boolean sendToSocket(JSONObject jsonObj, String command) {
-//		不需要判断是否存在，
+		// 不需要判断是否存在，
 //		if (!jsonObj.containsKey("gameuid")) {
-//			System.out.println("BaseControl.class   +写回时候  缺少gameuid ");
+		// System.out.println("BaseControl.class   +写回时候  缺少gameuid ");
 //			return false;
 //		}
 //		int gameuid = jsonObj.getInt("gameuid");
@@ -33,8 +32,18 @@ public class BaseControl {
 			jsonObj.put("sendTime", getTime());
 		}
 		jsonObj.put("control", command);
-		System.out.println("写向android的报文为："+jsonObj.toString());
-		Main.socketWrite(jsonObj.getInt("fromgameuid"), jsonObj.getInt("gameuid"), jsonObj.toString(), false);
+		System.out.println("写向android的报文为：" + jsonObj.toString());
+		// 判断返回池类别，如果是临时的，写入临时表
+
+		int fromgameuid = jsonObj.containsKey("fromgameuid") ? jsonObj
+				.getInt("fromgameuid") : 0;
+
+		if (jsonObj.containsValue("tem")) {
+			Main.socketWriteTem(jsonObj.getInt("gameuid"), jsonObj.toString());
+		} else {
+			Main.socketWrite(jsonObj.getInt("gameuid"), fromgameuid,
+					jsonObj.toString(), false);
+		}
 		return false;
 	}
 
