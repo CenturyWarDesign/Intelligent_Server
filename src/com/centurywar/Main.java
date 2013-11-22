@@ -15,10 +15,12 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import com.centurywar.control.MessageControl;
 
 public class Main {
+	protected final static Log Log = LogFactory.getLog(Main.class);
 	private int port = 8080;
 	private ServerSocket serverSocket;
 	private ExecutorService executorService;
@@ -29,6 +31,7 @@ public class Main {
 		serverSocket = new ServerSocket(port);
 		executorService = Executors.newFixedThreadPool(Runtime.getRuntime()
 				.availableProcessors() * POOL_SIZE);
+		Log.info("服务启动，等待请求！");
 		System.out.println("waiting for");
 		Timer timer = new Timer();
 		timer.schedule(new TimingTask(), 6000, 20000);
@@ -41,12 +44,14 @@ public class Main {
 				socket = serverSocket.accept();
 				System.out.println("First get it " + socket.getInetAddress()
 						+ ":" + socket.getPort());
+				Log.info("收到用户的连接请求,地址为--"+socket.getInetAddress()+ ":" + socket.getPort());
 				String sec = null;
 				InputStream socketIn = socket.getInputStream();
 				BufferedReader br = new BufferedReader(new InputStreamReader(
 						socketIn));
 				sec = br.readLine();
 				System.out.println("Sec:" + sec);
+				Log.info("收到的验证码,sec为--"+sec);
 				if (sec.length() != 32) {
 					// socket.close();
 					// break;
@@ -54,6 +59,7 @@ public class Main {
 				User us = new User(sec);
 				if (us.userName.equals("")) {
 					System.out.println(sec + " has not init");
+					Log.info("请求失败,没有找到该用户的信息");
 					socket.close();
 					break;
 				}
@@ -64,12 +70,14 @@ public class Main {
 				PrintWriter pw = new PrintWriter(socketOut, true);
 				System.out.println("welcome " + us.userName);
 				pw.println("welcome " + us.userName);
+				Log.info("用户连接成功,用户名为："+ us.userName);
 				executorService.execute(new Handler(socket, us.getGameuid(),
 						us.client));
 				globalSocket.put(us.getGameuid() + "", socket);
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.out.println(e.toString());
+				Log.error("用户发起连接出现异常",e);
 			}
 		}
 	}
@@ -99,6 +107,7 @@ public class Main {
 				Integer time = new Integer((int) (System.currentTimeMillis()/1000));
 				Redis.set(key,time.toString());
 				System.out.println("[send to client]" + content);
+				Log.info("服务启动，等待请求！");
 				return true;
 			} catch (Exception e) {
 				// 记录失败的程序
@@ -137,7 +146,7 @@ public class Main {
 	 */
 	public static boolean socketRead(String content, int gameuid,
 			int fromgameuid) {
-		System.out.println("服务端收到的报文为："+content);
+		Log.info("服务端收到的报文为："+content);
 		MessageControl.MessageControl(content, gameuid, fromgameuid);
 		return true;
 	}
