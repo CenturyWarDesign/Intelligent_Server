@@ -24,14 +24,16 @@ public class Main {
 	private ExecutorService executorService;
 	private final int POOL_SIZE = 10;
 	public static Map<String, MainHandler> globalHandler = new HashMap<String, MainHandler>();
+	public static Map<String, MainHandler> arduinoHandler = new HashMap<String, MainHandler>();
 	public static Map<String, MainHandler> temHandler = new HashMap<String, MainHandler>();
-	private static int MaxTem=0;
+	private static int MaxTem = 1;
 	
 	public Main() throws IOException {
 		serverSocket = new ServerSocket(port);
 		executorService = Executors.newFixedThreadPool(Runtime.getRuntime()
 				.availableProcessors() * POOL_SIZE);
 		System.out.println("waiting for");
+		// 注册定期运行任务
 		Timer timer = new Timer();
 		timer.schedule(new TimingTask(), 6000, 20000);
 	}
@@ -48,19 +50,61 @@ public class Main {
 				BufferedReader br = new BufferedReader(new InputStreamReader(
 						socketIn));
 				sec = br.readLine();
-				System.out.println("Sec:" + sec);
+				//  判断是否为Ardnino登录
 				SimpleDateFormat df = new SimpleDateFormat(
 						"yyyy-MM-dd HH:mm:ss");// 设置日期格式
 				System.out.println(df.format(new Date()));// new Date()为获取当前系统时间
-				MainHandler temr = new MainHandler(socket, MaxTem);
-				executorService.execute(temr);
-				temHandler.put(MaxTem + "", temr);
-				MaxTem++;
+				if (sec.length() == 32) {
+					System.out.println("Sec:" + sec);
+					ArduinoModle arduinoModel = new ArduinoModle(sec);
+					MainHandler temr = new MainHandler(socket,
+							arduinoModel.getGameuid(), false);
+					executorService.execute(temr);
+					arduinoHandler.put(MaxTem + "", temr);
+				} else {
+					MainHandler temr = new MainHandler(socket, MaxTem, true);
+					executorService.execute(temr);
+					System.out.println("put into tem:" + MaxTem);
+					temHandler.put(MaxTem + "", temr);
+					MaxTem++;
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.out.println(e.toString());
 			}
 		}
+	}
+
+	public static boolean socketWriteTem(int id, String content) {
+		if (id <= 0) {
+			return false;
+		}
+		if (temHandler.containsKey(id + "")) {
+			MainHandler tem = temHandler.get(id + "");
+			try {
+				OutputStream socketOut = tem.socket.getOutputStream();
+				PrintWriter pw = new PrintWriter(socketOut, true);
+				pw.println(content);
+
+				// 存入缓存
+				String key = id + content;
+				Integer time = new Integer(
+						(int) (System.currentTimeMillis() / 1000));
+				Redis.set(key, time.toString());
+				System.out.println("[send to client]" + content);
+				return true;
+			} catch (Exception e) {
+				// 记录失败的程序
+				e.printStackTrace();
+				// 把socket给移除
+				cleanSocket(id);
+				System.out.println(String.format("[send to client %d error]",
+						id));
+			}
+		} else {
+			System.out.println("No gameuid in globalSockets");
+		}
+		return false;
 	}
 
 	/**
@@ -78,7 +122,7 @@ public class Main {
 			return false;
 		}
 		if (globalHandler.containsKey(id + "")) {
-			MainHandler temHandler = globalHandler.get(id);
+			MainHandler temHandler = globalHandler.get(id + "");
 			try {
 				OutputStream socketOut = temHandler.socket.getOutputStream();
 				PrintWriter pw = new PrintWriter(socketOut, true);
@@ -127,9 +171,10 @@ public class Main {
 	 * @param content
 	 * @return
 	 */
-	public static boolean socketRead(String content, int id) {
+	public static boolean socketRead(String content, int id, int fromid,
+			boolean tem) {
 		System.out.println("服务端收到的报文为：" + content);
-		MessageControl.MessageControl(content, id, id);
+		MessageControl.MessageControl(content, id, fromid, tem);
 		return true;
 	}
 
@@ -137,5 +182,13 @@ public class Main {
 		new Main().service();
 	}
 
+	public static boolean moveSocketInGlobal(String temName, String globalName) {
+		temHandler.get(temName).tem = false;
+		globalHandler.put(globalName, temHandler.get(temName));
+		temHandler.remove(temName);
+		System.out.println("globalCount:" + globalHandler.size());
+		System.out.println("temCount:" + temHandler.size());
+		return true;
+	}
 }
 

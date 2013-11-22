@@ -22,7 +22,7 @@ public class TimingTask extends TimerTask {
 
 	public void run() {
 		Behave be = new Behave(0);
-		//检测缓存中有木有超时需要加入冲发表的
+		// 检测缓存中有木有超时需要加入冲发表的
 		this.checkCachedCommands(6, be);
 		List<Behave> needsend = be.getNeedRunInfo();
 		List<Integer> hasSend = new ArrayList<Integer>();
@@ -42,20 +42,23 @@ public class TimingTask extends TimerTask {
 	
 	/**
 	 * 检查缓存中超时的命令，写入send_log表
-	 * @param timeout  设置超时时间 单位为秒
-	 * @param behave behave对象，随时写入重发表
+	 * 
+	 * @param timeout
+	 *            设置超时时间 单位为秒
+	 * @param behave
+	 *            behave对象，随时写入重发表
 	 */
 	public void checkCachedCommands(int timeout,Behave behave){
-		//取出缓存的集合
+		// 取出缓存的集合
 		Set<String> cachedKeys = Redis.hkeys("cachedCommands");
-		//for循环遍历：  
+		// for循环遍历：
 		for (String key : cachedKeys) {  
 			String timeStr = Redis.hget("cachedCommands",key);
 			System.out.println(timeStr);
 			Integer sendTime = Integer.parseInt(timeStr);
 			Integer nowTime = new Integer((int) (System.currentTimeMillis()/1000));
 			if(nowTime-sendTime>timeout){
-				System.out.println("反馈超时，写入重发表:"+key);
+				System.out.println("反馈超时，写入重发表:" + key);
 				Redis.hdel("cachedCommands", key);
 				String params[] = key.split(":");
 				behave.newInfo(Integer.parseInt(params[0]), 11, sendTime, params[1]);

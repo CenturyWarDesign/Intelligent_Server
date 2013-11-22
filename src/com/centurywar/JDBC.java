@@ -43,9 +43,13 @@ public class JDBC {
 	 * 
 	 * @param sql
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public static JSONObject selectOne(String sql) throws Exception {
+		JSONArray tem = select(sql);
+		if (tem.size() == 0) {
+			return new JSONObject();
+		}
 		return (JSONObject) select(sql).get(0);
 	}
 	

@@ -11,10 +11,13 @@ import java.net.Socket;
 public class MainHandler implements Runnable {
 	public Socket socket;
 	int id = 0;
+	int fromid = 0;
+	public boolean tem;
 
-	public MainHandler(Socket socket, int id) {
+	public MainHandler(Socket socket, int id, boolean tem) {
 		this.socket = socket;
 		this.id = id;
+		this.tem = tem;
 	}
 
 	private PrintWriter getWriter(Socket socket) throws IOException {
@@ -36,7 +39,7 @@ public class MainHandler implements Runnable {
 			BufferedReader br = getReader(socket);
 			String msg = null;
 			while ((msg = br.readLine()) != null) {
-				Main.socketRead(msg.trim().substring(0), id);
+				Main.socketRead(msg.trim().substring(0), id, fromid, tem);
 			}
 		} catch (IOException e) {
 			System.out.println("断开连接了");

@@ -44,9 +44,9 @@ public class CheckPassword extends BaseControl {
 					jsonObj.put("sec", sec);
 					jsonObj.put("retCode", "0000");
 					jsonObj.put("memo", "登陆成功");
-					Main.globalHandler.put(uid + "",
-							Main.temHandler.get(gameuid));
-					Main.temHandler.remove(gameuid);
+					jsonObj.remove("tem");
+					jsonObj.put("gameuid", uid);
+					Main.moveSocketInGlobal(gameuid + "", uid + "");
 					System.out.println("登陆验证完成：" + jsonObj);
 				}
 			}
@@ -59,7 +59,6 @@ public class CheckPassword extends BaseControl {
 	public static int checkPassword(String username, String password) {
 		JSONObject obj = null;
 		try {
-			
 			obj = JDBC.selectOne(String.format(
 					"select id from users where username='%s' and password='%s' limit 1",
 					username, 
@@ -74,4 +73,6 @@ public class CheckPassword extends BaseControl {
 		}
 		return 0;
 	}
+
+
 }

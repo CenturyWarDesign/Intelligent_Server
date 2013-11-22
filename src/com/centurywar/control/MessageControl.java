@@ -15,7 +15,8 @@ import com.centurywar.Redis;
  * 
  */
 public class MessageControl {
-	public static String MessageControl(String message, int id, int fromid) {
+	public static String MessageControl(String message, int id, int fromid,
+			boolean tem) {
 		System.out.println("gameuid" + id);
 		// 如果是板子返回的信息
 		if (message.length() == 0) {
@@ -26,7 +27,6 @@ public class MessageControl {
 			controlReturn(message, id);
 			return "";
 		}
-		System.out.println("[get from client]" + message);
 		System.out.println(message.contains("{"));
 		if (message.contains("{")) {
 			System.out.println("1111");
@@ -34,7 +34,8 @@ public class MessageControl {
 			try {
 				getJson = JSONObject.fromObject(message);
 				getJson.put("gameuid", id);
-				getJson.put("fromgameuid", id);
+				getJson.put("fromgameuid", fromid);
+				getJson.put("tem", tem);
 				controlBetch(getJson);
 			} catch (Exception e) {
 				System.out.println(e.toString());
