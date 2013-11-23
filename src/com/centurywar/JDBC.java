@@ -17,7 +17,7 @@ public class JDBC {
 	static Connection conn;
 	private static Map<String, Connection> connectpoll = new HashMap<String, Connection>();
 
-	public static void initConn() {
+	public static void initConn() throws Exception {
 		conn = getConnection("127.0.0.1:3306/intelligent", "root", "");
 	}
 
@@ -71,31 +71,22 @@ public class JDBC {
 	 * @param sql
 	 * @return
 	 */
-	public static boolean query(String sql) {
+	public static boolean query(String sql) throws Exception {
 		initConn();
-		try {
-			Statement st = (Statement) conn.createStatement();
-			return st.execute(sql);
-		} catch (SQLException e) {
-			System.out.println("[Error]" + sql +"\n"+ e.toString());
-		}
-		return false;
+		Statement st = (Statement) conn.createStatement();
+		return st.execute(sql);
 	}
 
 	public static Connection getConnection(String host, String username,
-			String password) {
+			String password) throws Exception {
 		if (connectpoll.containsKey(host)) {
 			return connectpoll.get(host);
 		}
 		Connection con = null;
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			con = DriverManager.getConnection("jdbc:mysql://" + host, username,
-					password);
-			connectpoll.put(host, con);
-		} catch (Exception e) {
-			System.out.println("连接失败" + e.getMessage());
-		}
+		Class.forName("com.mysql.jdbc.Driver");
+		con = DriverManager.getConnection("jdbc:mysql://" + host, username,
+				password);
+		connectpoll.put(host, con);
 		return con;
 	}
 

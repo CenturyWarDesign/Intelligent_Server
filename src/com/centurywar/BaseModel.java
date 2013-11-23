@@ -4,6 +4,10 @@ import java.util.Date;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import cn.jpush.api.ErrorCodeEnum;
 import cn.jpush.api.JPushClient;
 import cn.jpush.api.MessageResult;
@@ -16,6 +20,8 @@ public class BaseModel {
 	public static final int MIN = (int) MAX / 2;
 	private static JPushClient jpush = new JPushClient(
 			"68c01e4660be175e19844c47", "550943fb320cf916b5a78c41");
+
+	protected final static Log Log = LogFactory.getLog(BaseModel.class);
 
 	public int getTime() {
 		Date date = new Date();
@@ -71,7 +77,7 @@ public class BaseModel {
 	 * 
 	 * @param sql
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public static JSONArray select(String sql) throws Exception {
 		return JDBC.select(sql);
@@ -82,7 +88,7 @@ public class BaseModel {
 	 * 
 	 * @param sql
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public static JSONObject selectOne(String sql) throws Exception {
 		return JDBC.selectOne(sql);
@@ -95,7 +101,12 @@ public class BaseModel {
 	 * @return
 	 */
 	public static boolean query(String sql) {
-		return JDBC.query(sql);
+		try {
+			return JDBC.query(sql);
+		} catch (Exception e) {
+			Log.error(e.toString());
+		}
+		return false;
 	}
 
 }
