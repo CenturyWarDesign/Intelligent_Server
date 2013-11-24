@@ -11,18 +11,24 @@ public class GetUserTemperaTure extends BaseControl {
 
 	public GetUserTemperaTure() throws IOException {
 		super();
+
 		// TODO Auto-generated constructor stub
 	}
 
 	public static void betch(JSONObject jsonObj) {
-		ArduinoModle us = new ArduinoModle(0);
+		String sec = jsonObj.getString("sec");
+		String username = jsonObj.getString("username");
+		ArduinoModle am = new ArduinoModle(username, sec);
 		JSONArray re= null;
 		try {
-			re = us.getUserDevice(5);
+			re = am.getUserDevice(am.gameuid);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		sendToSocket(re, ConstantControl.ECHO_GET_USER_TEMPERATURE);
+		JSONObject obj = new JSONObject();
+		obj.put("data", re);
+		obj.put("gameuid", am.gameuid);
+		sendToSocket(obj, ConstantControl.ECHO_GET_USER_TEMPERATURE);
 	}
 
 }

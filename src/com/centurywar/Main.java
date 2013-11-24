@@ -93,7 +93,7 @@ public class Main {
 				OutputStream socketOut = tem.socket.getOutputStream();
 				PrintWriter pw = new PrintWriter(socketOut, true);
 				pw.println(content);
-
+				Log.info(String.format("服务端写向Arduino客户端%d报文为：%s", id, content));
 				// 存入缓存
 				String key = id + content;
 				Integer time = new Integer(
@@ -110,7 +110,7 @@ public class Main {
 						id));
 			}
 		} else {
-			System.out.println("No gameuid in globalSockets");
+			Log.info(String.format("在Android临时组里没有ID为%d的客户端", id));
 		}
 		return false;
 	}
@@ -125,7 +125,7 @@ public class Main {
 				OutputStream socketOut = tem.socket.getOutputStream();
 				PrintWriter pw = new PrintWriter(socketOut, true);
 				pw.println(content);
-
+				Log.info(String.format("服务端写向Arduino客户端%d报文为：%s", id, content));
 				// 存入缓存
 				String key = id + content;
 				Integer time = new Integer(
@@ -142,7 +142,7 @@ public class Main {
 						id));
 			}
 		} else {
-			System.out.println("No gameuid in globalSockets");
+			Log.info(String.format("在Arduino组里没有ID为%d的客户端", id));
 		}
 		return false;
 	}
@@ -167,7 +167,7 @@ public class Main {
 				OutputStream socketOut = temHandler.socket.getOutputStream();
 				PrintWriter pw = new PrintWriter(socketOut, true);
 				pw.println(content);
-
+				Log.info(String.format("服务端写向Android客户端%d报文为：%s", id, content));
 				// 存入缓存
 				String key = id + content;
 				Integer time = new Integer(
@@ -185,7 +185,7 @@ public class Main {
 						id));
 			}
 		} else {
-			System.out.println("No gameuid in globalSockets");
+			Log.info(String.format("在Global组里没有ID为%d的客户端", id));
 		}
 		if (!resend) {
 			Behave errorBehave = new Behave(0);
@@ -214,7 +214,8 @@ public class Main {
 	 */
 	public static boolean socketRead(String content, int id, int fromid,
 			boolean tem) {
-		System.out.println("服务端收到的报文为：" + content);
+		System.out.println("服务端收到的报文为：%s" + content);
+		Log.info(String.format("服务端收到的客户端%d报文为：%s", id, content));
 		MessageControl.MessageControl(content, id, fromid, tem);
 		return true;
 	}
