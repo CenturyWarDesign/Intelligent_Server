@@ -2,14 +2,11 @@ package com.centurywar.control;
 
 //设置延迟时间
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.util.Random;
 
 import net.sf.json.JSONObject;
 
+import com.centurywar.ArduinoModle;
 import com.centurywar.Behave;
-import com.centurywar.JDBC;
-import com.centurywar.Main;
 
 public class SetStatus extends BaseControl {
 
@@ -22,14 +19,27 @@ public class SetStatus extends BaseControl {
 
 		int type = jsonObj.getInt("type");
 		int pik = jsonObj.getInt("pik");
-		int command = jsonObj.getInt("command");
 		int value = jsonObj.getInt("value");
+		int data = jsonObj.getInt("data");
+		gameuid = jsonObj.getInt("gameuid");
+		String sec = jsonObj.getString("sec");
+		String username = jsonObj.getString("username");
+		ArduinoModle am = new ArduinoModle(username, sec);
 		// 有延时的开关
-		if (type == 10 && value > 0) {
+		if (type == 10 && data > 0 && false) {
 			Behave be = new Behave(0);
-			be.newInfo(gameuid, gameuid, -value,
-					getBehaver(type, pik, command, value));
+			be.newInfo(am.client, am.gameuid, -data,
+					getBehaver(type, pik, value, data));
+		} else {
+			JSONObject Jso = new JSONObject();
+			Jso.put("gameuid", am.client);
+			Jso.put("fromgameuid", gameuid);
+			Jso.put("sendToArduino", getBehaver(type, pik, value, data));
+			System.out.println(String.format("send to arduino %d:%s",
+					am.client, getBehaver(type, pik, value, data)));
+			sendToSocket(Jso, ConstantControl.SET_STATUS);
 		}
+
 	}
 
 }

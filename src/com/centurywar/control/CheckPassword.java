@@ -5,6 +5,7 @@ import java.util.Random;
 
 import net.sf.json.JSONObject;
 
+import com.centurywar.ArduinoModle;
 import com.centurywar.JDBC;
 import com.centurywar.Main;
 
@@ -41,12 +42,13 @@ public class CheckPassword extends BaseControl {
 					jsonObj.put("retCode", "1112");
 					jsonObj.put("memo", "登陆失败,请重试");
 				} else {
+					jsonObj.put("info", ArduinoModle.getInfo(uid));
 					jsonObj.put("sec", sec);
 					jsonObj.put("retCode", "0000");
 					jsonObj.put("memo", "登陆成功");
 					jsonObj.remove("tem");
 					jsonObj.put("gameuid", uid);
-					Main.moveSocketInGlobal(gameuid + "", uid + "");
+					Main.moveSocketInGlobal(gameuid + "", uid);
 					System.out.println("登陆验证完成：" + jsonObj);
 				}
 			}

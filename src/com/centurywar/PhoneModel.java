@@ -4,7 +4,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 public class PhoneModel extends BaseModel {
-	public final static double LIMIT = 50;
+	public final static double LIMIT = 100;
 	private int gameuid = 0;
 	
 	private String secGameuid = "";

@@ -15,8 +15,10 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import com.centurywar.control.MessageControl;
 
 public class Main {
@@ -48,7 +50,8 @@ public class Main {
 				socket = serverSocket.accept();
 				System.out.println("First get it " + socket.getInetAddress()
 						+ ":" + socket.getPort());
-				Log.info("收到用户的连接请求,地址为--"+socket.getInetAddress()+ ":" + socket.getPort());
+				Log.info("收到用户的连接请求,地址为--" + socket.getInetAddress() + ":"
+						+ socket.getPort());
 				String sec = null;
 				InputStream socketIn = socket.getInputStream();
 				BufferedReader br = new BufferedReader(new InputStreamReader(
@@ -75,7 +78,7 @@ public class Main {
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.out.println(e.toString());
-				Log.error("用户发起连接出现异常",e);
+				Log.error("用户发起连接出现异常", e);
 			}
 		}
 	}
@@ -97,6 +100,38 @@ public class Main {
 						(int) (System.currentTimeMillis() / 1000));
 				Redis.set(key, time.toString());
 				System.out.println("[send to client]" + content);
+				return true;
+			} catch (Exception e) {
+				// 记录失败的程序
+				e.printStackTrace();
+				// 把socket给移除
+				cleanSocket(id);
+				System.out.println(String.format("[send to client %d error]",
+						id));
+			}
+		} else {
+			System.out.println("No gameuid in globalSockets");
+		}
+		return false;
+	}
+
+	public static boolean socketWriteTemArduino(int id, String content) {
+		if (id <= 0) {
+			return false;
+		}
+		if (arduinoHandler.containsKey(id + "")) {
+			MainHandler tem = arduinoHandler.get(id + "");
+			try {
+				OutputStream socketOut = tem.socket.getOutputStream();
+				PrintWriter pw = new PrintWriter(socketOut, true);
+				pw.println(content);
+
+				// 存入缓存
+				String key = id + content;
+				Integer time = new Integer(
+						(int) (System.currentTimeMillis() / 1000));
+				Redis.set(key, time.toString());
+				System.out.println("[send to client arduino]" + content);
 				return true;
 			} catch (Exception e) {
 				// 记录失败的程序
@@ -188,9 +223,12 @@ public class Main {
 		new Main().service();
 	}
 
-	public static boolean moveSocketInGlobal(String temName, String globalName) {
+	public static boolean moveSocketInGlobal(String temName, int globalName) {
 		temHandler.get(temName).tem = false;
-		globalHandler.put(globalName, temHandler.get(temName));
+		System.out.println("changeitnameto:" + globalName);
+		temHandler.get(temName).id = globalName;
+		temHandler.get(temName).fromid = globalName;
+		globalHandler.put(globalName + "", temHandler.get(temName));
 		temHandler.remove(temName);
 		System.out.println("globalCount:" + globalHandler.size());
 		System.out.println("temCount:" + temHandler.size());

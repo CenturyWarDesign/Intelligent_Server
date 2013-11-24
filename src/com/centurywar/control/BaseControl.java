@@ -38,11 +38,19 @@ public class BaseControl {
 		int fromgameuid = jsonObj.containsKey("fromgameuid") ? jsonObj
 				.getInt("fromgameuid") : 0;
 
-		if (jsonObj.containsValue("tem")) {
-			Main.socketWriteTem(jsonObj.getInt("gameuid"), jsonObj.toString());
+		if (command.equals(ConstantControl.SET_STATUS)) {
+			Main.socketWriteTemArduino(jsonObj.getInt("gameuid"),
+					jsonObj.getString("sendToArduino"));
+			return true;
 		} else {
-			Main.socketWrite(jsonObj.getInt("gameuid"), fromgameuid,
-					jsonObj.toString(), false);
+
+			if (jsonObj.containsValue("tem")) {
+				Main.socketWriteTem(jsonObj.getInt("gameuid"),
+						jsonObj.toString());
+			} else {
+				Main.socketWrite(jsonObj.getInt("gameuid"), fromgameuid,
+						jsonObj.toString(), false);
+			}
 		}
 		return false;
 	}

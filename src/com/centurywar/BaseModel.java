@@ -14,7 +14,7 @@ import cn.jpush.api.MessageResult;
 
 public class BaseModel {
 	private int fromgameuid	= 0;
-	protected String username = "";
+	protected String username = "wanbin";
 	private int gameuid = 0;
 	public static final int MAX = Integer.MAX_VALUE;
 	public static final int MIN = (int) MAX / 2;
@@ -37,21 +37,25 @@ public class BaseModel {
 	 * @return
 	 */
 	public boolean sendToPush(int gameuid,String title, String content) {
-		MessageResult msgResult = jpush.sendNotificationWithAlias(11221,
-				username, title, content);
-		if (null != msgResult) {
-			if (msgResult.getErrcode() == ErrorCodeEnum.NOERROR.value()) {
-				System.out.println("发送成功， sendNo=" + msgResult.getSendno());
+		PhoneModel phone = new PhoneModel(gameuid);
+		if (phone.userName.length() > 0) {
+			System.out.println("send Push to :" + phone.username);
+			MessageResult msgResult = jpush.sendNotificationWithAlias(
+					getRandomSendNo(), phone.username, title, content);
+			if (null != msgResult) {
+				if (msgResult.getErrcode() == ErrorCodeEnum.NOERROR.value()) {
+					System.out.println("发送成功， sendNo=" + msgResult.getSendno());
+				} else {
+					System.out.println("发送失败， 错误代码=" + msgResult.getErrcode()
+							+ ", 错误消息=" + msgResult.getErrmsg());
+					return false;
+				}
 			} else {
-				System.out.println("发送失败， 错误代码=" + msgResult.getErrcode()
-						+ ", 错误消息=" + msgResult.getErrmsg());
+				System.out.println("无法获取数据");
 				return false;
 			}
-		} else {
-			System.out.println("无法获取数据");
-			return false;
 		}
-		return true;
+		return false;
 	}
 
 	public static int getRandomSendNo() {

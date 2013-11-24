@@ -62,7 +62,8 @@ public class MessageControl {
 		if (jsonObj.getString("control").equals(
 				ConstantControl.CHECK_USERNAME_PASSWORD)) {
 			CheckPassword.betch(jsonObj);
-		} else if (jsonObj.getString("control").equals("sst")) {
+		} else if (jsonObj.getString("control").equals(
+				ConstantControl.SET_STATUS)) {
 			SetStatus.betch(jsonObj);
 		} else if (jsonObj.getString("control").equals(
 				ConstantControl.GET_USER_TEMPERATURE)) {
@@ -101,6 +102,20 @@ public class MessageControl {
 			try {
 				ArduinoModle u = new ArduinoModle(fromid);
 				// u.sendToPush(fromgameuid, "着火了", "家里有可能着火了");
+			} catch (Exception e) {
+
+			}
+		}
+		// 这是人体传感器
+		if (temp[0].equals(ConstantControl.DEVICE_RENTI)) {
+			if (temp.length < 4) {
+				System.out.println("参数输入错误：" + message);
+				Main.socketWrite(id, id, "error message", false);
+				return "";
+			}
+			try {
+				ArduinoModle u = new ArduinoModle(fromid);
+				// u.sendToPush(id, "着火了", "家里有可能着火了");
 			} catch (Exception e) {
 
 			}
