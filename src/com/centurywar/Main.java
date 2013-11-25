@@ -26,7 +26,7 @@ public class Main {
 	private int port = 8080;
 	private ServerSocket serverSocket;
 	private ExecutorService executorService;
-	private final int POOL_SIZE = 10;
+	private final int POOL_SIZE = 4000;
 	public static Map<String, MainHandler> globalHandler = new HashMap<String, MainHandler>();
 	public static Map<String, MainHandler> arduinoHandler = new HashMap<String, MainHandler>();
 	public static Map<String, MainHandler> temHandler = new HashMap<String, MainHandler>();
@@ -67,12 +67,19 @@ public class Main {
 					MainHandler temr = new MainHandler(socket,
 							arduinoModel.getGameuid(), false);
 					executorService.execute(temr);
-					arduinoHandler.put(MaxTem + "", temr);
+					clearArduino();
+					arduinoHandler.put(arduinoModel.getGameuid() + "", temr);
+					System.out.println(String.format(
+							"put in Arduino Haddle:%d now have: %d ",
+							arduinoModel.getGameuid(), arduinoHandler.size()));
 				} else {
 					MainHandler temr = new MainHandler(socket, MaxTem, true);
 					executorService.execute(temr);
-					System.out.println("put into tem:" + MaxTem);
+					clearTem();
 					temHandler.put(MaxTem + "", temr);
+					System.out.println(String.format(
+							"put in Tem Haddle:%d now have:%d", MaxTem,
+							temHandler.size()));
 					MaxTem++;
 				}
 			} catch (Exception e) {
@@ -83,12 +90,59 @@ public class Main {
 		}
 	}
 
+
+	public static void clearTem() {
+		for (String key : temHandler.keySet()) {
+			Socket temsoc = temHandler.get(key).socket;
+			if (!temsoc.isConnected()) {
+				try {
+					temsoc.close();
+				} catch (Exception e) {
+					System.out.println("tem socket " + key + "is closed");
+				}
+				temHandler.remove(key);
+			}
+		}
+	}
+
+	public static void clearArduino() {
+		for (String key : arduinoHandler.keySet()) {
+			Socket temsoc = arduinoHandler.get(key).socket;
+			if (!temsoc.isConnected()) {
+				try {
+					temsoc.close();
+				} catch (Exception e) {
+					System.out.println("arduino socket " + key + "is closed");
+				}
+				arduinoHandler.remove(key);
+			}
+		}
+	}
+
+	public static void clearAndroid() {
+		for (String key : globalHandler.keySet()) {
+			Socket temsoc = globalHandler.get(key).socket;
+			if (!temsoc.isConnected()) {
+				try {
+					temsoc.close();
+				} catch (Exception e) {
+					System.out.println("android socket " + key + "is closed");
+				}
+				globalHandler.remove(key);
+			}
+		}
+	}
+
 	public static boolean socketWriteTem(int id, String content) {
 		if (id <= 0) {
 			return false;
 		}
 		if (temHandler.containsKey(id + "")) {
 			MainHandler tem = temHandler.get(id + "");
+			if(!tem.socket.isConnected()){
+				closeTemHandler(id);
+				return false;
+			}
 			try {
 				OutputStream socketOut = tem.socket.getOutputStream();
 				PrintWriter pw = new PrintWriter(socketOut, true);
@@ -105,14 +159,25 @@ public class Main {
 				// 记录失败的程序
 				e.printStackTrace();
 				// 把socket给移除
-				cleanSocket(id);
-				System.out.println(String.format("[send to client %d error]",
-						id));
+				closeTemHandler(id);
 			}
 		} else {
 			Log.info(String.format("在Android临时组里没有ID为%d的客户端", id));
 		}
 		return false;
+	}
+
+	protected static void closeTemHandler(int id) {
+		MainHandler tem = temHandler.get(id + "");
+		if (tem.socket.isClosed()) {
+			try {
+				tem.socket.close();
+				temHandler.remove(id + "");
+			} catch (Exception e) {
+				System.out.println(String.format("[删除临时 SOCKET %d 失败]", id));
+				Log.error(e.toString());
+			}
+		}
 	}
 
 	public static boolean socketWriteTemArduino(int id, String content) {
@@ -121,6 +186,11 @@ public class Main {
 		}
 		if (arduinoHandler.containsKey(id + "")) {
 			MainHandler tem = arduinoHandler.get(id + "");
+			if (tem.socket.isClosed()) {
+				closeArduinoHandler(id);
+				return false;
+			}
+
 			try {
 				OutputStream socketOut = tem.socket.getOutputStream();
 				PrintWriter pw = new PrintWriter(socketOut, true);
@@ -137,9 +207,7 @@ public class Main {
 				// 记录失败的程序
 				e.printStackTrace();
 				// 把socket给移除
-				cleanSocket(id);
-				System.out.println(String.format("[send to client %d error]",
-						id));
+				closeArduinoHandler(id);
 			}
 		} else {
 			Log.info(String.format("在Arduino组里没有ID为%d的客户端", id));
@@ -147,6 +215,20 @@ public class Main {
 		return false;
 	}
 
+	protected static void closeArduinoHandler(int id) {
+		MainHandler tem = arduinoHandler.get(id + "");
+		if (tem.socket.isClosed()) {
+			try {
+				tem.socket.close();
+				arduinoHandler.remove(id + "");
+			} catch (Exception e) {
+				System.out.println(String
+						.format("[删除Arduino SOCKET %d 失败]", id));
+				Log.error(e.toString());
+			}
+		}
+	}
+	
 	/**
 	 * 输出。
 	 * 
@@ -163,11 +245,16 @@ public class Main {
 		}
 		if (globalHandler.containsKey(id + "")) {
 			MainHandler temHandler = globalHandler.get(id + "");
+			if (!temHandler.socket.isConnected()) {
+				closeGlobalHandler(id);
+				return false;
+			}
 			try {
 				OutputStream socketOut = temHandler.socket.getOutputStream();
 				PrintWriter pw = new PrintWriter(socketOut, true);
 				pw.println(content);
-				Log.info(String.format("服务端写向Android客户端%d报文为：%s", id, content));
+				Log.info(String.format("服务端写向Android客户端%d报文为：%s", id,
+							content));
 				// 存入缓存
 				String key = id + content;
 				Integer time = new Integer(
@@ -180,9 +267,7 @@ public class Main {
 				// 记录失败的程序
 				e.printStackTrace();
 				// 把socket给移除
-				cleanSocket(id);
-				System.out.println(String.format("[send to client %d error]",
-						id));
+				closeGlobalHandler(id);
 			}
 		} else {
 			Log.info(String.format("在Global组里没有ID为%d的客户端", id));
@@ -194,14 +279,15 @@ public class Main {
 		return false;
 	}
 
-	public static void cleanSocket(int id) {
-		Socket socket = globalHandler.get(id + "").socket;
-		try {
-			socket.close();
-			socket = null;
-			globalHandler.remove(id + "");
-		} catch (IOException e) {
-			e.printStackTrace();
+	protected static void closeGlobalHandler(int id) {
+		MainHandler tem = globalHandler.get(id + "");
+		if (tem.socket.isClosed()) {
+			try {
+				tem.socket.close();
+				globalHandler.remove(id + "");
+			} catch (Exception e) {
+				Log.error(e.toString());
+			}
 		}
 	}
 
@@ -225,12 +311,18 @@ public class Main {
 	}
 
 	public static boolean moveSocketInGlobal(String temName, int globalName) {
+		clearAndroid();
 		temHandler.get(temName).tem = false;
 		System.out.println("changeitnameto:" + globalName);
 		temHandler.get(temName).id = globalName;
 		temHandler.get(temName).fromid = globalName;
+		globalHandler.remove(globalName + "");
 		globalHandler.put(globalName + "", temHandler.get(temName));
+		System.out
+.println(String.format("put in Global Haddle:%d now have:%d",
+				globalName, globalHandler.size()));
 		temHandler.remove(temName);
+		System.out.println(String.format("remove Tem Haddle:%d", globalName));
 		System.out.println("globalCount:" + globalHandler.size());
 		System.out.println("temCount:" + temHandler.size());
 		return true;

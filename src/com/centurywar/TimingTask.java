@@ -38,8 +38,16 @@ public class TimingTask extends TimerTask {
 		}
 		be.delInfo(hasSend);
 		System.out.println("延迟操作发送中……");
+		clearSocket();
 	}
-	
+
+	public void clearSocket() {
+		System.out.println("清空没用的连接。。。。");
+		Main.clearTem();
+		Main.clearArduino();
+		Main.clearAndroid();
+	}
+
 	/**
 	 * 检查缓存中超时的命令，写入send_log表
 	 * 

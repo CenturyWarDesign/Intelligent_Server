@@ -48,7 +48,6 @@ public class MainHandler implements Runnable {
 			try {
 				if (socket != null) {
 					socket.close();
-					Main.cleanSocket(id);
 				}
 			} catch (IOException e) {
 				e.printStackTrace();

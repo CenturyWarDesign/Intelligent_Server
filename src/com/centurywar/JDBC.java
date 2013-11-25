@@ -18,8 +18,8 @@ public class JDBC {
 	private static Map<String, Connection> connectpoll = new HashMap<String, Connection>();
 
 	public static void initConn() throws Exception {
-		// conn = getConnection("127.0.0.1:3306/intelligent", "root", "");
-		conn = getConnection("42.121.123.185:3306/intelligent", "root",
+//		conn = getConnection("127.0.0.1:3306/intelligent", "root", "");
+		 conn = getConnection("42.121.123.185:3306/intelligent", "root",
 				"abc123");
 	}
 
