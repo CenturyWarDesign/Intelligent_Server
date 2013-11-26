@@ -3,7 +3,11 @@ package com.centurywar;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public class ArduinoModle extends BaseModel {
+	protected final static Log Log = LogFactory.getLog(ArduinoModle.class);
 	public final static double LIMIT = 100;
 	public int gameuid = 0;
 	
@@ -123,6 +127,21 @@ public class ArduinoModle extends BaseModel {
 				.format("select sec,username,port,ip,id,client_id,bluetoothmac from users where id= %d ",
 						gameuid);
 		return JDBC.selectOne(sql);
+	}
+
+	public static int getAndroidId(int clientid) {
+		String sql = String.format("select id from users where client_id= %d ",
+				clientid);
+		JSONObject obj = new JSONObject();
+		try {
+			obj = JDBC.selectOne(sql);
+		} catch (Exception e) {
+			Log.error(e.toString());
+		}
+		if (obj.containsKey("id")) {
+			return obj.getInt("id");
+		}
+		return 0;
 	}
 
 

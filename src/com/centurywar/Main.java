@@ -318,8 +318,7 @@ public class Main {
 		temHandler.get(temName).fromid = globalName;
 		globalHandler.remove(globalName + "");
 		globalHandler.put(globalName + "", temHandler.get(temName));
-		System.out
-.println(String.format("put in Global Haddle:%d now have:%d",
+		System.out.println(String.format("put in Global Haddle:%d now have:%d",
 				globalName, globalHandler.size()));
 		temHandler.remove(temName);
 		System.out.println(String.format("remove Tem Haddle:%d", globalName));

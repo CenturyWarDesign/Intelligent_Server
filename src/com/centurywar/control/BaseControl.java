@@ -43,7 +43,6 @@ public class BaseControl {
 					jsonObj.getString("sendToArduino"));
 			return true;
 		} else {
-
 			if (jsonObj.containsValue("tem")) {
 				Main.socketWriteTem(jsonObj.getInt("gameuid"),
 						jsonObj.toString());

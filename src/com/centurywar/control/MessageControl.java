@@ -134,6 +134,11 @@ public class MessageControl {
 		String originCommand = message.substring(2);
 		System.out.print("得到反馈，删除缓存：" + gameuid + originCommand);
 		String key = gameuid+":"+message;
+		// 把反馈回传到客户端
+		JSONObject obj = new JSONObject();
+		obj.put("command", message);
+		obj.put("gameuid", gameuid);
+		EchoSetStatus.betch(obj);
 		return Redis.hdel("cachedCommands",key);
 	}
 	
