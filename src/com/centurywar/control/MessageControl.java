@@ -2,7 +2,7 @@ package com.centurywar.control;
 
 import net.sf.json.JSONObject;
 
-import com.centurywar.ArduinoModle;
+import com.centurywar.ArduinoModel;
 import com.centurywar.Main;
 import com.centurywar.Redis;
 
@@ -42,7 +42,7 @@ public class MessageControl {
 				return "";
 			}
 		} else {
-			controlArduinoSend(message, id, fromid);
+			ArduinoControl.controlArduinoSend(message, id, fromid);
 			return "";
 		}
 		return "";
@@ -74,55 +74,7 @@ public class MessageControl {
 		}
 	}
 
-	public static String controlArduinoSend(String message, int id, int fromid) {
-		String[] temp = null;
-		temp = message.trim().split("_");
-		// 4个是标准输入
-		if (temp[0].equals("r")) {
-			return "";
-		}
-		if (temp[0].equals(ConstantControl.DEVICE_TEMPERATURE)) {
-			double temValue = 0.0;
-			try {
-				temValue = Float.parseFloat(temp[2] + "." + temp[3]);
-				// 温度计返回值
-				ArduinoModle u = new ArduinoModle(id);
-				u.updateTemperature(temValue, 1);
-			} catch (Exception e) {
-
-			}
-		}
-		// 这是火焰报警器
-		if (temp[0].equals(ConstantControl.DEVICE_HUOJING)) {
-			if (temp.length < 4) {
-				System.out.println("参数输入错误：" + message);
-				Main.socketWrite(id, id, "error message", false);
-				return "";
-			}
-			try {
-				ArduinoModle u = new ArduinoModle(fromid);
-				// u.sendToPush(fromgameuid, "着火了", "家里有可能着火了");
-			} catch (Exception e) {
-
-			}
-		}
-		// 这是人体传感器
-		if (temp[0].equals(ConstantControl.DEVICE_RENTI)) {
-			if (temp.length < 4) {
-				System.out.println("参数输入错误：" + message);
-				Main.socketWrite(id, id, "error message", false);
-				return "";
-			}
-			try {
-				ArduinoModle u = new ArduinoModle(fromid);
-				// u.sendToPush(id, "着火了", "家里有可能着火了");
-			} catch (Exception e) {
-
-			}
-		}
-
-		return "";
-	}
+	
 
 	/**
 	 * 处理板子返回的信息

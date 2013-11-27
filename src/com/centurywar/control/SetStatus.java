@@ -5,8 +5,9 @@ import java.io.IOException;
 
 import net.sf.json.JSONObject;
 
-import com.centurywar.ArduinoModle;
+import com.centurywar.ArduinoModel;
 import com.centurywar.Behave;
+import com.centurywar.UsersModel;
 
 public class SetStatus extends BaseControl {
 
@@ -24,7 +25,7 @@ public class SetStatus extends BaseControl {
 		gameuid = jsonObj.getInt("gameuid");
 		String sec = jsonObj.getString("sec");
 		String username = jsonObj.getString("username");
-		ArduinoModle am = new ArduinoModle(username, sec);
+		UsersModel am = new UsersModel(username, sec);
 		// 有延时的开关
 		if (type == 10 && data > 0 && false) {
 			Behave be = new Behave(0);

@@ -5,9 +5,10 @@ import java.util.Random;
 
 import net.sf.json.JSONObject;
 
-import com.centurywar.ArduinoModle;
+import com.centurywar.ArduinoModel;
 import com.centurywar.JDBC;
 import com.centurywar.Main;
+import com.centurywar.UsersModel;
 
 public class CheckPassword extends BaseControl {
 
@@ -29,20 +30,20 @@ public class CheckPassword extends BaseControl {
 				Main.socketWrite(gameuid, gameuid, "Login fail", false);
 				jsonObj.put("retCode", "1111");
 				jsonObj.put("memo", "用户名密码错误,登陆失败");
-				
-			}else{
+
+			} else {
 				Random r = new Random();
 				int temp1 = r.nextInt();
-				String sec = EncoderPwdByMd5(String.format("Intelligent%d%d",temp1, uid));
-				int isSuccess = JDBC.update(String
-						.format("update users set sec='%s' where id='%d'",
-								sec, uid));
-				if(isSuccess<1){
+				String sec = EncoderPwdByMd5(String.format("Intelligent%d%d",
+						temp1, uid));
+				int isSuccess = JDBC.update(String.format(
+						"update users set sec='%s' where id='%d'", sec, uid));
+				if (isSuccess < 1) {
 					System.out.println("将新生成的验证码写入数据库失败，登录失败");
 					jsonObj.put("retCode", "1112");
 					jsonObj.put("memo", "登陆失败,请重试");
 				} else {
-					jsonObj.put("info", ArduinoModle.getInfo(uid));
+					jsonObj.put("info", UsersModel.getInfo(uid));
 					jsonObj.put("sec", sec);
 					jsonObj.put("retCode", "0000");
 					jsonObj.put("memo", "登陆成功");

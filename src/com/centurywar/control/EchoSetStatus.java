@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import net.sf.json.JSONObject;
 
-import com.centurywar.ArduinoModle;
+import com.centurywar.ArduinoModel;
 
 public class EchoSetStatus extends BaseControl {
 
@@ -17,7 +17,8 @@ public class EchoSetStatus extends BaseControl {
 	public static void betch(JSONObject jsonObj) {
 		int androidId = jsonObj.getInt("gameuid");
 		String command = jsonObj.getString("command");
-		int gameuid = ArduinoModle.getAndroidId(androidId);
+		ArduinoModel arduino = new ArduinoModel(androidId);
+		int gameuid = arduino.getUsersId();
 		JSONObject Jso = new JSONObject();
 		Jso.put("gameuid", gameuid);
 		Jso.put("fromgameuid", androidId);

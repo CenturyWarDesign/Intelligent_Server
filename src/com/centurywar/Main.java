@@ -63,15 +63,15 @@ public class Main {
 				System.out.println(df.format(new Date()));// new Date()为获取当前系统时间
 				if (sec.length() == 32) {
 					System.out.println("Sec:" + sec);
-					ArduinoModle arduinoModel = new ArduinoModle(sec);
+					ArduinoModel arduinoModel = new ArduinoModel(sec);
 					MainHandler temr = new MainHandler(socket,
-							arduinoModel.getGameuid(), false);
+							arduinoModel.getid(), false);
 					executorService.execute(temr);
 					clearArduino();
-					arduinoHandler.put(arduinoModel.getGameuid() + "", temr);
+					arduinoHandler.put(arduinoModel.getid() + "", temr);
 					System.out.println(String.format(
 							"put in Arduino Haddle:%d now have: %d ",
-							arduinoModel.getGameuid(), arduinoHandler.size()));
+							arduinoModel.getid(), arduinoHandler.size()));
 				} else {
 					MainHandler temr = new MainHandler(socket, MaxTem, true);
 					executorService.execute(temr);

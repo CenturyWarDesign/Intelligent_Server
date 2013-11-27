@@ -13,6 +13,10 @@ public class ConstantControl {
 	// 取得用户温度信息
 	public static String GET_USER_TEMPERATURE = "gut";
 	public static String ECHO_GET_USER_TEMPERATURE = "egut";
+	
+	// 取得用户温度信息
+	public static String GET_USER_INFO = "gui";
+	public static String ECHO_GET_USER_INFO = "egui";
 
 	// ========================传感器=========================
 

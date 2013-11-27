@@ -8,9 +8,9 @@ import net.sf.json.JSONObject;
 import com.centurywar.ArduinoModel;
 import com.centurywar.UsersModel;
 
-public class GetUserTemperaTure extends BaseControl {
+public class GetUserInfo extends BaseControl {
 
-	public GetUserTemperaTure() throws IOException {
+	public GetUserInfo() throws IOException {
 		super();
 
 		// TODO Auto-generated constructor stub
@@ -31,5 +31,4 @@ public class GetUserTemperaTure extends BaseControl {
 		obj.put("gameuid", am.gameuid);
 		sendToSocket(obj, ConstantControl.ECHO_GET_USER_TEMPERATURE);
 	}
-
 }

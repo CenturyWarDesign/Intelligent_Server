@@ -47,12 +47,16 @@ public class JDBC {
 	 * @return
 	 * @throws Exception
 	 */
-	public static JSONObject selectOne(String sql) throws Exception {
-		JSONArray tem = select(sql);
-		if (tem.size() == 0) {
-			return new JSONObject();
+	public static JSONObject selectOne(String sql) {
+		try {
+			JSONArray tem = select(sql);
+			if (tem.size() == 0) {
+				return new JSONObject();
+			}
+			return (JSONObject) select(sql).get(0);
+		} catch (Exception e) {
+			return null;
 		}
-		return (JSONObject) select(sql).get(0);
 	}
 	
 	/**

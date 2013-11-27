@@ -3,31 +3,27 @@ package com.centurywar;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-public class ArduinoModle extends BaseModel {
-	protected final static Log Log = LogFactory.getLog(ArduinoModle.class);
+public class UsersModel extends BaseModel {
 	public final static double LIMIT = 100;
 	public int gameuid = 0;
-	
+
 	private String secGameuid = "";
 	public String userName = "";
 	public String ip = "0.0.0.0";
 	public int port = 80;
 	public int client = 0;
-	public String bluetoothMac = "";
-
-	public ArduinoModle(String password) {
-		secGameuid = password;
-		try{
+	public ArduinoModel arduinoClient;
+	
+	public UsersModel(String sec) {
+		secGameuid = sec;
+		try {
 			getUserInfoFromPassword();
-		}catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public ArduinoModle(int gameuidsend) {
+	public UsersModel(int gameuidsend) {
 		if (gameuidsend > 0) {
 			gameuid = gameuidsend;
 			try {
@@ -38,32 +34,22 @@ public class ArduinoModle extends BaseModel {
 		}
 	}
 
-	public ArduinoModle(String username, String sec) {
-			try {
-			getUserInfoFromUserNameSec(username, sec);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-	}
-
-
-	private ArduinoModle getUserInfoFromGameuid() throws Exception {
+	
+	public UsersModel(String username, String password){
 		JSONObject obj = JDBC.selectOne(String.format(
-				"select * from users where id=%d", gameuid));
+				"select * from users where username='%s' and password='%s'",
+				username, password));
 		if (!obj.isEmpty()) {
 			userName = obj.getString("username");
 			gameuid = obj.getInt("id");
 			client = obj.getInt("client_id");
 		}
-		return this;
 	}
 
-	private ArduinoModle getUserInfoFromUserNameSec(String username, String sec)
-			throws Exception {
+	
+	private UsersModel getUserInfoFromGameuid() throws Exception {
 		JSONObject obj = JDBC.selectOne(String.format(
-				"select * from users where username='%s'  and sec='%s'",
-				username,
-				sec));
+				"select * from users where id=%d", gameuid));
 		if (!obj.isEmpty()) {
 			userName = obj.getString("username");
 			gameuid = obj.getInt("id");
@@ -80,8 +66,7 @@ public class ArduinoModle extends BaseModel {
 		this.gameuid = gameuid;
 	}
 
-
-	private ArduinoModle getUserInfoFromPassword() throws Exception {
+	private UsersModel getUserInfoFromPassword() throws Exception {
 		JSONObject obj = JDBC.selectOne(String.format(
 				"select * from users where password='%s'", secGameuid));
 		if (!obj.isEmpty()) {
@@ -113,20 +98,13 @@ public class ArduinoModle extends BaseModel {
 							value, time, gameuid, port);
 			System.out.println(sql);
 			JDBC.query(sql);
-			if(value>LIMIT){
+			if (value > LIMIT) {
 				sendToPush(this.gameuid, "温度提醒", "现在的温度是" + value + "请知晓！");
 			}
 		} catch (Exception e) {
 
 		}
 		return false;
-	}
-
-	public static JSONObject getInfo(int gameuid) throws Exception {
-		String sql = String
-				.format("select sec,username,port,ip,id,client_id,bluetoothmac from users where id= %d ",
-						gameuid);
-		return JDBC.selectOne(sql);
 	}
 
 	public static int getAndroidId(int clientid) {
@@ -144,5 +122,8 @@ public class ArduinoModle extends BaseModel {
 		return 0;
 	}
 
-
+	public static JSONObject getInfo(int id) {
+		JSONObject obj = new JSONObject();
+		return obj;
+	}
 }

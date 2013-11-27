@@ -37,7 +37,7 @@ public class BaseModel {
 	 * @return
 	 */
 	public boolean sendToPush(int gameuid,String title, String content) {
-		PhoneModel phone = new PhoneModel(gameuid);
+		UsersModel phone = new UsersModel(gameuid);
 		if (phone.userName.length() > 0) {
 			System.out.println("send Push to :" + phone.username);
 			MessageResult msgResult = jpush.sendNotificationWithAlias(
