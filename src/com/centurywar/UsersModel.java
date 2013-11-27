@@ -108,14 +108,11 @@ public class UsersModel extends BaseModel {
 	}
 
 	public static int getAndroidId(int clientid) {
-		String sql = String.format("select id from users where client_id= %d ",
+		String sql = String.format("select client_id from users where id= %d ",
 				clientid);
 		JSONObject obj = new JSONObject();
 		obj = JDBC.selectOne(sql);
-		if (obj.containsKey("id")) {
-			return obj.getInt("id");
-		}
-		return 0;
+		return obj.getInt("client_id");
 	}
 
 	public static JSONObject getInfo(int id) {
@@ -136,7 +133,8 @@ public class UsersModel extends BaseModel {
 	 * 
 	 * @return
 	 */
-	public JSONArray getAllUserDevice() {
-		return ArduinoModel.getAllDevice(client);
+	public static JSONArray getAllUserDevice(int id) {
+		int arduinoid = getAndroidId(id);
+		return ArduinoModel.getAllDevice(arduinoid);
 	}
 }

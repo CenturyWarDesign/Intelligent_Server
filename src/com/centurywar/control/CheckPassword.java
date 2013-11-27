@@ -5,7 +5,6 @@ import java.util.Random;
 
 import net.sf.json.JSONObject;
 
-import com.centurywar.ArduinoModel;
 import com.centurywar.JDBC;
 import com.centurywar.Main;
 import com.centurywar.UsersModel;
@@ -44,6 +43,7 @@ public class CheckPassword extends BaseControl {
 					jsonObj.put("memo", "登陆失败,请重试");
 				} else {
 					jsonObj.put("info", UsersModel.getInfo(uid));
+					jsonObj.put("device", UsersModel.getAllUserDevice(uid));
 					jsonObj.put("sec", sec);
 					jsonObj.put("retCode", "0000");
 					jsonObj.put("memo", "登陆成功");
