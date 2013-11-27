@@ -49,7 +49,7 @@ public class ArduinoControl {
 			}
 			try {
 				ArduinoModel u = new ArduinoModel(fromid);
-				// u.sendToPush(id, "着火了", "家里有可能着火了");
+				u.sendToPush(id, "家里有人回来了", "家里有人了");
 			} catch (Exception e) {
 
 			}

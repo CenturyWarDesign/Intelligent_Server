@@ -39,9 +39,9 @@ public class BaseModel {
 	public boolean sendToPush(int gameuid,String title, String content) {
 		UsersModel phone = new UsersModel(gameuid);
 		if (phone.userName.length() > 0) {
-			System.out.println("send Push to :" + phone.username);
+			System.out.println("send Push to :" + phone.userName);
 			MessageResult msgResult = jpush.sendNotificationWithAlias(
-					getRandomSendNo(), phone.username, title, content);
+					getRandomSendNo(), phone.userName, title, content);
 			if (null != msgResult) {
 				if (msgResult.getErrcode() == ErrorCodeEnum.NOERROR.value()) {
 					System.out.println("发送成功， sendNo=" + msgResult.getSendno());
