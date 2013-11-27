@@ -79,7 +79,7 @@ public class UsersModel extends BaseModel {
 
 	public JSONArray getUserDevice(int clientid) throws Exception {
 		String sql = String.format(
-				"select * from user_device where client='%s'", clientid);
+				"select * from user_device where arduinoid='%s'", clientid);
 		return JDBC.select(sql);
 	}
 
@@ -122,5 +122,21 @@ public class UsersModel extends BaseModel {
 		String sql = String.format("select * from users where id= %d ", id);
 		JSONObject obj = JDBC.selectOne(sql);
 		return obj;
+	}
+
+	public boolean UpdateUserDevice(JSONArray deviceArray) {
+		ArduinoModel.updateAllDevice(client, deviceArray);
+		// String sqldel =
+		// String.format("delete from user_device where id=%d",id);
+		return true;
+	}
+
+	/**
+	 * 返回用户所有的传感器
+	 * 
+	 * @return
+	 */
+	public JSONArray getAllUserDevice() {
+		return ArduinoModel.getAllDevice(client);
 	}
 }

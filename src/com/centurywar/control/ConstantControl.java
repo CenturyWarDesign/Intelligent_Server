@@ -18,6 +18,13 @@ public class ConstantControl {
 	public static String GET_USER_INFO = "gui";
 	public static String ECHO_GET_USER_INFO = "egui";
 
+	// 同步用户的信息到网上
+	public static String UPDAT_DEVICE_TO_SERVER = "udts";
+	public static String ECHO_UPDAT_DEVICE_TO_SERVER = "eudts";
+
+	// 控制指令（必须要有以下内容；type,pik,value,data）
+	public static String CONTROL_DEVICE = "cd";
+	public static String ECHO_CONTROL_DEVICE = "ecd";
 	// ========================传感器=========================
 
 	// 灯
@@ -31,7 +38,5 @@ public class ConstantControl {
 	// 人体传感器
 	public static String DEVICE_RENTI = "32";
 
-	// 控制指令（必须要有以下内容；type,pik,value,data）
-	public static String CONTROL_DEVICE = "cd";
-	public static String ECHO_CONTROL_DEVICE = "ecd";
+
 }

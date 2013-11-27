@@ -11,6 +11,7 @@ import net.sf.json.JSONObject;
 import sun.misc.BASE64Encoder;
 
 import com.centurywar.Main;
+import com.centurywar.UsersModel;
 
 public class BaseControl {
 	protected static int gameuid = 0;
@@ -107,5 +108,12 @@ public class BaseControl {
 			}
 		}
 
+	}
+
+	protected static UsersModel getUserModel(JSONObject jsonObj) {
+		String sec = jsonObj.getString("sec");
+		String username = jsonObj.getString("username");
+		UsersModel am = new UsersModel(username, sec);
+		return am;
 	}
 }

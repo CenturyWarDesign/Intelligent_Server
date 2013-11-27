@@ -2,8 +2,6 @@ package com.centurywar.control;
 
 import net.sf.json.JSONObject;
 
-import com.centurywar.ArduinoModel;
-import com.centurywar.Main;
 import com.centurywar.Redis;
 
 /**
@@ -71,6 +69,9 @@ public class MessageControl {
 		} else if (jsonObj.getString("control").equals(
 				ConstantControl.CONTROL_DEVICE)) {
 			ControlDevice.betch(jsonObj);
+		} else if (jsonObj.getString("control").equals(
+				ConstantControl.UPDAT_DEVICE_TO_SERVER)) {
+			UpdateUserDevice.betch(jsonObj);
 		}
 	}
 
