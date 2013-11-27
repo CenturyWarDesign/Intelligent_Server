@@ -35,17 +35,17 @@ public class UsersModel extends BaseModel {
 	}
 
 	
-	public UsersModel(String username, String password){
-		JSONObject obj = JDBC.selectOne(String.format(
-				"select * from users where username='%s' and password='%s'",
-				username, password));
+	public UsersModel(String username, String password) {
+		JSONObject obj = JDBC
+				.selectOne(String
+						.format("select * from users where username='%s' and (password='%s' or sec='%s')",
+								username, password, password));
 		if (!obj.isEmpty()) {
 			userName = obj.getString("username");
 			gameuid = obj.getInt("id");
 			client = obj.getInt("client_id");
 		}
 	}
-
 	
 	private UsersModel getUserInfoFromGameuid() throws Exception {
 		JSONObject obj = JDBC.selectOne(String.format(
@@ -111,11 +111,7 @@ public class UsersModel extends BaseModel {
 		String sql = String.format("select id from users where client_id= %d ",
 				clientid);
 		JSONObject obj = new JSONObject();
-		try {
-			obj = JDBC.selectOne(sql);
-		} catch (Exception e) {
-			Log.error(e.toString());
-		}
+		obj = JDBC.selectOne(sql);
 		if (obj.containsKey("id")) {
 			return obj.getInt("id");
 		}
@@ -123,7 +119,8 @@ public class UsersModel extends BaseModel {
 	}
 
 	public static JSONObject getInfo(int id) {
-		JSONObject obj = new JSONObject();
+		String sql = String.format("select * from users where id= %d ", id);
+		JSONObject obj = JDBC.selectOne(sql);
 		return obj;
 	}
 }

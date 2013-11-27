@@ -1,9 +1,13 @@
 package com.centurywar.control;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.centurywar.ArduinoModel;
 import com.centurywar.Main;
 
 public class ArduinoControl {
+	protected final static Log Log = LogFactory.getLog(ArduinoControl.class);
 	public static String controlArduinoSend(String message, int id, int fromid) {
 		String[] temp = null;
 		temp = message.trim().split("_");
@@ -13,10 +17,14 @@ public class ArduinoControl {
 		}
 		if (temp[0].equals(ConstantControl.DEVICE_TEMPERATURE)) {
 			double temValue = 0.0;
-			temValue = Float.parseFloat(temp[2] + "." + temp[3]);
-			// 温度计返回值
-			ArduinoModel u = new ArduinoModel(id);
-			u.updateTem(temValue, 1);
+			try {
+				temValue = Float.parseFloat(temp[2] + "." + temp[3].trim());
+				// 温度计返回值
+				ArduinoModel u = new ArduinoModel(id);
+				u.updateTem(temValue, 1);
+			} catch (Exception e) {
+				Log.error(e.toString());
+			}
 		}
 		// 这是火焰报警器
 		if (temp[0].equals(ConstantControl.DEVICE_HUOJING)) {
@@ -27,7 +35,7 @@ public class ArduinoControl {
 			}
 			try {
 				ArduinoModel u = new ArduinoModel(fromid);
-				
+
 			} catch (Exception e) {
 
 			}

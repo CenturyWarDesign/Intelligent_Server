@@ -13,15 +13,15 @@ public class ArduinoModel extends BaseModel {
 	public int port = 0;
 	public String bluetoothMac = "";
 
-	public ArduinoModel(String sec){
+	public ArduinoModel(String sec) {
 		JSONObject obj = JDBC.selectOne(String.format(
-				"select * from users where  sec='%s'", sec));
+				"select * from arduino where  sec='%s'", sec));
 		JsonToArduino(obj);
 	}
 
-	public ArduinoModel(int id)  {
+	public ArduinoModel(int id) {
 		JSONObject obj = JDBC.selectOne(String.format(
-				"select * from users where id=%d", id));
+				"select * from arduino where id=%d", id));
 		JsonToArduino(obj);
 	}
 
@@ -32,15 +32,16 @@ public class ArduinoModel extends BaseModel {
 			ip = obj.getString("ip");
 		}
 	}
-	
-	public boolean updateTem(double tem,int satatus){
-		
+
+	public boolean updateTem(double tem, int satatus) {
+
 		return true;
 	}
 
-	public int getUsersId(){
-		return 100;
+	public int getUsersId() {
+		JSONObject obj = JDBC.selectOne(String.format(
+				"select * from users where client_id=%d", id));
+		return obj.getInt("id");
 	}
-	
 
 }

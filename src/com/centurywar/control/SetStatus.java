@@ -5,7 +5,6 @@ import java.io.IOException;
 
 import net.sf.json.JSONObject;
 
-import com.centurywar.ArduinoModel;
 import com.centurywar.Behave;
 import com.centurywar.UsersModel;
 

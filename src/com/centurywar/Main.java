@@ -300,7 +300,6 @@ public class Main {
 	 */
 	public static boolean socketRead(String content, int id, int fromid,
 			boolean tem) {
-		System.out.println("服务端收到的报文为：%s" + content);
 		Log.info(String.format("服务端收到的客户端%d报文为：%s", id, content));
 		MessageControl.MessageControl(content, id, fromid, tem);
 		return true;
