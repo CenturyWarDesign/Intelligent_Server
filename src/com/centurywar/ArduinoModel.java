@@ -42,11 +42,5 @@ public class ArduinoModel extends BaseModel {
 		return 100;
 	}
 	
-	public int getid() {
-		return id;
-	}
 
-	public void setid(int id) {
-		this.id = id;
-	}
 }

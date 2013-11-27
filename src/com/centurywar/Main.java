@@ -65,13 +65,13 @@ public class Main {
 					System.out.println("Sec:" + sec);
 					ArduinoModel arduinoModel = new ArduinoModel(sec);
 					MainHandler temr = new MainHandler(socket,
-							arduinoModel.getid(), false);
+							arduinoModel.id, false);
 					executorService.execute(temr);
 					clearArduino();
-					arduinoHandler.put(arduinoModel.getid() + "", temr);
+					arduinoHandler.put(arduinoModel.id + "", temr);
 					System.out.println(String.format(
 							"put in Arduino Haddle:%d now have: %d ",
-							arduinoModel.getid(), arduinoHandler.size()));
+							arduinoModel.id, arduinoHandler.size()));
 				} else {
 					MainHandler temr = new MainHandler(socket, MaxTem, true);
 					executorService.execute(temr);
