@@ -86,7 +86,6 @@ public class BaseControl {
 	}
 	
 	
-
 	/**
 	 * 把JSONObject 转化为指令
 	 * 

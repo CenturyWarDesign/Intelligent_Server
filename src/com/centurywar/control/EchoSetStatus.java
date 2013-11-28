@@ -6,6 +6,7 @@ import java.io.IOException;
 import net.sf.json.JSONObject;
 
 import com.centurywar.ArduinoModel;
+import com.centurywar.DeviceModel;
 
 public class EchoSetStatus extends BaseControl {
 
@@ -19,6 +20,8 @@ public class EchoSetStatus extends BaseControl {
 		String command = jsonObj.getString("command");
 		ArduinoModel arduino = new ArduinoModel(androidId);
 		int gameuid = arduino.getUsersId();
+		DeviceModel.updateDeviceByReturn(command, androidId);
+
 		JSONObject Jso = new JSONObject();
 		Jso.put("gameuid", gameuid);
 		Jso.put("fromgameuid", androidId);

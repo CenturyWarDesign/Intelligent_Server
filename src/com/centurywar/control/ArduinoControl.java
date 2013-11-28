@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.centurywar.ArduinoModel;
+import com.centurywar.DeviceModel;
 import com.centurywar.Main;
 
 public class ArduinoControl {
@@ -16,12 +17,8 @@ public class ArduinoControl {
 			return "";
 		}
 		if (temp[0].equals(ConstantControl.DEVICE_TEMPERATURE)) {
-			double temValue = 0.0;
 			try {
-				temValue = Float.parseFloat(temp[2] + "." + temp[3].trim());
-				// 温度计返回值
-				ArduinoModel u = new ArduinoModel(id);
-				u.updateTem(temValue, 1);
+				DeviceModel.updateDeviceByReturn(message, id);
 			} catch (Exception e) {
 				Log.error(e.toString());
 			}
@@ -35,7 +32,6 @@ public class ArduinoControl {
 			}
 			try {
 				ArduinoModel u = new ArduinoModel(fromid);
-
 			} catch (Exception e) {
 
 			}
