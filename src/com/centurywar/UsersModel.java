@@ -121,6 +121,13 @@ public class UsersModel extends BaseModel {
 		return obj;
 	}
 
+	public static int getUserIdFromClientid(int clientid) {
+		String sql = String.format("select * from users where client_id= %d ",
+				clientid);
+		JSONObject obj = JDBC.selectOne(sql);
+		return obj.getInt("id");
+	}
+
 	public boolean UpdateUserDevice(JSONArray deviceArray) {
 		ArduinoModel.updateAllDevice(client, deviceArray);
 		// String sqldel =

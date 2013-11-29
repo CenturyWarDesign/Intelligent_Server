@@ -36,7 +36,7 @@ public class BaseModel {
 	 * @param content
 	 * @return
 	 */
-	public boolean sendToPush(int gameuid,String title, String content) {
+	public static boolean sendToPush(int gameuid, String title, String content) {
 		UsersModel phone = new UsersModel(gameuid);
 		if (phone.userName.length() > 0) {
 			System.out.println("send Push to :" + phone.userName);
