@@ -191,9 +191,9 @@ public class Main {
 				closeGlobalHandler(id);
 			}
 		} else {
-			Log.info(String.format("在%组里没有ID为%d的客户端", writeStr, id));
+			Log.info(String.format("在%s组里没有ID为%d的客户端", writeStr, id));
 		}
-		if (!resend) {
+		if (resend) {
 			Behave errorBehave = new Behave(0);
 			errorBehave.newInfo(id, fromid, 0, content);
 		}

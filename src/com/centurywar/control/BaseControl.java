@@ -37,7 +37,7 @@ public class BaseControl {
 		if (command.equals(ConstantControl.SET_STATUS)) {
 			Main.socketWriteAll(jsonObj.getInt("gameuid"),
 					jsonObj.getInt("gameuid"),
-					jsonObj.getString("sendToArduino"), false,
+					jsonObj.getString("sendToArduino"), true,
 					ConstantControl.WRITE_ARDUINO_HANDLER);
 			return true;
 		} else {

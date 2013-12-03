@@ -6,9 +6,13 @@ import java.util.List;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.centurywar.control.ConstantControl;
 
 public class Behave extends BaseModel {
+	protected final static Log Log = LogFactory.getLog(BaseModel.class);
 	public int id;
 	public int gameuid;
 	public int fromgameuid;
@@ -25,34 +29,37 @@ public class Behave extends BaseModel {
 
 
 	private Behave getInfo() {
-		JSONObject rs =null;
-		try {
-			rs = JDBC.selectOne(String.format(
-					"select * from send_log where id='%s'", id));
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		JSONObject rs = null;
+		rs = JDBC.selectOne(String.format(
+				"select * from send_log where id='%s'", id));
 		if (!rs.isEmpty()) {
-			behaveString = rs.getString("username");
 			gameuid = rs.getInt("gameuid");
 			fromgameuid = rs.getInt("fromgameuid");
 			time = rs.getInt("time");
 			sendtime = rs.getInt("sendtime");
-			status = rs.getInt("satus");
+			status = rs.getInt("status");
 		}
 		return this;
 	}
 
-	public List<Behave> getNeedRunInfo() {
-		List<Behave> temlist = new ArrayList<Behave>();
-		try {
-			JSONArray rs = JDBC.select(String.format(
-					"select * from send_log where time<%d", getTime()));
-		} catch (Exception e) {
-			e.printStackTrace();
+
+	public ArrayList<Behave> getNeedRunInfo() {
+		ArrayList<Behave> temlist = new ArrayList<Behave>();
+		JSONArray rs = JDBC.select(String.format(
+				"select * from send_log where time<%d group by gameuid",
+				getTime()));
+		for (int i = 0; i < rs.size(); i++) {
+			JSONObject obj = rs.getJSONObject(i);
+			Behave be = new Behave(0);
+			be.id = obj.getInt("id");
+			be.gameuid = obj.getInt("gameuid");
+			be.fromgameuid = obj.getInt("fromgameuid");
+			be.time = obj.getInt("time");
+			be.sendtime = obj.getInt("sendtime");
+			be.status = obj.getInt("status");
+			be.behaveString = obj.getString("behaveString");
+			temlist.add(be);
 		}
-//		temlist = (List) JSONArray.toCollection(rs, Behave.class);
 		return temlist;
 	}
 
