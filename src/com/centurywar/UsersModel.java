@@ -12,6 +12,7 @@ public class UsersModel extends BaseModel {
 	public String ip = "0.0.0.0";
 	public int port = 80;
 	public int client = 0;
+	public int mode = 1;
 	public ArduinoModel arduinoClient;
 	
 	public UsersModel(String sec) {
@@ -24,16 +25,9 @@ public class UsersModel extends BaseModel {
 	}
 
 	public UsersModel(int gameuidsend) {
-		if (gameuidsend > 0) {
-			gameuid = gameuidsend;
-			try {
-				getUserInfoFromGameuid();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+		gameuid = gameuidsend;
+		getUserInfoFromGameuid();
 	}
-
 	
 	public UsersModel(String username, String password) {
 		JSONObject obj = JDBC
@@ -47,14 +41,10 @@ public class UsersModel extends BaseModel {
 		}
 	}
 	
-	private UsersModel getUserInfoFromGameuid() throws Exception {
+	private UsersModel getUserInfoFromGameuid() {
 		JSONObject obj = JDBC.selectOne(String.format(
 				"select * from users where id=%d", gameuid));
-		if (!obj.isEmpty()) {
-			userName = obj.getString("username");
-			gameuid = obj.getInt("id");
-			client = obj.getInt("client_id");
-		}
+		initUserInfoFromJSONObject(obj);
 		return this;
 	}
 
@@ -69,12 +59,17 @@ public class UsersModel extends BaseModel {
 	private UsersModel getUserInfoFromPassword() throws Exception {
 		JSONObject obj = JDBC.selectOne(String.format(
 				"select * from users where password='%s'", secGameuid));
+		initUserInfoFromJSONObject(obj);
+		return this;
+	}
+
+	public void initUserInfoFromJSONObject(JSONObject obj) {
 		if (!obj.isEmpty()) {
 			userName = obj.getString("username");
 			gameuid = obj.getInt("id");
 			client = obj.getInt("client_id");
+			mode = obj.getInt("mode");
 		}
-		return this;
 	}
 
 	public JSONArray getUserDevice(int clientid) throws Exception {
@@ -152,10 +147,14 @@ public class UsersModel extends BaseModel {
 	 * @param delay
 	 */
 	public static void openPMW(int arduinoid, int delay) {
-		String sql = String.format(
-				"select pik from users where arduinoid= %d limit 1", arduinoid);
+		String sql = String
+				.format("select pik from user_device where arduinoid= %d and type=20 limit 1",
+						arduinoid);
 		JSONObject obj = JDBC.selectOne(sql);
 		int pik = obj.getInt("pik");
-
+		String openStr = getBehaver(20, pik, 1, 0);
+		String closeStr = getBehaver(20, pik, 0, 0);
+		Behave.sendBehave(arduinoid, openStr);
+		Behave.sendBehave(arduinoid, closeStr, delay);
 	}
 }

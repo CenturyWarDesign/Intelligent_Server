@@ -6,6 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import com.centurywar.ArduinoModel;
 import com.centurywar.DeviceModel;
 import com.centurywar.Main;
+import com.centurywar.UsersModel;
 
 public class ArduinoControl {
 	protected final static Log Log = LogFactory.getLog(ArduinoControl.class);
@@ -13,8 +14,10 @@ public class ArduinoControl {
 	public static String controlArduinoSend(String message, int id, int fromid) {
 		String[] temp = null;
 		temp = message.trim().split("_");
-		// 4个是标准输入
-		if (temp[0].equals("r")) {
+		if (temp.length < 4) {
+			System.out.println("参数输入错误：" + message);
+			Main.socketWriteAll(id, id, "error message", false,
+					ConstantControl.WRITE_ARDUINO_HANDLER);
 			return "";
 		}
 		if (temp[0].equals(ConstantControl.DEVICE_TEMPERATURE)) {
@@ -32,15 +35,19 @@ public class ArduinoControl {
 		}
 		// 这是人体传感器
 		if (temp[0].equals(ConstantControl.DEVICE_RENTI)) {
-			if (temp.length < 4) {
-				System.out.println("参数输入错误：" + message);
-				Main.socketWriteAll(id, id, "error message", false,
-						ConstantControl.WRITE_ARDUINO_HANDLER);
-				return "";
-			}
-			ArduinoModel u = new ArduinoModel(fromid);
-			u.sendToPush(id, "家里有人回来了", "家里有人了");
+			rentiControl(id);
 		}
 		return "";
+	}
+
+	public static void rentiControl(int fromid) {
+		ArduinoModel u = new ArduinoModel(fromid);
+		int usersGameuid = u.getUsersId();
+		UsersModel user = new UsersModel(usersGameuid);
+		if (user.mode == ConstantControl.MODE_DEFAULT) {
+			UsersModel.openPMW(fromid, 30);
+		} else if (user.mode == ConstantControl.MODE_DEFAULT) {
+			ArduinoModel.sendToPush(fromid, "家里有人回来了", "家里有人了");
+		}
 	}
 }

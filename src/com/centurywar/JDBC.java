@@ -42,6 +42,7 @@ public class JDBC {
 			Statement st;
 			st = (Statement) conn.createStatement();
 			rs = st.executeQuery(sql);
+			System.out.println("[mysql]" + sql);
 			jsa = resultSetToJson(rs);
 			return jsa;
 		} catch (Exception e) {

@@ -1,8 +1,8 @@
 package com.centurywar;
 
-import com.centurywar.control.ConstantControl;
-
 import net.sf.json.JSONObject;
+
+import com.centurywar.control.ConstantControl;
 
 public class DeviceModel extends BaseModel {
 	public int pik = 0;
@@ -26,6 +26,7 @@ public class DeviceModel extends BaseModel {
 	
 	/**
 	 * 处理板子返回的信息
+	 * 
 	 * @param commandReturn
 	 * @param arduinoid
 	 * @return
@@ -35,8 +36,7 @@ public class DeviceModel extends BaseModel {
 		JSONObject temobj = getJSONStrFromCommand(commandReturn);
 		String sql = String
 				.format("update user_device set value=%d where arduinoid=%d and pik=%d;",
-						temobj.getDouble("value"), arduinoid,
-						temobj.getInt("pik"));
+						temobj.getInt("value"), arduinoid, temobj.getInt("pik"));
 		JDBC.query(sql);
 		return true;
 	}
@@ -49,15 +49,13 @@ public class DeviceModel extends BaseModel {
 		JSONObject obj = new JSONObject();
 		obj.put("type", comArr[1]);
 		obj.put("pik", comArr[2]);
-		if (comArr[0].equals(ConstantControl.DEVICE_LIGTH)) {
+		if (comArr[0].equals(ConstantControl.DEVICE_LIGTH)
+				|| comArr[0].equals(ConstantControl.DEVICE_PMW)) {
 			obj.put("value", comArr[3]);
 		} else if (comArr[0].equals(ConstantControl.DEVICE_TEMPERATURE)) {
 			obj.put("value",
 					Float.parseFloat(comArr[2] + "." + comArr[3].trim()));
 		}
-		
-		
-		
 		return obj;
 	}
 }

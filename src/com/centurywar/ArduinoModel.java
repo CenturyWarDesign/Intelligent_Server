@@ -61,7 +61,6 @@ public class ArduinoModel extends BaseModel {
 	 */
 	public void initDevice() {
 
-
 	}
 
 	public static JSONArray getAllDevice(int id) {

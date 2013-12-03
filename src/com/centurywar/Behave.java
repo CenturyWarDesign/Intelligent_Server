@@ -131,4 +131,18 @@ public class Behave extends BaseModel {
 		Main.socketWriteAll(gameuid, gameuid, behaveString, false,
 				ConstantControl.WRITE_ARDUINO_HANDLER);
 	}
+
+	/**
+	 * 向板子发送延迟指令
+	 * 
+	 * @param gameuid
+	 * @param behaveString
+	 * @param delaysocend
+	 */
+	public static void sendBehave(int gameuid, String behaveString,
+			int delaysocend) {
+
+		Behave be = new Behave(0);
+		be.newInfo(gameuid, gameuid, -Math.abs(delaysocend), behaveString);
+	}
 }
