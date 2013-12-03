@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TimerTask;
 
+import com.centurywar.control.ConstantControl;
+
 //定时运行的程序
 public class TimingTask extends TimerTask {
 
@@ -29,8 +31,9 @@ public class TimingTask extends TimerTask {
 		for (int i = 0; i < needsend.size(); i++) {
 			Behave tembe = needsend.get(i);
 			System.out.println("正在发送：" + tembe.behaveString);
-			if (Main.socketWrite(tembe.gameuid, tembe.fromgameuid,
-					tembe.behaveString, true)) {
+			if (Main.socketWriteAll(tembe.gameuid, tembe.fromgameuid,
+					tembe.behaveString, true,
+					ConstantControl.WRITE_ARDUINO_HANDLER)) {
 				hasSend.add(tembe.id);
 				System.out.println("发送成功：" + tembe.behaveString + "id:"
 						+ tembe.id);
@@ -56,21 +59,23 @@ public class TimingTask extends TimerTask {
 	 * @param behave
 	 *            behave对象，随时写入重发表
 	 */
-	public void checkCachedCommands(int timeout,Behave behave){
+	public void checkCachedCommands(int timeout, Behave behave) {
 		// 取出缓存的集合
 		Set<String> cachedKeys = Redis.hkeys("cachedCommands");
 		// for循环遍历：
-		for (String key : cachedKeys) {  
-			String timeStr = Redis.hget("cachedCommands",key);
+		for (String key : cachedKeys) {
+			String timeStr = Redis.hget("cachedCommands", key);
 			System.out.println(timeStr);
 			Integer sendTime = Integer.parseInt(timeStr);
-			Integer nowTime = new Integer((int) (System.currentTimeMillis()/1000));
-			if(nowTime-sendTime>timeout){
+			Integer nowTime = new Integer(
+					(int) (System.currentTimeMillis() / 1000));
+			if (nowTime - sendTime > timeout) {
 				System.out.println("反馈超时，写入重发表:" + key);
 				Redis.hdel("cachedCommands", key);
 				String params[] = key.split(":");
-				behave.newInfo(Integer.parseInt(params[0]), 11, sendTime, params[1]);
+				behave.newInfo(Integer.parseInt(params[0]), 11, sendTime,
+						params[1]);
 			}
-		}  
+		}
 	}
 }

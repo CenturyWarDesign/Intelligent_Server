@@ -9,6 +9,7 @@ import com.centurywar.Main;
 
 public class ArduinoControl {
 	protected final static Log Log = LogFactory.getLog(ArduinoControl.class);
+
 	public static String controlArduinoSend(String message, int id, int fromid) {
 		String[] temp = null;
 		temp = message.trim().split("_");
@@ -17,38 +18,28 @@ public class ArduinoControl {
 			return "";
 		}
 		if (temp[0].equals(ConstantControl.DEVICE_TEMPERATURE)) {
-			try {
-				DeviceModel.updateDeviceByReturn(message, id);
-			} catch (Exception e) {
-				Log.error(e.toString());
-			}
+			DeviceModel.updateDeviceByReturn(message, id);
 		}
 		// 这是火焰报警器
 		if (temp[0].equals(ConstantControl.DEVICE_HUOJING)) {
 			if (temp.length < 4) {
 				System.out.println("参数输入错误：" + message);
-				Main.socketWrite(id, id, "error message", false);
+				Main.socketWriteAll(id, id, "error message", false,
+						ConstantControl.WRITE_ARDUINO_HANDLER);
 				return "";
 			}
-			try {
-				ArduinoModel u = new ArduinoModel(fromid);
-			} catch (Exception e) {
-
-			}
+			ArduinoModel u = new ArduinoModel(fromid);
 		}
 		// 这是人体传感器
 		if (temp[0].equals(ConstantControl.DEVICE_RENTI)) {
 			if (temp.length < 4) {
 				System.out.println("参数输入错误：" + message);
-				Main.socketWrite(id, id, "error message", false);
+				Main.socketWriteAll(id, id, "error message", false,
+						ConstantControl.WRITE_ARDUINO_HANDLER);
 				return "";
 			}
-			try {
-				ArduinoModel u = new ArduinoModel(fromid);
-				u.sendToPush(id, "家里有人回来了", "家里有人了");
-			} catch (Exception e) {
-
-			}
+			ArduinoModel u = new ArduinoModel(fromid);
+			u.sendToPush(id, "家里有人回来了", "家里有人了");
 		}
 		return "";
 	}

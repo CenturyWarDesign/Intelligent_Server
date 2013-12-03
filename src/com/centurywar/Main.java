@@ -19,6 +19,7 @@ import java.util.concurrent.Executors;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.centurywar.control.ConstantControl;
 import com.centurywar.control.MessageControl;
 
 public class Main {
@@ -133,118 +134,29 @@ public class Main {
 		}
 	}
 
-	public static boolean socketWriteTem(int id, String content) {
-		if (id <= 0) {
-			return false;
-		}
-		if (temHandler.containsKey(id + "")) {
-			MainHandler tem = temHandler.get(id + "");
-			if(!tem.socket.isConnected()){
-				closeTemHandler(id);
-				return false;
-			}
-			try {
-				OutputStream socketOut = tem.socket.getOutputStream();
-				PrintWriter pw = new PrintWriter(socketOut, true);
-				pw.println(content);
-				Log.info(String.format("服务端写向Arduino客户端%d报文为：%s", id, content));
-				// 存入缓存
-				String key = id + content;
-				Integer time = new Integer(
-						(int) (System.currentTimeMillis() / 1000));
-				Redis.set(key, time.toString());
-				System.out.println("[send to client]" + content);
-				return true;
-			} catch (Exception e) {
-				// 记录失败的程序
-				e.printStackTrace();
-				// 把socket给移除
-				closeTemHandler(id);
-			}
-		} else {
-			Log.info(String.format("在Android临时组里没有ID为%d的客户端", id));
-		}
-		return false;
-	}
 
-	protected static void closeTemHandler(int id) {
-		MainHandler tem = temHandler.get(id + "");
-		if (tem.socket.isClosed()) {
-			try {
-				tem.socket.close();
-				temHandler.remove(id + "");
-			} catch (Exception e) {
-				System.out.println(String.format("[删除临时 SOCKET %d 失败]", id));
-				Log.error(e.toString());
-			}
-		}
-	}
-
-	public static boolean socketWriteTemArduino(int id, String content) {
-		if (id <= 0) {
-			return false;
-		}
-		if (arduinoHandler.containsKey(id + "")) {
-			MainHandler tem = arduinoHandler.get(id + "");
-			if (tem.socket.isClosed()) {
-				closeArduinoHandler(id);
-				return false;
-			}
-
-			try {
-				OutputStream socketOut = tem.socket.getOutputStream();
-				PrintWriter pw = new PrintWriter(socketOut, true);
-				pw.println(content);
-				Log.info(String.format("服务端写向Arduino客户端%d报文为：%s", id, content));
-				// 存入缓存
-				String key = id + content;
-				Integer time = new Integer(
-						(int) (System.currentTimeMillis() / 1000));
-				Redis.set(key, time.toString());
-				System.out.println("[send to client arduino]" + content);
-				return true;
-			} catch (Exception e) {
-				// 记录失败的程序
-				e.printStackTrace();
-				// 把socket给移除
-				closeArduinoHandler(id);
-			}
-		} else {
-			Log.info(String.format("在Arduino组里没有ID为%d的客户端", id));
-		}
-		return false;
-	}
-
-	protected static void closeArduinoHandler(int id) {
-		MainHandler tem = arduinoHandler.get(id + "");
-		if (tem.socket.isClosed()) {
-			try {
-				tem.socket.close();
-				arduinoHandler.remove(id + "");
-			} catch (Exception e) {
-				System.out.println(String
-						.format("[删除Arduino SOCKET %d 失败]", id));
-				Log.error(e.toString());
-			}
-		}
-	}
 	
-	/**
-	 * 输出。
-	 * 
-	 * @param gameuid
-	 * @param fromgameuid
-	 * @param content
-	 * @param resend
-	 * @return
-	 */
-	public static boolean socketWrite(int id, int fromid, String content,
-			boolean resend) {
+
+	public static boolean socketWriteAll(int id, int fromid, String content,
+			boolean resend, int writetype) {
 		if (id <= 0) {
 			return false;
 		}
-		if (globalHandler.containsKey(id + "")) {
-			MainHandler temHandler = globalHandler.get(id + "");
+
+		Map<String, MainHandler> tempHandler = null;
+		String writeStr = "";
+		if (writetype == ConstantControl.WRITE_ARDUINO_HANDLER) {
+			tempHandler = arduinoHandler;
+			writeStr = "Arduino";
+		} else if (writetype == ConstantControl.WRITE_GLOBAL_HANDLER) {
+			tempHandler = globalHandler;
+			writeStr = "Global";
+		} else {
+			tempHandler = temHandler;
+			writeStr = "Tem";
+		}
+		if (tempHandler.containsKey(id + "")) {
+			MainHandler temHandler = tempHandler.get(id + "");
 			if (!temHandler.socket.isConnected()) {
 				closeGlobalHandler(id);
 				return false;
@@ -253,24 +165,33 @@ public class Main {
 				OutputStream socketOut = temHandler.socket.getOutputStream();
 				PrintWriter pw = new PrintWriter(socketOut, true);
 				pw.println(content);
-				Log.info(String.format("服务端写向Android客户端%d报文为：%s", id,
-							content));
+				Log.info(String.format("服务端写向%s客户端%d报文为：%s", writeStr, id,
+						content));
 				// 存入缓存
 				String key = id + content;
 				Integer time = new Integer(
 						(int) (System.currentTimeMillis() / 1000));
 				Redis.set(key, time.toString());
-				System.out.println("[send to client]" + content);
 				Log.info("服务启动，等待请求！");
 				return true;
 			} catch (Exception e) {
 				// 记录失败的程序
 				e.printStackTrace();
 				// 把socket给移除
+				Log.error("服务启动，等待请求！");
+				MainHandler tem = tempHandler.get(id + "");
+				if (tem.socket.isClosed()) {
+					try {
+						tem.socket.close();
+						globalHandler.remove(id + "");
+					} catch (Exception e3) {
+						Log.error(e3.toString());
+					}
+				}
 				closeGlobalHandler(id);
 			}
 		} else {
-			Log.info(String.format("在Global组里没有ID为%d的客户端", id));
+			Log.info(String.format("在%组里没有ID为%d的客户端", writeStr, id));
 		}
 		if (!resend) {
 			Behave errorBehave = new Behave(0);
@@ -278,6 +199,8 @@ public class Main {
 		}
 		return false;
 	}
+
+
 
 	protected static void closeGlobalHandler(int id) {
 		MainHandler tem = globalHandler.get(id + "");

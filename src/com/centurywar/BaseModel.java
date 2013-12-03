@@ -113,4 +113,7 @@ public class BaseModel {
 		return false;
 	}
 
+	public static String getBehaver(int type, int pik, int commmand, int value) {
+		return String.format("%d_%d_%d_%d", type, pik, commmand, value);
+	}
 }

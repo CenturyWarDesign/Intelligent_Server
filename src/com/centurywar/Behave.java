@@ -6,6 +6,8 @@ import java.util.List;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import com.centurywar.control.ConstantControl;
+
 public class Behave extends BaseModel {
 	public int id;
 	public int gameuid;
@@ -20,6 +22,7 @@ public class Behave extends BaseModel {
 			getInfo();
 		}
 	}
+
 
 	private Behave getInfo() {
 		JSONObject rs =null;
@@ -118,5 +121,14 @@ public class Behave extends BaseModel {
 		return false;
 	}
 
-
+	/**
+	 * 向板子发送指令
+	 * 
+	 * @param gameuid
+	 * @param behaveString
+	 */
+	public static void sendBehave(int gameuid, String behaveString) {
+		Main.socketWriteAll(gameuid, gameuid, behaveString, false,
+				ConstantControl.WRITE_ARDUINO_HANDLER);
+	}
 }

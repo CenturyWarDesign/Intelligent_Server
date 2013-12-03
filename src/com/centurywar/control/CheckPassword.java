@@ -26,7 +26,8 @@ public class CheckPassword extends BaseControl {
 		try {
 			if (uid == 0) {
 				System.out.println("登陆失败");
-				Main.socketWrite(gameuid, gameuid, "Login fail", false);
+				Main.socketWriteAll(gameuid, gameuid, "Login fail", false,
+						ConstantControl.WRITE_TEM_HANDLER);
 				jsonObj.put("retCode", "1111");
 				jsonObj.put("memo", "用户名密码错误,登陆失败");
 

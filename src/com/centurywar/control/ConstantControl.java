@@ -38,5 +38,15 @@ public class ConstantControl {
 	// 人体传感器
 	public static String DEVICE_RENTI = "32";
 
+	// 正常模式
+	public static int MODE_DEFAULT = 1;
+	// 外出模式
+	public static int MODE_OUT = 2;
+
+	// ===================写入模式
+
+	public static int WRITE_TEM_HANDLER = 1;
+	public static int WRITE_ARDUINO_HANDLER = 2;
+	public static int WRITE_GLOBAL_HANDLER = 3;
 
 }

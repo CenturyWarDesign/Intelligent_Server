@@ -156,5 +156,6 @@ public class UsersModel extends BaseModel {
 				"select pik from users where arduinoid= %d limit 1", arduinoid);
 		JSONObject obj = JDBC.selectOne(sql);
 		int pik = obj.getInt("pik");
+
 	}
 }

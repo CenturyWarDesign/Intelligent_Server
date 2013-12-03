@@ -24,11 +24,6 @@ public class BaseControl {
 
 	public static boolean sendToSocket(JSONObject jsonObj, String command) {
 		// 不需要判断是否存在，
-//		if (!jsonObj.containsKey("gameuid")) {
-		// System.out.println("BaseControl.class   +写回时候  缺少gameuid ");
-//			return false;
-//		}
-//		int gameuid = jsonObj.getInt("gameuid");
 		if (!jsonObj.containsKey("sendTime")) {
 			jsonObj.put("sendTime", getTime());
 		}
@@ -40,23 +35,28 @@ public class BaseControl {
 				.getInt("fromgameuid") : 0;
 
 		if (command.equals(ConstantControl.SET_STATUS)) {
-			Main.socketWriteTemArduino(jsonObj.getInt("gameuid"),
-					jsonObj.getString("sendToArduino"));
+			Main.socketWriteAll(jsonObj.getInt("gameuid"),
+					jsonObj.getInt("gameuid"),
+					jsonObj.getString("sendToArduino"), false,
+					ConstantControl.WRITE_ARDUINO_HANDLER);
 			return true;
 		} else {
 			if (jsonObj.containsValue("tem")) {
-				Main.socketWriteTem(jsonObj.getInt("gameuid"),
-						jsonObj.toString());
+				Main.socketWriteAll(jsonObj.getInt("gameuid"),
+						jsonObj.getInt("gameuid"), jsonObj.toString(), false,
+						ConstantControl.WRITE_TEM_HANDLER);
 			} else {
-				Main.socketWrite(jsonObj.getInt("gameuid"), fromgameuid,
-						jsonObj.toString(), false);
+				Main.socketWriteAll(jsonObj.getInt("gameuid"), fromgameuid,
+						jsonObj.toString(), false,
+						ConstantControl.WRITE_GLOBAL_HANDLER);
 			}
 		}
 		return false;
 	}
 
 	public static boolean sendToSocketDevice(String command, int gameuid) {
-		Main.socketWrite(gameuid, gameuid, command, true);
+		Main.socketWriteAll(gameuid, gameuid, command, true,
+				ConstantControl.WRITE_ARDUINO_HANDLER);
 		return false;
 	}
 
