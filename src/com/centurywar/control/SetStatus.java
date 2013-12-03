@@ -26,7 +26,7 @@ public class SetStatus extends BaseControl {
 		String username = jsonObj.getString("username");
 		UsersModel am = new UsersModel(username, sec);
 		// 有延时的开关
-		if (type == 10 && data > 0 && false) {
+		if (type == 10 && data > 0) {
 			Behave be = new Behave(0);
 			be.newInfo(am.client, am.gameuid, -data,
 					getBehaver(type, pik, value, data));

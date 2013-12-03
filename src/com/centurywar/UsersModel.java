@@ -144,4 +144,17 @@ public class UsersModel extends BaseModel {
 		int arduinoid = getAndroidId(id);
 		return ArduinoModel.getAllDevice(arduinoid);
 	}
+
+	/**
+	 * 打开用户PMW灯
+	 * 
+	 * @param arduinoid
+	 * @param delay
+	 */
+	public static void openPMW(int arduinoid, int delay) {
+		String sql = String.format(
+				"select pik from users where arduinoid= %d limit 1", arduinoid);
+		JSONObject obj = JDBC.selectOne(sql);
+		int pik = obj.getInt("pik");
+	}
 }
