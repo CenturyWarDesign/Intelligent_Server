@@ -54,8 +54,9 @@ public class BaseControl {
 		return false;
 	}
 
-	public static boolean sendToSocketDevice(String command, int gameuid) {
-		Main.socketWriteAll(gameuid, gameuid, command, true,
+	public static boolean sendToSocketDevice(String command, int gameuid,
+			boolean resend) {
+		Main.socketWriteAll(gameuid, gameuid, command, resend,
 				ConstantControl.WRITE_ARDUINO_HANDLER);
 		return false;
 	}

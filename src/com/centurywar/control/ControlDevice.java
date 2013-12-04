@@ -2,9 +2,9 @@ package com.centurywar.control;
 
 import java.io.IOException;
 
-import com.centurywar.Redis;
-
 import net.sf.json.JSONObject;
+
+import com.centurywar.Redis;
 
 //控制板子指令
 public class ControlDevice extends BaseControl {
@@ -18,15 +18,15 @@ public class ControlDevice extends BaseControl {
 		String control = getSendStringFromJsonObject(jsonObj);
 		if (control.length() > 0) {
 			int gameuid = jsonObj.getInt("gameuid");
-			sendToSocketDevice(control, gameuid);
+			sendToSocketDevice(control, gameuid, false);
 			System.out.println(String.format("[send to device %d]%s", gameuid,
 					control));
 			
-			//存入缓存
+			// 存入缓存
 			String key = gameuid+":"+control;
 			Integer time = new Integer((int) (System.currentTimeMillis()/1000));
 			Redis.hset("cachedCommands",key,time.toString());
-			System.out.println("缓存至："+key+",等待板子反馈");
+			System.out.println("缓存至：" + key + ",等待板子反馈");
 		}
 	}
 
