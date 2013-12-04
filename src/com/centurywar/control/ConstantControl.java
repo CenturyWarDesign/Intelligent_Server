@@ -25,6 +25,9 @@ public class ConstantControl {
 	// 控制指令（必须要有以下内容；type,pik,value,data）
 	public static String CONTROL_DEVICE = "cd";
 	public static String ECHO_CONTROL_DEVICE = "ecd";
+
+	// 输出服务器的错误信息
+	public static String ECHO_SERVER_MESSAGE = "esm";
 	// ========================传感器=========================
 
 	// 灯

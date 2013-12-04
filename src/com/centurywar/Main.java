@@ -16,9 +16,12 @@ import java.util.Timer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import net.sf.json.JSONObject;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.centurywar.control.ConstantCode;
 import com.centurywar.control.ConstantControl;
 import com.centurywar.control.MessageControl;
 
@@ -62,6 +65,8 @@ public class Main {
 				SimpleDateFormat df = new SimpleDateFormat(
 						"yyyy-MM-dd HH:mm:ss");// 设置日期格式
 				System.out.println(df.format(new Date()));// new Date()为获取当前系统时间
+				OutputStream socketOut = socket.getOutputStream();
+				PrintWriter pw = new PrintWriter(socketOut, true);
 				if (sec.length() == 32) {
 					System.out.println("Sec:" + sec);
 					ArduinoModel arduinoModel = new ArduinoModel(sec);
@@ -78,6 +83,12 @@ public class Main {
 					executorService.execute(temr);
 					clearTem();
 					temHandler.put(MaxTem + "", temr);
+					JSONObject obj = new JSONObject();
+					obj.put("code", ConstantCode.CODE_CONNECTET);
+					obj.put("control", ConstantControl.ECHO_SERVER_MESSAGE);
+					pw.write(obj.toString());
+					System.out.println(String.format("[send to Android]%s",
+							obj.toString()));
 					System.out.println(String.format(
 							"put in Tem Haddle:%d now have:%d", MaxTem,
 							temHandler.size()));
