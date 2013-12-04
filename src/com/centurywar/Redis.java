@@ -30,6 +30,7 @@ public class Redis {
 	
 	/**
 	 * 缓存至集合
+	 * 
 	 * @param set
 	 * @param key
 	 * @param value
@@ -42,6 +43,7 @@ public class Redis {
 	
 	/**
 	 * 获取一个集合中所有的keys
+	 * 
 	 * @param set
 	 * @return
 	 */
@@ -57,6 +59,7 @@ public class Redis {
 	
 	/**
 	 * 删除集合中一个或多个值
+	 * 
 	 * @param set
 	 * @param key
 	 * @return
@@ -65,8 +68,10 @@ public class Redis {
 		initRedis();
 		return redis.hdel(set, key);
 	}
+	
 	/**
 	 * 删除key
+	 * 
 	 * @param key
 	 * @return
 	 */
@@ -86,4 +91,5 @@ public class Redis {
 		initRedis();
 		return redis.get(key);
 	}
+
 }

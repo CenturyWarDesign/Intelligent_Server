@@ -178,18 +178,11 @@ public class Main {
 				pw.println(content);
 				Log.info(String.format("服务端写向%s客户端%d报文为：%s", writeStr, id,
 						content));
-				// 存入缓存
-				String key = id + content;
-				Integer time = new Integer(
-						(int) (System.currentTimeMillis() / 1000));
-				Redis.set(key, time.toString());
-				Log.info("服务启动，等待请求！");
 				return true;
 			} catch (Exception e) {
 				// 记录失败的程序
 				e.printStackTrace();
 				// 把socket给移除
-				Log.error("服务启动，等待请求！");
 				MainHandler tem = tempHandler.get(id + "");
 				if (tem.socket.isClosed()) {
 					try {
@@ -210,6 +203,7 @@ public class Main {
 		}
 		return false;
 	}
+
 
 
 
