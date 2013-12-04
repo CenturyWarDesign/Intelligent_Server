@@ -46,7 +46,7 @@ public class Behave extends BaseModel {
 	public ArrayList<Behave> getNeedRunInfo() {
 		ArrayList<Behave> temlist = new ArrayList<Behave>();
 		JSONArray rs = JDBC.select(String.format(
-				"select * from send_log where time<%d group by gameuid",
+				"select * from send_log where time<%d ",
 				getTime()));
 		for (int i = 0; i < rs.size(); i++) {
 			JSONObject obj = rs.getJSONObject(i);
