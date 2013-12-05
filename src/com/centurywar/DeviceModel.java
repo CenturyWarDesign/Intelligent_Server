@@ -47,11 +47,11 @@ public class DeviceModel extends BaseModel {
 		}
 		String[] comArr = command.split("_");
 		JSONObject obj = new JSONObject();
-		obj.put("type", comArr[1]);
-		obj.put("pik", comArr[2]);
+		obj.put("type", comArr[0]);
+		obj.put("pik", comArr[1]);
 		if (comArr[0].equals(ConstantControl.DEVICE_LIGTH)
 				|| comArr[0].equals(ConstantControl.DEVICE_PMW)) {
-			obj.put("value", comArr[3]);
+			obj.put("value", comArr[2]);
 		} else if (comArr[0].equals(ConstantControl.DEVICE_TEMPERATURE)) {
 			obj.put("value",
 					Float.parseFloat(comArr[2] + "." + comArr[3].trim()));
