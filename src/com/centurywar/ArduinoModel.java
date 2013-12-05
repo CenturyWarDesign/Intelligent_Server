@@ -86,5 +86,6 @@ public class ArduinoModel extends BaseModel {
 		return true;
 	}
 
+	// public static boolean sendTo
 
 }

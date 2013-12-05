@@ -1,11 +1,16 @@
 package com.centurywar.control;
 
+import java.util.Set;
+
+import net.sf.json.JSONObject;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.centurywar.ArduinoModel;
 import com.centurywar.DeviceModel;
 import com.centurywar.Main;
+import com.centurywar.Redis;
 import com.centurywar.UsersModel;
 
 public class ArduinoControl {
@@ -49,5 +54,64 @@ public class ArduinoControl {
 		} else if (user.mode == ConstantControl.MODE_DEFAULT) {
 			ArduinoModel.sendToPush(fromid, "家里有人回来了", "家里有人了");
 		}
+	}
+
+	/**
+	 * 执行板子操作
+	 * 
+	 * @param gameuid
+	 * @param control
+	 */
+	public static void doCommand(int gameuid, String control) {
+		Integer time = new Integer((int) (System.currentTimeMillis() / 1000));
+		Redis.hset(getCatchKey(gameuid), control, time.toString());
+		doWriteToArduino(gameuid, control);
+	}
+
+	/**
+	 * 初次登录的时候处理所有的信息
+	 * 
+	 * @param gameuid
+	 */
+	public static void doAllCommand(int gameuid) {
+		String keyStr = getCatchKey(gameuid);
+		Set<String> cachedKeys = Redis.hkeys(keyStr);
+		// for循环遍历：
+		for (String key : cachedKeys) {
+			doWriteToArduino(gameuid, key);
+			try {
+				Thread.sleep(3);
+			} catch (Exception e) {
+				System.out.println(e.toString());
+			}
+		}
+	}
+
+	private static String getCatchKey(int gameuid) {
+		return gameuid + "_command";
+	}
+
+
+	/**
+	 * 处理板子返回的信息
+	 * 
+	 * @param message
+	 * @return
+	 */
+	public static long controlReturn(int gameuid, String message) {
+		String originCommand = message.substring(2);
+		System.out.print(String.format("得到%d反馈，删除缓存：", gameuid, originCommand));
+		// 把反馈回传到客户端
+		JSONObject obj = new JSONObject();
+		obj.put("command", message);
+		obj.put("gameuid", gameuid);
+		EchoSetStatus.betch(obj);
+		return Redis.hdel(getCatchKey(gameuid), originCommand);
+	}
+
+	private static void doWriteToArduino(int gameuid, String control) {
+		Main.socketWriteAll(gameuid, gameuid, control, false,
+				ConstantControl.WRITE_ARDUINO_HANDLER);
+		System.out.println(String.format("写入板子%d的内容:%s", gameuid, control));
 	}
 }

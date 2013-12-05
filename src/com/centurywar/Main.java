@@ -21,6 +21,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.centurywar.control.ArduinoControl;
 import com.centurywar.control.ConstantCode;
 import com.centurywar.control.ConstantControl;
 import com.centurywar.control.MessageControl;
@@ -44,7 +45,7 @@ public class Main {
 		System.out.println("waiting for");
 		// 注册定期运行任务
 		Timer timer = new Timer();
-		timer.schedule(new TimingTask(), 5000, 20000);
+		timer.schedule(new TimingTask(), 30000, 20000);
 	}
 
 	public void service() {
@@ -73,8 +74,10 @@ public class Main {
 					MainHandler temr = new MainHandler(socket,
 							arduinoModel.id, false);
 					executorService.execute(temr);
-					clearArduino();
 					arduinoHandler.put(arduinoModel.id + "", temr);
+
+					// 把所有的指令下发
+					ArduinoControl.doAllCommand(arduinoModel.id);
 					System.out.println(String.format(
 							"put in Arduino Haddle:%d now have: %d ",
 							arduinoModel.id, arduinoHandler.size()));
@@ -153,7 +156,6 @@ public class Main {
 		if (id <= 0) {
 			return false;
 		}
-
 		Map<String, MainHandler> tempHandler = null;
 		String writeStr = "";
 		if (writetype == ConstantControl.WRITE_ARDUINO_HANDLER) {
@@ -168,10 +170,6 @@ public class Main {
 		}
 		if (tempHandler.containsKey(id + "")) {
 			MainHandler temHandler = tempHandler.get(id + "");
-			if (!temHandler.socket.isConnected()) {
-				closeGlobalHandler(id);
-				return false;
-			}
 			try {
 				OutputStream socketOut = temHandler.socket.getOutputStream();
 				PrintWriter pw = new PrintWriter(socketOut, true);

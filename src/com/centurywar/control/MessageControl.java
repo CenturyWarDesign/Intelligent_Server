@@ -2,8 +2,6 @@ package com.centurywar.control;
 
 import net.sf.json.JSONObject;
 
-import com.centurywar.Redis;
-
 /**
  * @author Administrator 接收板子的请求字符串，进行数据分发组装。
  *         message格式：传感器类型_引脚_值_附加位（若值是温度20.5，则值为20，附加位为5）
@@ -15,14 +13,14 @@ import com.centurywar.Redis;
 public class MessageControl {
 	public static String MessageControl(String message, int id, int fromid,
 			boolean tem) {
-		System.out.println("gameuid" + id);
+		System.out.println("gameuid:" + id);
 		// 如果是板子返回的信息
 		if (message.length() == 0) {
 			return "";
 		}
 		// 服务器反馈处理，从缓存中删除
 		if (message.substring(0, 1).equals("r")) {
-			controlReturn(message, id);
+			ArduinoControl.controlReturn(id, message);
 			return "";
 		}
 		System.out.println(message.contains("{"));
@@ -77,23 +75,23 @@ public class MessageControl {
 
 	
 
-	/**
-	 * 处理板子返回的信息
-	 * 
-	 * @param message
-	 * @return
-	 */
-	public static long controlReturn(String message,int gameuid) {
-		String originCommand = message.substring(2);
-		System.out.print("得到反馈，删除缓存：" + gameuid + originCommand);
-		String key = gameuid+":"+message;
-		// 把反馈回传到客户端
-		JSONObject obj = new JSONObject();
-		obj.put("command", message);
-		obj.put("gameuid", gameuid);
-		EchoSetStatus.betch(obj);
-		return Redis.hdel("cachedCommands",key);
-	}
+	// /**
+	// * 处理板子返回的信息
+	// *
+	// * @param message
+	// * @return
+	// */
+	// public static long controlReturn(String message,int gameuid) {
+	// String originCommand = message.substring(2);
+	// System.out.print("得到反馈，删除缓存：" + gameuid + originCommand);
+	// String key = gameuid+":"+message;
+	// // 把反馈回传到客户端
+	// JSONObject obj = new JSONObject();
+	// obj.put("command", message);
+	// obj.put("gameuid", gameuid);
+	// EchoSetStatus.betch(obj);
+	// return Redis.hdel("cachedCommands",key);
+	// }
 	
 	
 	public static void main(String[] args) {

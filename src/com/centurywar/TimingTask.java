@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TimerTask;
 
-import com.centurywar.control.ConstantControl;
+import com.centurywar.control.ArduinoControl;
 
 //定时运行的程序
 public class TimingTask extends TimerTask {
@@ -25,23 +25,16 @@ public class TimingTask extends TimerTask {
 	public void run() {
 		Behave be = new Behave(0);
 		// 检测缓存中有木有超时需要加入冲发表的
-		this.checkCachedCommands(6, be);
+		// this.checkCachedCommands(6, be);
 		List<Behave> needsend = be.getNeedRunInfo();
 		List<Integer> hasSend = new ArrayList<Integer>();
 		for (int i = 0; i < needsend.size(); i++) {
 			Behave tembe = needsend.get(i);
-			System.out.println("正在发送：" + tembe.behaveString);
-			if (Main.socketWriteAll(tembe.gameuid, tembe.fromgameuid,
-					tembe.behaveString, true,
-					ConstantControl.WRITE_ARDUINO_HANDLER)) {
-				hasSend.add(tembe.id);
-				System.out.println("发送成功：" + tembe.behaveString + "id:"
-						+ tembe.id);
-			}
+			ArduinoControl.doCommand(tembe.gameuid, tembe.behaveString);
+			hasSend.add(tembe.id);
 		}
 		be.delInfo(hasSend);
-		System.out.println("延迟操作发送中……");
-		clearSocket();
+		System.out.println("定时操作发送中……");
 	}
 
 	public void clearSocket() {

@@ -9,7 +9,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.centurywar.control.ConstantControl;
+import com.centurywar.control.ArduinoControl;
 
 public class Behave extends BaseModel {
 	protected final static Log Log = LogFactory.getLog(BaseModel.class);
@@ -135,8 +135,7 @@ public class Behave extends BaseModel {
 	 * @param behaveString
 	 */
 	public static void sendBehave(int gameuid, String behaveString) {
-		Main.socketWriteAll(gameuid, gameuid, behaveString, false,
-				ConstantControl.WRITE_ARDUINO_HANDLER);
+		ArduinoControl.doCommand(gameuid, behaveString);
 	}
 
 	/**
@@ -148,7 +147,6 @@ public class Behave extends BaseModel {
 	 */
 	public static void sendBehave(int gameuid, String behaveString,
 			int delaysocend) {
-
 		Behave be = new Behave(0);
 		be.newInfo(gameuid, gameuid, -Math.abs(delaysocend), behaveString);
 	}

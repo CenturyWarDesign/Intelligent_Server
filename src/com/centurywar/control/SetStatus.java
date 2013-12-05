@@ -16,7 +16,6 @@ public class SetStatus extends BaseControl {
 	}
 
 	public static void betch(JSONObject jsonObj) {
-
 		int type = jsonObj.getInt("type");
 		int pik = jsonObj.getInt("pik");
 		int value = jsonObj.getInt("value");
@@ -31,13 +30,8 @@ public class SetStatus extends BaseControl {
 			be.newInfo(am.client, am.gameuid, -data,
 					getBehaver(type, pik, value, data));
 		} else {
-			JSONObject Jso = new JSONObject();
-			Jso.put("gameuid", am.client);
-			Jso.put("fromgameuid", gameuid);
-			Jso.put("sendToArduino", getBehaver(type, pik, value, data));
-			System.out.println(String.format("send to arduino %d:%s",
-					am.client, getBehaver(type, pik, value, data)));
-			sendToSocket(Jso, ConstantControl.SET_STATUS);
+			ArduinoControl.doCommand(am.client,
+					getBehaver(type, pik, value, data));
 		}
 
 	}
