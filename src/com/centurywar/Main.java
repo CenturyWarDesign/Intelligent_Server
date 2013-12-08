@@ -16,8 +16,6 @@ import java.util.Timer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import net.sf.json.JSONObject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -102,12 +100,6 @@ public class Main {
 					executorService.execute(temr);
 					clearTem();
 					temHandler.put(MaxTem + "", temr);
-					JSONObject obj = new JSONObject();
-					obj.put("code", ConstantCode.CODE_CONNECTET);
-					obj.put("control", ConstantControl.ECHO_SERVER_MESSAGE);
-					pw.write(obj.toString());
-					System.out.println(String.format("[send to Android]%s",
-							obj.toString()));
 					System.out.println(String.format(
 							"put in Tem Haddle:%d now have:%d", MaxTem,
 							temHandler.size()));
@@ -273,6 +265,11 @@ public class Main {
 		System.out.println("changeitnameto:" + globalName);
 		temHandler.get(temName).id = globalName;
 		temHandler.get(temName).fromid = globalName;
+		// 如果当前global里面有相应的用户记录，则让用户下线
+		if (globalHandler.containsKey(globalName + "")) {
+			UsersModel.sendError(ConstantCode.USER_MORE_THAN_ONE_ERROR,
+					globalName);
+		}
 		globalHandler.remove(globalName + "");
 		globalHandler.put(globalName + "", temHandler.get(temName));
 		System.out.println(String.format("put in Global Haddle:%d now have:%d",

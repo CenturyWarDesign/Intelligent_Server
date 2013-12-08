@@ -3,6 +3,8 @@ package com.centurywar;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import com.centurywar.control.ConstantControl;
+
 public class UsersModel extends BaseModel {
 	public final static double LIMIT = 100;
 	public int gameuid = 0;
@@ -154,5 +156,33 @@ public class UsersModel extends BaseModel {
 		String closeStr = getBehaver(20, pik, 0, 0);
 		Behave.sendBehave(arduinoid, openStr);
 		Behave.sendBehave(arduinoid, closeStr, delay);
+	}
+
+	/**
+	 * 向客户端发送错误数据值
+	 * 
+	 * @param code
+	 * @param gameuid
+	 */
+	public static void sendError(int code, int gameuid) {
+		JSONObject obj = new JSONObject();
+		obj.put("code", code);
+		obj.put("control", ConstantControl.ECHO_SERVER_MESSAGE);
+		Main.socketWriteAll(gameuid, gameuid, obj.toString(), false,
+				ConstantControl.WRITE_GLOBAL_HANDLER);
+	}
+
+	/**
+	 * 向Tem客户端发送错误数据值
+	 * 
+	 * @param code
+	 * @param gameuid
+	 */
+	public static void sendErrorTem(int code, int gameuid) {
+		JSONObject obj = new JSONObject();
+		obj.put("code", code);
+		obj.put("control", ConstantControl.ECHO_SERVER_MESSAGE);
+		Main.socketWriteAll(gameuid, gameuid, obj.toString(), false,
+				ConstantControl.WRITE_TEM_HANDLER);
 	}
 }
