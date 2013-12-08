@@ -23,41 +23,37 @@ public class CheckPassword extends BaseControl {
 		int gameuid = jsonObj.getInt("gameuid");
 		int uid = checkPassword(username, password);
 		System.out.println("用户的ID为：" + uid);
-		try {
-			if (uid == 0) {
-				System.out.println("登陆失败");
-				Main.socketWriteAll(gameuid, gameuid, "Login fail", false,
-						ConstantControl.WRITE_TEM_HANDLER);
-				jsonObj.put("retCode", "1111");
-				jsonObj.put("memo", "用户名密码错误,登陆失败");
+		if (uid == 0) {
+			System.out.println("登陆失败");
+			Main.socketWriteAll(gameuid, gameuid, "Login fail", false,
+					ConstantControl.WRITE_TEM_HANDLER);
+			jsonObj.put("retCode", "1111");
+			jsonObj.put("memo", "用户名密码错误,登陆失败");
 
+		} else {
+			Random r = new Random();
+			int temp1 = r.nextInt();
+			String sec = EncoderPwdByMd5(String.format("Intelligent%d%d",
+					temp1, uid));
+			int isSuccess = JDBC.update(String.format(
+					"update users set sec='%s' where id='%d'", sec, uid));
+			if (isSuccess < 1) {
+				System.out.println("将新生成的验证码写入数据库失败，登录失败");
+				jsonObj.put("retCode", "1112");
+				jsonObj.put("memo", "登陆失败,请重试");
 			} else {
-				Random r = new Random();
-				int temp1 = r.nextInt();
-				String sec = EncoderPwdByMd5(String.format("Intelligent%d%d",
-						temp1, uid));
-				int isSuccess = JDBC.update(String.format(
-						"update users set sec='%s' where id='%d'", sec, uid));
-				if (isSuccess < 1) {
-					System.out.println("将新生成的验证码写入数据库失败，登录失败");
-					jsonObj.put("retCode", "1112");
-					jsonObj.put("memo", "登陆失败,请重试");
-				} else {
-					jsonObj.put("info", UsersModel.getInfo(uid));
-					jsonObj.put("device", UsersModel.getAllUserDevice(uid));
-					jsonObj.put("sec", sec);
-					jsonObj.put("retCode", "0000");
-					jsonObj.put("memo", "登陆成功");
-					jsonObj.remove("tem");
-					jsonObj.put("gameuid", uid);
-					Main.moveSocketInGlobal(gameuid + "", uid);
-					System.out.println("登陆验证完成：" + jsonObj);
-				}
+				jsonObj.put("info", UsersModel.getInfo(uid));
+				jsonObj.put("device", UsersModel.getAllUserDevice(uid));
+				jsonObj.put("sec", sec);
+				jsonObj.put("retCode", "0000");
+				jsonObj.put("memo", "登陆成功");
+				jsonObj.remove("tem");
+				jsonObj.put("gameuid", uid);
+				Main.moveSocketInGlobal(gameuid + "", uid);
+				System.out.println("登陆验证完成：" + jsonObj);
 			}
-			sendToSocket(jsonObj, ConstantControl.ECHO_CHECK_USERNAME_PASSWORD);
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
+		sendToSocket(jsonObj, ConstantControl.ECHO_CHECK_USERNAME_PASSWORD);
 	}
 
 	public static int checkPassword(String username, String password) {

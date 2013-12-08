@@ -148,6 +148,13 @@ public class JDBC {
 		return array;
 	}
 
+	/**
+	 * 从jsonsobject得到insert数据
+	 * 
+	 * @param obj
+	 * @param tablename
+	 * @return
+	 */
 	public static String insertStringFromJSONObject(JSONObject obj,
 			String tablename) {
 		Iterator it = obj.keys();

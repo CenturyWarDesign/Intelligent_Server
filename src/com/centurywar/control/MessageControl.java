@@ -54,46 +54,36 @@ public class MessageControl {
 	 * @param fromgameuid
 	 */
 	public static void controlBetch(JSONObject jsonObj) {
-		System.out.println("control:"+jsonObj.getString("control"));
+		System.out.println("get from android:control:"
+				+ jsonObj.getString("control"));
 		if (jsonObj.getString("control").equals(
+		// 检查用户名及密码
 				ConstantControl.CHECK_USERNAME_PASSWORD)) {
 			CheckPassword.betch(jsonObj);
 		} else if (jsonObj.getString("control").equals(
+		// 设置传感器状态
 				ConstantControl.SET_STATUS)) {
 			SetStatus.betch(jsonObj);
 		} else if (jsonObj.getString("control").equals(
+		// 取得用户的温度信息
 				ConstantControl.GET_USER_TEMPERATURE)) {
 			GetUserTemperaTure.betch(jsonObj);
 		} else if (jsonObj.getString("control").equals(
+		// 传感器控制指令
 				ConstantControl.CONTROL_DEVICE)) {
 			ControlDevice.betch(jsonObj);
 		} else if (jsonObj.getString("control").equals(
+		// 更新传感器引脚信息
 				ConstantControl.UPDAT_DEVICE_TO_SERVER)) {
 			UpdateUserDevice.betch(jsonObj);
 		}
 	}
 
-	
-
-	// /**
-	// * 处理板子返回的信息
-	// *
-	// * @param message
-	// * @return
-	// */
-	// public static long controlReturn(String message,int gameuid) {
-	// String originCommand = message.substring(2);
-	// System.out.print("得到反馈，删除缓存：" + gameuid + originCommand);
-	// String key = gameuid+":"+message;
-	// // 把反馈回传到客户端
-	// JSONObject obj = new JSONObject();
-	// obj.put("command", message);
-	// obj.put("gameuid", gameuid);
-	// EchoSetStatus.betch(obj);
-	// return Redis.hdel("cachedCommands",key);
-	// }
-	
-	
+	/**
+	 * 测试代码，没什么用
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		JSONObject json = new JSONObject();
 		json.put("username", "wanbin");

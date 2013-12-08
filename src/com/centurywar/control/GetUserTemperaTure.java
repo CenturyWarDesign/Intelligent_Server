@@ -5,9 +5,9 @@ import java.io.IOException;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-import com.centurywar.ArduinoModel;
 import com.centurywar.UsersModel;
 
+//取得用户的温度信息
 public class GetUserTemperaTure extends BaseControl {
 
 	public GetUserTemperaTure() throws IOException {

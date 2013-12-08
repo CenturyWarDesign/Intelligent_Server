@@ -11,7 +11,7 @@ import com.centurywar.control.ArduinoControl;
 public class TimingTask extends TimerTask {
 
 	/**
-	 * 从数据为库中查出要定时运行的程序
+	 * 从数据为库中查出要运行的程序
 	 */
 	public static void getTimingBehave() {
 

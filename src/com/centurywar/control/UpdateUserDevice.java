@@ -1,5 +1,6 @@
 package com.centurywar.control;
 
+//更新用户传感器信息的地方
 import java.io.IOException;
 
 import net.sf.json.JSONArray;
@@ -18,7 +19,6 @@ public class UpdateUserDevice extends BaseControl {
 	public static void betch(JSONObject jsonObj) {
 		UsersModel am = getUserModel(jsonObj);
 		am.UpdateUserDevice(jsonObj.getJSONArray("device"));
-
 		JSONArray re = null;
 		try {
 			re = am.getUserDevice(am.gameuid);

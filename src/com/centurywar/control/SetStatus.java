@@ -1,6 +1,5 @@
 package com.centurywar.control;
 
-//设置延迟时间
 import java.io.IOException;
 
 import net.sf.json.JSONObject;
@@ -24,12 +23,13 @@ public class SetStatus extends BaseControl {
 		String sec = jsonObj.getString("sec");
 		String username = jsonObj.getString("username");
 		UsersModel am = new UsersModel(username, sec);
-		// 有延时的开关
+		// 有延时的开关,
 		if (type == 10 && data > 0) {
 			Behave be = new Behave(0);
 			be.newInfo(am.client, am.gameuid, -data,
 					getBehaver(type, pik, value, data));
 		} else {
+			// 直接控制的开关
 			ArduinoControl.doCommand(am.client,
 					getBehaver(type, pik, value, data));
 		}

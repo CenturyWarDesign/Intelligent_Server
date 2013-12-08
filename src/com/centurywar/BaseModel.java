@@ -2,9 +2,6 @@ package com.centurywar;
 
 import java.util.Date;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -58,6 +55,11 @@ public class BaseModel {
 		return false;
 	}
 
+	/**
+	 * 取得一个随机的发送序列，JPUSH提供的
+	 * 
+	 * @return
+	 */
 	public static int getRandomSendNo() {
 		return (int) (MIN + Math.random() * (MAX - MIN));
 	}
@@ -77,42 +79,14 @@ public class BaseModel {
 
 
 	/**
-	 * 返回数据集
+	 * 反加指令的详细信息
 	 * 
-	 * @param sql
-	 * @return
-	 * @throws Exception
-	 */
-	public static JSONArray select(String sql) throws Exception {
-		return JDBC.select(sql);
-	}
-
-	/**
-	 * 返回一条记录
-	 * 
-	 * @param sql
-	 * @return
-	 * @throws Exception
-	 */
-	public static JSONObject selectOne(String sql) throws Exception {
-		return JDBC.selectOne(sql);
-	}
-
-	/**
-	 * 运行一条SQL update/delete
-	 * 
-	 * @param sql
+	 * @param type
+	 * @param pik
+	 * @param commmand
+	 * @param value
 	 * @return
 	 */
-	public static boolean query(String sql) {
-		try {
-			return JDBC.query(sql);
-		} catch (Exception e) {
-			Log.error(e.toString());
-		}
-		return false;
-	}
-
 	public static String getBehaver(int type, int pik, int commmand, int value) {
 		return String.format("%d_%d_%d_%d", type, pik, commmand, value);
 	}

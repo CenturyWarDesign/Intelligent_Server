@@ -26,24 +26,35 @@ import com.centurywar.control.ConstantCode;
 import com.centurywar.control.ConstantControl;
 import com.centurywar.control.MessageControl;
 
+/**
+ * 主程序函数和入口类
+ * 
+ * @author wanhin
+ * 
+ */
 public class Main {
+	// LOG4j----LOG固定格式，以后每个里面都要加上
 	protected final static Log Log = LogFactory.getLog(Main.class);
 	private int port = 8080;
 	private ServerSocket serverSocket;
 	private ExecutorService executorService;
 	private final int POOL_SIZE = 4000;
+	// 这个参数是客户端面的地址，客户端正常登录后都会进入这个里面
 	public static Map<String, MainHandler> globalHandler = new HashMap<String, MainHandler>();
+	// 所有板子进来之后都放入这个里面
 	public static Map<String, MainHandler> arduinoHandler = new HashMap<String, MainHandler>();
+	// 客户端临时的地址，没有登录之前全在这里
 	public static Map<String, MainHandler> temHandler = new HashMap<String, MainHandler>();
+	// 临时表的一个递增的序列，没有实际意义
 	private static int MaxTem = 1;
-	
 	public Main() throws IOException {
 		serverSocket = new ServerSocket(port);
 		executorService = Executors.newFixedThreadPool(Runtime.getRuntime()
 				.availableProcessors() * POOL_SIZE);
 		Log.info("服务启动，等待请求！");
 		System.out.println("waiting for");
-		// 注册定期运行任务
+
+		// 注册定期运行任务，每5秒进行一次，把send_log 里面的该要运行的任务放到缓存里面进行
 		Timer timer = new Timer();
 		timer.schedule(new TimingTask(), 5000, 20000);
 	}
@@ -59,9 +70,12 @@ public class Main {
 						+ socket.getPort());
 				String sec = null;
 				InputStream socketIn = socket.getInputStream();
+
+				// 从当前连接的SOCKET里面读取第一行数据，arduino发送的是32位的串，android发送的字符串:arduino
 				BufferedReader br = new BufferedReader(new InputStreamReader(
 						socketIn));
 				sec = br.readLine();
+
 				//  判断是否为Ardnino登录
 				SimpleDateFormat df = new SimpleDateFormat(
 						"yyyy-MM-dd HH:mm:ss");// 设置日期格式
@@ -69,6 +83,7 @@ public class Main {
 				OutputStream socketOut = socket.getOutputStream();
 				PrintWriter pw = new PrintWriter(socketOut, true);
 				if (sec.length() == 32) {
+					// 这里面是arduino登录
 					System.out.println("Sec:" + sec);
 					ArduinoModel arduinoModel = new ArduinoModel(sec);
 					MainHandler temr = new MainHandler(socket,
@@ -82,6 +97,7 @@ public class Main {
 							"put in Arduino Haddle:%d now have: %d ",
 							arduinoModel.id, arduinoHandler.size()));
 				} else {
+					// 这里面是安卓登录，先把字放到临时的登录表里面
 					MainHandler temr = new MainHandler(socket, MaxTem, true);
 					executorService.execute(temr);
 					clearTem();
@@ -106,6 +122,9 @@ public class Main {
 	}
 
 
+	/**
+	 * 清理没有用的临时连接
+	 */
 	public static void clearTem() {
 		for (String key : temHandler.keySet()) {
 			Socket temsoc = temHandler.get(key).socket;
@@ -120,6 +139,9 @@ public class Main {
 		}
 	}
 
+	/**
+	 * 清理没有用的arduino连接
+	 */
 	public static void clearArduino() {
 		for (String key : arduinoHandler.keySet()) {
 			Socket temsoc = arduinoHandler.get(key).socket;
@@ -134,6 +156,9 @@ public class Main {
 		}
 	}
 
+	/**
+	 * 清理没有用的安卓连接
+	 */
 	public static void clearAndroid() {
 		for (String key : globalHandler.keySet()) {
 			Socket temsoc = globalHandler.get(key).socket;
@@ -151,6 +176,21 @@ public class Main {
 
 	
 
+	/**
+	 * 这个是向socket写入的主函数入口
+	 * 
+	 * @param id
+	 *            要写入的id
+	 * @param fromid
+	 *            从哪个客户端写入的
+	 * @param content
+	 *            具体内容
+	 * @param resend
+	 *            是否需要重复发送，这里都不重复发送，我们用redis来处理这个事情了已经
+	 * @param writetype
+	 *            向三种对象里面写入数据，有三种不同的枚举值
+	 * @return
+	 */
 	public static boolean socketWriteAll(int id, int fromid, String content,
 			boolean resend, int writetype) {
 		if (id <= 0) {
@@ -178,8 +218,6 @@ public class Main {
 						content));
 				return true;
 			} catch (Exception e) {
-				// 记录失败的程序
-				e.printStackTrace();
 				// 把socket给移除
 				MainHandler tem = tempHandler.get(id + "");
 				if (tem.socket.isClosed()) {
@@ -190,11 +228,12 @@ public class Main {
 						Log.error(e3.toString());
 					}
 				}
-				closeGlobalHandler(id);
+				Log.error(e.toString());
 			}
 		} else {
 			Log.info(String.format("在%s组里没有ID为%d的客户端", writeStr, id));
 		}
+		// 是不是放入延迟重发表，现在已经不再使用就该方法
 		if (resend) {
 			Behave errorBehave = new Behave(0);
 			errorBehave.newInfo(id, fromid, 0, content);
@@ -203,19 +242,6 @@ public class Main {
 	}
 
 
-
-
-	protected static void closeGlobalHandler(int id) {
-		MainHandler tem = globalHandler.get(id + "");
-		if (tem.socket.isClosed()) {
-			try {
-				tem.socket.close();
-				globalHandler.remove(id + "");
-			} catch (Exception e) {
-				Log.error(e.toString());
-			}
-		}
-	}
 
 	/**
 	 * 取得命令行，可以是手机，也可以是板子
@@ -235,8 +261,14 @@ public class Main {
 		new Main().service();
 	}
 
+	/**
+	 * 这个函数主要是把登录过的玩家的socket换个位置，放到global里面去，便于管理
+	 * 
+	 * @param temName
+	 * @param globalName
+	 * @return
+	 */
 	public static boolean moveSocketInGlobal(String temName, int globalName) {
-		clearAndroid();
 		temHandler.get(temName).tem = false;
 		System.out.println("changeitnameto:" + globalName);
 		temHandler.get(temName).id = globalName;
@@ -252,4 +284,3 @@ public class Main {
 		return true;
 	}
 }
-

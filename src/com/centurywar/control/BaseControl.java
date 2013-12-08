@@ -68,15 +68,32 @@ public class BaseControl {
 		return sendToSocket(obj, command);
 	}
 
-	public static final String EncoderPwdByMd5(String str)
-			throws NoSuchAlgorithmException, UnsupportedEncodingException {
-		// 确定计算方法
-		MessageDigest md5 = MessageDigest.getInstance("MD5");
-		BASE64Encoder base64en = new BASE64Encoder();
-		// 加密后的字符串
-		String newstr = base64en.encode(md5.digest(str.getBytes("utf-8")));
-		return newstr;
+	/**
+	 * MD5加密算法
+	 * 
+	 * @param str
+	 * @return
+	 * @throws NoSuchAlgorithmException
+	 * @throws UnsupportedEncodingException
+	 */
+	public static String EncoderPwdByMd5(String str) {
+		try {
+			// 确定计算方法
+			MessageDigest md5 = MessageDigest.getInstance("MD5");
+			BASE64Encoder base64en = new BASE64Encoder();
+			// 加密后的字符串
+			String newstr = base64en.encode(md5.digest(str.getBytes("utf-8")));
+			return newstr;
+		} catch (Exception e) {
+			return "";
+		}
 	}
+
+	/**
+	 * 取得当前的时间
+	 * 
+	 * @return
+	 */
 	public static int getTime() {
 		Date date = new Date();
 		return (int) (date.getTime() / 1000);

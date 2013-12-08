@@ -9,8 +9,6 @@ public class UsersModel extends BaseModel {
 
 	private String secGameuid = "";
 	public String userName = "";
-	public String ip = "0.0.0.0";
-	public int port = 80;
 	public int client = 0;
 	public int mode = 1;
 	public ArduinoModel arduinoClient;

@@ -4,6 +4,12 @@ import net.sf.json.JSONObject;
 
 import com.centurywar.control.ConstantControl;
 
+/**
+ * 这个类主要功能就是管理用户传感器信息
+ * 
+ * @author wanhin
+ * 
+ */
 public class DeviceModel extends BaseModel {
 	public int pik = 0;
 	public String name = "";
@@ -11,6 +17,12 @@ public class DeviceModel extends BaseModel {
 	public int updatetime;
 	public int arduinoid;
 
+	/**
+	 * 通过anduinoid和pik可以定位唯一的传感器
+	 * 
+	 * @param arduinoid
+	 * @param pik
+	 */
 	public DeviceModel(int arduinoid, int pik) {
 		JSONObject obj = JDBC.selectOne(String.format(
 				"select * from user_device where arduinoid=%d and pik=%d",
@@ -25,7 +37,7 @@ public class DeviceModel extends BaseModel {
 	}
 	
 	/**
-	 * 处理板子返回的信息
+	 * 处理板子返回的信息,把数据 库进行更新
 	 * 
 	 * @param commandReturn
 	 * @param arduinoid
@@ -41,6 +53,12 @@ public class DeviceModel extends BaseModel {
 		return true;
 	}
 
+	/**
+	 * 分板返回的数据，得到需要的数据
+	 * 
+	 * @param command
+	 * @return
+	 */
 	public static JSONObject getJSONStrFromCommand(String command) {
 		if (command.substring(0, 1).equals("r")) {
 			command = command.substring(2);

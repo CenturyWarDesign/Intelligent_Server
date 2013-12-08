@@ -57,7 +57,7 @@ public class ArduinoControl {
 	}
 
 	/**
-	 * 执行板子操作
+	 * 执行板子操作,仅此这一个地方
 	 * 
 	 * @param gameuid
 	 * @param control

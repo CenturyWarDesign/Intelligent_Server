@@ -44,12 +44,22 @@ public class ArduinoModel extends BaseModel {
 		return true;
 	}
 
+	/**
+	 * 取得一个arduino的用户信息
+	 * 
+	 * @return
+	 */
 	public int getUsersId() {
 		JSONObject obj = JDBC.selectOne(String.format(
 				"select * from users where client_id=%d", id));
 		return obj.getInt("id");
 	}
 
+	/**
+	 * 取得所有传感器信息
+	 * 
+	 * @return
+	 */
 	public JSONArray getDevice() {
 		JSONArray obj = JDBC.select(String.format(
 				"select * from user_device where arduinoid=%d", id));
@@ -63,12 +73,25 @@ public class ArduinoModel extends BaseModel {
 
 	}
 
+	/**
+	 * 取得所有的传感器信息
+	 * 
+	 * @param id
+	 * @return
+	 */
 	public static JSONArray getAllDevice(int id) {
 		JSONArray jsonArray = JDBC
 				.select("select * from user_device where arduinoid=" + id);
 		return jsonArray;
 	}
 
+	/**
+	 * 更新所有传感器信息
+	 * 
+	 * @param id
+	 * @param jsonarr
+	 * @return
+	 */
 	public static boolean updateAllDevice(int id, JSONArray jsonarr) {
 		JDBC.query("delete from user_device where arduinoid=" + id);
 		String sql = "";
