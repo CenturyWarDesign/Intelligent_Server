@@ -45,7 +45,7 @@ public class Main {
 		System.out.println("waiting for");
 		// 注册定期运行任务
 		Timer timer = new Timer();
-		timer.schedule(new TimingTask(), 30000, 20000);
+		timer.schedule(new TimingTask(), 5000, 20000);
 	}
 
 	public void service() {
