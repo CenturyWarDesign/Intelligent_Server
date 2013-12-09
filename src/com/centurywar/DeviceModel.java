@@ -46,11 +46,23 @@ public class DeviceModel extends BaseModel {
 	public static boolean updateDeviceByReturn(String commandReturn,
 			int arduinoid) {
 		JSONObject temobj = getJSONStrFromCommand(commandReturn);
+		Double dou=temobj.getDouble("value");
 		String sql = String
-				.format("update user_device set value=%d where arduinoid=%d and pik=%d;",
-						temobj.getInt("value"), arduinoid, temobj.getInt("pik"));
+				.format("update user_device set value=%s where arduinoid=%d and pik=%d;",
+						dou.toString(), arduinoid,
+						temobj.getInt("pik"));
 		JDBC.query(sql);
 		return true;
+	}
+
+	/**
+	 * 返回的是温度进行更新
+	 * 
+	 * @param commandReturn
+	 * @param arduinoid
+	 */
+	public static void updateTem(String commandReturn, int arduinoid) {
+
 	}
 
 	/**
@@ -72,7 +84,7 @@ public class DeviceModel extends BaseModel {
 			obj.put("value", comArr[2]);
 		} else if (comArr[0].equals(ConstantControl.DEVICE_TEMPERATURE)) {
 			obj.put("value",
-					Float.parseFloat(comArr[2] + "." + comArr[3].trim()));
+ Float.parseFloat(comArr[2]));
 		}
 		return obj;
 	}
