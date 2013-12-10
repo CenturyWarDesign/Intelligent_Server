@@ -20,7 +20,7 @@ public class BaseModel {
 
 	protected final static Log Log = LogFactory.getLog(BaseModel.class);
 
-	public int getTime() {
+	public static int getTime() {
 		Date date = new Date();
 		return (int) (date.getTime() / 1000);
 	}

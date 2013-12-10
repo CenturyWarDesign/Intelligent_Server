@@ -18,11 +18,14 @@ public class ArduinoModel extends BaseModel {
 	public String bluetoothMac = "";
 	// 用户设备表
 	public List<DeviceModel> deviceList = new ArrayList<DeviceModel>();
-
 	public ArduinoModel(String sec) {
 		JSONObject obj = JDBC.selectOne(String.format(
 				"select * from arduino where  sec='%s'", sec));
 		JsonToArduino(obj);
+		if (!obj.isEmpty()) {
+			id = obj.getInt("id");
+			getConnLog(id);
+		}
 	}
 
 	public ArduinoModel(int id) {
@@ -109,6 +112,26 @@ public class ArduinoModel extends BaseModel {
 		return true;
 	}
 
+	
+	/**
+	 * 添加登录的LOG信息
+	 * @param arduinoid
+	 */
+	private static void getConnLog(int arduinoid) {
+		int time = getTime();
+		String sql = String
+				.format("insert into `arduino_conn_log` (arduinoid,conntime,updatetime) values (%d,%d,%d)",
+						arduinoid, time, time);
+		JDBC.query(sql);
+	}
 	// public static boolean sendTo
-
+	
+	public static void updateDateTran(int up, int down, int arduinoid) {
+		int conntime = 0;
+		int time = getTime();
+		String sql = String
+				.format("update arduino_conn_log set up=up+%d,down=down+%d,updatetime=%d where arduinoid=%d and conntime =%d",
+						up, down, time, arduinoid, conntime);
+		JDBC.query(sql);
+	}
 }

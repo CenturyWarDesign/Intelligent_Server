@@ -19,10 +19,7 @@ public class MessageControl {
 			return "";
 		}
 		// 服务器反馈处理，从缓存中删除
-		if (message.substring(0, 1).equals("r")) {
-			ArduinoControl.controlReturn(id, message);
-			return "";
-		}
+		
 		System.out.println(message.contains("{"));
 		if (message.contains("{")) {
 			System.out.println("1111");

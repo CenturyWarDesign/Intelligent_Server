@@ -17,6 +17,12 @@ public class ArduinoControl {
 	protected final static Log Log = LogFactory.getLog(ArduinoControl.class);
 
 	public static String controlArduinoSend(String message, int id, int fromid) {
+		//更新上传信息
+		ArduinoModel.updateDateTran(message.length(), 0, id);
+		if (message.substring(0, 1).equals("r")) {
+			ArduinoControl.controlReturn(id, message);
+			return "";
+		}
 		String[] temp = null;
 		temp = message.trim().split("_");
 		if (temp.length < 4) {
@@ -100,12 +106,12 @@ public class ArduinoControl {
 	 */
 	public static long controlReturn(int gameuid, String message) {
 		String originCommand = message.substring(2);
-		System.out.print(String.format("得到%d反馈，删除缓存：", gameuid, originCommand));
 		// 把反馈回传到客户端
 		JSONObject obj = new JSONObject();
 		obj.put("command", message);
 		obj.put("gameuid", gameuid);
 		EchoSetStatus.betch(obj);
+		System.out.print(String.format("得到%d反馈，删除缓存：", gameuid, originCommand));
 		return Redis.hdel(getCatchKey(gameuid), originCommand);
 	}
 
@@ -113,5 +119,7 @@ public class ArduinoControl {
 		Main.socketWriteAll(gameuid, gameuid, control, false,
 				ConstantControl.WRITE_ARDUINO_HANDLER);
 		System.out.println(String.format("写入板子%d的内容:%s", gameuid, control));
+		//更新下载的信息
+		ArduinoModel.updateDateTran(0, control.length(), gameuid);
 	}
 }
