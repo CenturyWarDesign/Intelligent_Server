@@ -18,6 +18,38 @@ public class ArduinoModel extends BaseModel {
 	public String bluetoothMac = "";
 	// 用户设备表
 	public List<DeviceModel> deviceList = new ArrayList<DeviceModel>();
+	
+	/**
+	 * 设置最后一次连接时间
+	 * 
+	 * @param time
+	 * @param arduinoid
+	 */
+	public void setLastConnTime(int time, int arduinoid) {
+		Redis.set(getLastTimeKey(arduinoid), time + "");
+	}
+
+	private String getLastTimeKey(int arduinoid) {
+		return String.format("last_conn_key_%d", arduinoid);
+	}
+	/**
+	 * 得到最后一次连接时间
+	 * @param arduinoid
+	 */
+	public int getLastConnTime(int arduinoid) {
+		String str = Redis.get(getLastTimeKey(arduinoid));
+		int lasttime = Integer.valueOf(str).intValue();
+		if (lasttime == 0) {
+			JSONObject obj = JDBC
+					.selectOne(String
+							.format("select max(conntime) maxid from arduino_conn_log where  arduinoid=%d",
+									arduinoid));
+			lasttime = obj.getInt("maxid");
+			setLastConnTime(lasttime, arduinoid);
+		}
+		return lasttime;
+	}
+	
 	public ArduinoModel(String sec) {
 		JSONObject obj = JDBC.selectOne(String.format(
 				"select * from arduino where  sec='%s'", sec));
