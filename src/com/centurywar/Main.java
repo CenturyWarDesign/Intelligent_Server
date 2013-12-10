@@ -211,11 +211,10 @@ public class Main {
 				return true;
 			} catch (Exception e) {
 				// 把socket给移除
-				MainHandler tem = tempHandler.get(id + "");
-				if (tem.socket.isClosed()) {
+				if (!temHandler.socket.isClosed()) {
 					try {
-						tem.socket.close();
-						globalHandler.remove(id + "");
+						temHandler.socket.close();
+						tempHandler.remove(id + "");
 					} catch (Exception e3) {
 						Log.error(e3.toString());
 					}
