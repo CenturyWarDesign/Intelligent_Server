@@ -159,6 +159,12 @@ public class ArduinoModel extends BaseModel {
 	}
 	// public static boolean sendTo
 	
+	/**
+	 * 更新上传及下载流量
+	 * @param up
+	 * @param down
+	 * @param arduinoid
+	 */
 	public static void updateDateTran(int up, int down, int arduinoid) {
 		int conntime = getLastConnTime(arduinoid);
 		int time = getTime();
@@ -166,5 +172,17 @@ public class ArduinoModel extends BaseModel {
 				.format("update arduino_conn_log set up=up+%d,down=down+%d,updatetime=%d where arduinoid=%d and conntime =%d",
 						up, down, time, arduinoid, conntime);
 		JDBC.query(sql);
+	}
+	
+	/**
+	 * 重置所有传感器数据，当板子断电
+	 * @param arduinoid
+	 */
+	public static void resetAllDevice(int arduinoid) {
+		JSONArray obj = JDBC
+				.select(String
+						.format("select pik,value from user_device where arduinoid=%d and type in (10,20)",
+								arduinoid));
+		
 	}
 }
