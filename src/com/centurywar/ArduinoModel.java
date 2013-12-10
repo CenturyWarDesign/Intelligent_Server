@@ -25,18 +25,18 @@ public class ArduinoModel extends BaseModel {
 	 * @param time
 	 * @param arduinoid
 	 */
-	public void setLastConnTime(int time, int arduinoid) {
+	public static void setLastConnTime(int time, int arduinoid) {
 		Redis.set(getLastTimeKey(arduinoid), time + "");
 	}
 
-	private String getLastTimeKey(int arduinoid) {
+	private static String getLastTimeKey(int arduinoid) {
 		return String.format("last_conn_key_%d", arduinoid);
 	}
 	/**
 	 * 得到最后一次连接时间
 	 * @param arduinoid
 	 */
-	public int getLastConnTime(int arduinoid) {
+	public static int  getLastConnTime(int arduinoid) {
 		String str = Redis.get(getLastTimeKey(arduinoid));
 		int lasttime = Integer.valueOf(str).intValue();
 		if (lasttime == 0) {
@@ -155,11 +155,12 @@ public class ArduinoModel extends BaseModel {
 				.format("insert into `arduino_conn_log` (arduinoid,conntime,updatetime) values (%d,%d,%d)",
 						arduinoid, time, time);
 		JDBC.query(sql);
+		setLastConnTime(time,arduinoid);
 	}
 	// public static boolean sendTo
 	
 	public static void updateDateTran(int up, int down, int arduinoid) {
-		int conntime = 0;
+		int conntime = getLastConnTime(arduinoid);
 		int time = getTime();
 		String sql = String
 				.format("update arduino_conn_log set up=up+%d,down=down+%d,updatetime=%d where arduinoid=%d and conntime =%d",
