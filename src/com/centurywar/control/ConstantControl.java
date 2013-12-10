@@ -39,6 +39,8 @@ public class ConstantControl {
 	public static String DEVICE_HUOJING = "31";
 	// 人体传感器
 	public static String DEVICE_RENTI = "32";
+	// 重置所有状态
+	public static String DEVICE_RESET = "00";
 
 	// 正常模式
 	public static int MODE_DEFAULT = 1;

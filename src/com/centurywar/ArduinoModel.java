@@ -9,6 +9,8 @@ import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.centurywar.control.ArduinoControl;
+
 public class ArduinoModel extends BaseModel {
 	protected final static Log Log = LogFactory.getLog(ArduinoModel.class);
 	public final static double LIMIT = 100;
@@ -32,13 +34,18 @@ public class ArduinoModel extends BaseModel {
 	private static String getLastTimeKey(int arduinoid) {
 		return String.format("last_conn_key_%d", arduinoid);
 	}
+	
 	/**
 	 * 得到最后一次连接时间
+	 * 
 	 * @param arduinoid
 	 */
 	public static int  getLastConnTime(int arduinoid) {
 		String str = Redis.get(getLastTimeKey(arduinoid));
-		int lasttime = Integer.valueOf(str).intValue();
+		int lasttime = 0;
+		if (str.equals(null)) {
+			lasttime = Integer.valueOf(str).intValue();
+		}
 		if (lasttime == 0) {
 			JSONObject obj = JDBC
 					.selectOne(String
@@ -147,6 +154,7 @@ public class ArduinoModel extends BaseModel {
 	
 	/**
 	 * 添加登录的LOG信息
+	 * 
 	 * @param arduinoid
 	 */
 	private static void getConnLog(int arduinoid) {
@@ -161,6 +169,7 @@ public class ArduinoModel extends BaseModel {
 	
 	/**
 	 * 更新上传及下载流量
+	 * 
 	 * @param up
 	 * @param down
 	 * @param arduinoid
@@ -176,13 +185,23 @@ public class ArduinoModel extends BaseModel {
 	
 	/**
 	 * 重置所有传感器数据，当板子断电
+	 * 
 	 * @param arduinoid
 	 */
 	public static void resetAllDevice(int arduinoid) {
 		JSONArray obj = JDBC
 				.select(String
-						.format("select pik,value from user_device where arduinoid=%d and type in (10,20)",
+						.format("select type,pik,value from user_device where arduinoid=%d and type in (10,20)",
 								arduinoid));
-		
+		for (int i = 0; i < obj.size(); i++) {
+			JSONObject temobj = obj.getJSONObject(i);
+			if (temobj.size() > 0) {
+				int type = temobj.getInt("type");
+				int value = temobj.getInt("value");
+				int pik = temobj.getInt("pik");
+				ArduinoControl.doCommand(arduinoid,
+						getBehaver(type, pik, value, 0));
+			}
+		}
 	}
 }

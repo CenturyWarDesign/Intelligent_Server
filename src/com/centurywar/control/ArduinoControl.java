@@ -17,7 +17,7 @@ public class ArduinoControl {
 	protected final static Log Log = LogFactory.getLog(ArduinoControl.class);
 
 	public static String controlArduinoSend(String message, int id, int fromid) {
-		//更新上传信息
+		// 更新上传信息
 		ArduinoModel.updateDateTran(message.length(), 0, id);
 		if (message.substring(0, 1).equals("r")) {
 			ArduinoControl.controlReturn(id, message);
@@ -44,6 +44,11 @@ public class ArduinoControl {
 			}
 			ArduinoModel u = new ArduinoModel(fromid);
 		}
+		// 重置所有板子所有状态
+		if (temp[0].equals(ConstantControl.DEVICE_RESET)) {
+			ArduinoModel.resetAllDevice(id);
+		}
+
 		// 这是人体传感器
 		if (temp[0].equals(ConstantControl.DEVICE_RENTI)) {
 			rentiControl(id);
@@ -69,8 +74,21 @@ public class ArduinoControl {
 	 * @param control
 	 */
 	public static void doCommand(int gameuid, String control) {
+		// 先判断之前是否有相反的操作，如果有，先把该操作清除
+		String keyStr = getCatchKey(gameuid);
+		Set<String> cachedKeys = Redis.hkeys(keyStr);
+		String controlarr[] = control.split("_");
+		// for循环遍历：
+		for (String key : cachedKeys) {
+			String temarr[] = key.split("_");
+			if (controlarr[0].equals(temarr[0])
+					&& controlarr[1].equals(temarr[1])) {
+				Redis.hdel(keyStr, key);
+				break;
+			}
+		}
 		Integer time = new Integer((int) (System.currentTimeMillis() / 1000));
-		Redis.hset(getCatchKey(gameuid), control, time.toString());
+		Redis.hset(keyStr, control, time.toString());
 		doWriteToArduino(gameuid, control);
 	}
 
@@ -119,7 +137,7 @@ public class ArduinoControl {
 		Main.socketWriteAll(gameuid, gameuid, control, false,
 				ConstantControl.WRITE_ARDUINO_HANDLER);
 		System.out.println(String.format("写入板子%d的内容:%s", gameuid, control));
-		//更新下载的信息
+		// 更新下载的信息
 		ArduinoModel.updateDateTran(0, control.length(), gameuid);
 	}
 }
