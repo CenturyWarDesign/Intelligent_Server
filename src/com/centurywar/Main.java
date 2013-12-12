@@ -86,6 +86,8 @@ public class Main {
 					ArduinoModel arduinoModel = new ArduinoModel(sec);
 					MainHandler temr = new MainHandler(socket,
 							arduinoModel.id, false);
+					ArduinoModel.updateIpAndPort(socket.getInetAddress()
+							.toString(), socket.getPort(), arduinoModel.id);
 					executorService.execute(temr);
 					arduinoHandler.put(arduinoModel.id + "", temr);
 
@@ -271,6 +273,12 @@ public class Main {
 		}
 		globalHandler.remove(globalName + "");
 		globalHandler.put(globalName + "", temHandler.get(temName));
+
+		// 更新登录的用户IP及端口
+		UsersModel.updateIpAndPort(temHandler.get(temName).socket
+				.getInetAddress().toString(), temHandler.get(temName).socket
+				.getPort(), globalName);
+
 		System.out.println(String.format("put in Global Haddle:%d now have:%d",
 				globalName, globalHandler.size()));
 		temHandler.remove(temName);

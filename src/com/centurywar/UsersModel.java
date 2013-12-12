@@ -41,6 +41,20 @@ public class UsersModel extends BaseModel {
 		}
 	}
 	
+	/**
+	 * 更新板子的ＩＰ
+	 * 
+	 * @param ip
+	 * @param port
+	 */
+	public static void updateIpAndPort(String ip, int port, int id) {
+		int time = getTime();
+		String sql = String.format(
+				"update users set ip='%s',port =%d ,last_login=%d where id=%d",
+				ip, port, time, id);
+		JDBC.query(sql);
+	}
+
 	private UsersModel getUserInfoFromGameuid() {
 		JSONObject obj = JDBC.selectOne(String.format(
 				"select * from users where id=%d", gameuid));

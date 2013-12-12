@@ -36,6 +36,20 @@ public class ArduinoModel extends BaseModel {
 	}
 	
 	/**
+	 * 更新板子的ＩＰ
+	 * 
+	 * @param ip
+	 * @param port
+	 */
+	public static void updateIpAndPort(String ip, int port, int arduinoid) {
+		int time = getTime();
+		String sql = String
+				.format("update arduino set ip='%s',port =%d ,updatetime=%d where id=%d",
+						ip, port, time, arduinoid);
+		JDBC.query(sql);
+	}
+
+	/**
 	 * 得到最后一次连接时间
 	 * 
 	 * @param arduinoid
