@@ -91,6 +91,10 @@ public class Main {
 					executorService.execute(temr);
 					arduinoHandler.put(arduinoModel.id + "", temr);
 
+					// 发送板子上线通知到客户端
+					UsersModel.sendError(ConstantCode.USER_ARDUINO_LOGIN,
+							arduinoModel.getUsersId());
+
 					// 把所有的指令下发
 					ArduinoControl.doAllCommand(arduinoModel.id);
 					System.out.println(String.format(

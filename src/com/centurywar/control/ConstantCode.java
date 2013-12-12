@@ -11,4 +11,6 @@ public class ConstantCode {
 	public static int USER_OR_PASSWORD_ERROR = 20001;
 	// 用户名用户多开
 	public static int USER_MORE_THAN_ONE_ERROR = 20002;
+	// arduino 登录
+	public static int USER_ARDUINO_LOGIN = 30001;
 }

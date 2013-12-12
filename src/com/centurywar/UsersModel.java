@@ -199,4 +199,12 @@ public class UsersModel extends BaseModel {
 		Main.socketWriteAll(gameuid, gameuid, obj.toString(), false,
 				ConstantControl.WRITE_TEM_HANDLER);
 	}
+
+	public static int getLastArduinoLogin(int gameuid) {
+		String sql = String
+				.format("select arduino.* from arduino,users where users.client_id=arduino.id and users.id=%d",
+						gameuid);
+		JSONObject obj = JDBC.selectOne(sql);
+		return obj.getInt("updatetime");
+	}
 }
