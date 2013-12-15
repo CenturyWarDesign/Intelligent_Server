@@ -83,8 +83,12 @@ public class DeviceModel extends BaseModel {
 				|| comArr[0].equals(ConstantControl.DEVICE_PMW)) {
 			obj.put("value", comArr[2]);
 		} else if (comArr[0].equals(ConstantControl.DEVICE_TEMPERATURE)) {
-			obj.put("value",
- Float.parseFloat(comArr[2]));
+			obj.put("value", Float.parseFloat(comArr[2]));
+		}
+ else if (comArr[0].equals(ConstantControl.DEVICE_RED_LIGHT_GET)) {
+			obj.put("value", 1);
+			obj.put("type", comArr[2]);
+			obj.put("date", comArr[3]);
 		}
 		return obj;
 	}

@@ -25,24 +25,24 @@ public class ArduinoControl {
 		}
 		String[] temp = null;
 		temp = message.trim().split("_");
-		if (temp.length < 4) {
-			System.out.println("参数输入错误：" + message);
-			Main.socketWriteAll(id, id, "error message", false,
-					ConstantControl.WRITE_ARDUINO_HANDLER);
-			return "";
-		}
+		// if (temp.length < 4) {
+		// System.out.println("参数输入错误：" + message);
+		// Main.socketWriteAll(id, id, "error message", false,
+		// ConstantControl.WRITE_ARDUINO_HANDLER);
+		// return "";
+		// }
 		if (temp[0].equals(ConstantControl.DEVICE_TEMPERATURE)) {
 			DeviceModel.updateDeviceByReturn(message, id);
 		}
 		// 这是火焰报警器
 		if (temp[0].equals(ConstantControl.DEVICE_HUOJING)) {
-			if (temp.length < 4) {
-				System.out.println("参数输入错误：" + message);
-				Main.socketWriteAll(id, id, "error message", false,
-						ConstantControl.WRITE_ARDUINO_HANDLER);
-				return "";
+			if (temp.length == 4) {
+				// System.out.println("参数输入错误：" + message);
+				// Main.socketWriteAll(id, id, "error message", false,
+				// ConstantControl.WRITE_ARDUINO_HANDLER);
+				// return "";
+				ArduinoModel u = new ArduinoModel(fromid);
 			}
-			ArduinoModel u = new ArduinoModel(fromid);
 		}
 		// 重置所有板子所有状态
 		if (temp[0].equals(ConstantControl.DEVICE_RESET)) {
@@ -104,7 +104,7 @@ public class ArduinoControl {
 		for (String key : cachedKeys) {
 			doWriteToArduino(gameuid, key);
 			try {
-				Thread.sleep(3);
+				Thread.sleep(20);
 			} catch (Exception e) {
 				System.out.println(e.toString());
 			}

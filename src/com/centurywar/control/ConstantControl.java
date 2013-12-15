@@ -22,6 +22,10 @@ public class ConstantControl {
 	public static String UPDAT_DEVICE_TO_SERVER = "udts";
 	public static String ECHO_UPDAT_DEVICE_TO_SERVER = "eudts";
 
+	// 设置用户的模式
+	public static String UPDAT_USER_MODE = "uum";
+	public static String ECHO_UPDAT_USER_MODE = "euum";
+
 	// 控制指令（必须要有以下内容；type,pik,value,data）
 	public static String CONTROL_DEVICE = "cd";
 	public static String ECHO_CONTROL_DEVICE = "ecd";
@@ -39,6 +43,10 @@ public class ConstantControl {
 	public static String DEVICE_HUOJING = "31";
 	// 人体传感器
 	public static String DEVICE_RENTI = "32";
+	// 光感
+	public static String DEVICE_LIGHT = "33";
+	// 红外接收
+	public static String DEVICE_RED_LIGHT_GET = "34";
 	// 重置所有状态
 	public static String DEVICE_RESET = "00";
 

@@ -73,6 +73,10 @@ public class MessageControl {
 		// 更新传感器引脚信息
 				ConstantControl.UPDAT_DEVICE_TO_SERVER)) {
 			UpdateUserDevice.betch(jsonObj);
+		} else if (jsonObj.getString("control").equals(
+		// 更新用户模式
+				ConstantControl.UPDAT_USER_MODE)) {
+			SetMode.betch(jsonObj);
 		}
 	}
 

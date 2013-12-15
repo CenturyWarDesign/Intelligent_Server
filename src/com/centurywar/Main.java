@@ -54,7 +54,7 @@ public class Main {
 
 		// 注册定期运行任务，每5秒进行一次，把send_log 里面的该要运行的任务放到缓存里面进行
 		Timer timer = new Timer();
-		timer.schedule(new TimingTask(), 30000, 20000);
+		timer.schedule(new TimingTask(), 3000, 5000);
 	}
 
 	public void service() {

@@ -202,9 +202,23 @@ public class UsersModel extends BaseModel {
 
 	public static int getLastArduinoLogin(int gameuid) {
 		String sql = String
-				.format("select arduino.* from arduino,users where users.client_id=arduino.id and users.id=%d",
+				.format("select max(updatetime) updatetime from arduino_conn_log,users where users.client_id=arduinoid and id=%d",
 						gameuid);
 		JSONObject obj = JDBC.selectOne(sql);
 		return obj.getInt("updatetime");
+	}
+
+	/**
+	 * 设置板子的模式
+	 * 
+	 * @param gameuid
+	 * @param mode
+	 * @return
+	 */
+	public boolean setMode(int mode) {
+		String sql = String.format("update users set mode=%d where id=%d",
+				mode, gameuid);
+		JDBC.query(sql);
+		return true;
 	}
 }

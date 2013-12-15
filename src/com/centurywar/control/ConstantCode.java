@@ -13,4 +13,7 @@ public class ConstantCode {
 	public static int USER_MORE_THAN_ONE_ERROR = 20002;
 	// arduino 登录
 	public static int USER_ARDUINO_LOGIN = 30001;
+	// arduino 设置模式
+	public static int USER_Mode_UPDATE_OK = 30201;
+	public static int USER_Mode_UPDATE_FAIL = 30202;
 }
