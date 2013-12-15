@@ -36,9 +36,7 @@ public class CheckPassword extends BaseControl {
 			int isSuccess = JDBC.update(String.format(
 					"update users set sec='%s' where id='%d'", sec, uid));
 			if (isSuccess < 1) {
-				System.out.println("将新生成的验证码写入数据库失败，登录失败");
-				jsonObj.put("retCode", "1112");
-				jsonObj.put("memo", "登陆失败,请重试");
+				UsersModel.sendError(ConstantCode.USER_OR_PASSWORD_ERROR, uid);
 			} else {
 				jsonObj.put("info", UsersModel.getInfo(uid));
 				jsonObj.put("device", UsersModel.getAllUserDevice(uid));
