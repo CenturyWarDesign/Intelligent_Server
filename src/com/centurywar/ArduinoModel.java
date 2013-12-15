@@ -54,7 +54,7 @@ public class ArduinoModel extends BaseModel {
 	 * 
 	 * @param arduinoid
 	 */
-	public static int  getLastConnTime(int arduinoid) {
+	public static int getLastConnTime(int arduinoid) {
 		String str = Redis.get(getLastTimeKey(arduinoid));
 		int lasttime = 0;
 		if (str.equals(null)) {
@@ -65,6 +65,9 @@ public class ArduinoModel extends BaseModel {
 					.selectOne(String
 							.format("select max(conntime) maxid from arduino_conn_log where  arduinoid=%d",
 									arduinoid));
+			if (obj.isEmpty()) {
+				return 0;
+			}
 			lasttime = obj.getInt("maxid");
 			setLastConnTime(lasttime, arduinoid);
 		}
@@ -72,13 +75,40 @@ public class ArduinoModel extends BaseModel {
 	}
 	
 	public ArduinoModel(String sec) {
+		int id = getIdFromSec(sec);
+		if (id == 0) {
+			initArduino(sec);
+			id = getIdFromSec(sec);
+		}
+		getConnLog(id);
+	}
+
+	/**
+	 * 通过密码取得sec
+	 * 
+	 * @param sec
+	 * @return
+	 */
+	public int getIdFromSec(String sec) {
 		JSONObject obj = JDBC.selectOne(String.format(
 				"select * from arduino where  sec='%s'", sec));
 		JsonToArduino(obj);
+		int id = 0;
 		if (!obj.isEmpty()) {
 			id = obj.getInt("id");
 			getConnLog(id);
 		}
+		return id;
+
+	}
+
+	/**
+	 * 初始化一个板子用户
+	 * 
+	 * @param sec
+	 */
+	public void initArduino(String sec) {
+		JDBC.query(String.format("insert into arduino (sec) values('%s')", sec));
 	}
 
 	public ArduinoModel(int id) {
@@ -108,6 +138,9 @@ public class ArduinoModel extends BaseModel {
 	public int getUsersId() {
 		JSONObject obj = JDBC.selectOne(String.format(
 				"select * from users where client_id=%d", id));
+		if (obj.isEmpty()) {
+			return 0;
+		}
 		return obj.getInt("id");
 	}
 
