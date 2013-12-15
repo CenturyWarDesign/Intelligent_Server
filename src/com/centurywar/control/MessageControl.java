@@ -78,6 +78,11 @@ public class MessageControl {
 				ConstantControl.UPDAT_USER_MODE)) {
 			SetMode.betch(jsonObj);
 		}
+ else if (jsonObj.getString("control").equals(
+		// 更新用户模式
+				ConstantControl.REG_USERNAME_PASSWORD)) {
+			UserReg.betch(jsonObj);
+		}
 	}
 
 	/**

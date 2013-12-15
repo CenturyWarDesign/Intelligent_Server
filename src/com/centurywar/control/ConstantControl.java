@@ -5,6 +5,9 @@ public class ConstantControl {
 	public static String CHECK_USERNAME_PASSWORD = "cup";
 	public static String ECHO_CHECK_USERNAME_PASSWORD = "ecup";
 	
+	// 用户注册
+	public static String REG_USERNAME_PASSWORD = "rup";
+	public static String ECHO_REG_USERNAME_PASSWORD = "rcup";
 	
 	// 设置用户传感器状态
 	public static String SET_STATUS = "ss";

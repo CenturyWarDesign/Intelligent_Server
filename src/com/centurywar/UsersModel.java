@@ -28,7 +28,21 @@ public class UsersModel extends BaseModel {
 		gameuid = gameuidsend;
 		getUserInfoFromGameuid();
 	}
-	
+
+	public static boolean UserReg(String username, String password) {
+		// 先检查用户名密码是否存在
+		JSONObject obj = JDBC.selectOne(String.format(
+				"select count(*) count from users where username='%s'",
+				username));
+		if (obj.getInt("count") > 0) {
+			return false;
+		}
+		JDBC.query(String.format(
+				"insert into users (username,password) values('%s','%s')",
+				username, password));
+		return true;
+	}
+
 	public UsersModel(String username, String password) {
 		JSONObject obj = JDBC
 				.selectOne(String
@@ -186,7 +200,9 @@ public class UsersModel extends BaseModel {
 				ConstantControl.WRITE_GLOBAL_HANDLER);
 	}
 
-	/**
+
+
+		/**
 	 * 向Tem客户端发送错误数据值
 	 * 
 	 * @param code
@@ -205,6 +221,9 @@ public class UsersModel extends BaseModel {
 				.format("select max(updatetime) updatetime from arduino_conn_log,users where users.client_id=arduinoid and id=%d",
 						gameuid);
 		JSONObject obj = JDBC.selectOne(sql);
+		if (obj.isEmpty()) {
+			return 0;
+		}
 		return obj.getInt("updatetime");
 	}
 

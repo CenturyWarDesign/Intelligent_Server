@@ -23,7 +23,7 @@ public class TimingTask extends TimerTask {
 	}
 
 	public void run() {
-		ArduinoControl.doCommand(1, "34_1_3_3");
+		// ArduinoControl.doCommand(1, "34_1_3_3");
 		Behave be = new Behave(0);
 		// 检测缓存中有木有超时需要加入冲发表的
 		// this.checkCachedCommands(6, be);
