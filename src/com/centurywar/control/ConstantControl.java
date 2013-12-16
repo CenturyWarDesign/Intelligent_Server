@@ -9,6 +9,10 @@ public class ConstantControl {
 	public static String REG_USERNAME_PASSWORD = "rup";
 	public static String ECHO_REG_USERNAME_PASSWORD = "rcup";
 	
+	// 自动匹配客户端
+	public static String AUTO_GET_ARUDINO_ID = "agai";
+	public static String ECHO_AUTO_GET_ARUDINO_ID = "eagai";
+
 	// 设置用户传感器状态
 	public static String SET_STATUS = "ss";
 	public static String ECHO_SET_STATUS = "ess";

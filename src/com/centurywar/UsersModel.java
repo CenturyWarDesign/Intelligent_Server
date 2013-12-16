@@ -3,6 +3,7 @@ package com.centurywar;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import com.centurywar.control.ConstantCode;
 import com.centurywar.control.ConstantControl;
 
 public class UsersModel extends BaseModel {
@@ -13,6 +14,7 @@ public class UsersModel extends BaseModel {
 	public String userName = "";
 	public int client = 0;
 	public int mode = 1;
+	public String IP = "";
 	public ArduinoModel arduinoClient;
 	
 	public UsersModel(String sec) {
@@ -52,6 +54,7 @@ public class UsersModel extends BaseModel {
 			userName = obj.getString("username");
 			gameuid = obj.getInt("id");
 			client = obj.getInt("client_id");
+			IP = obj.getString("ip");
 		}
 	}
 	
@@ -239,5 +242,36 @@ public class UsersModel extends BaseModel {
 				mode, gameuid);
 		JDBC.query(sql);
 		return true;
+	}
+
+	/**
+	 * 自动取得板子的功能,通过IP及过期时间，确定匹配该网断的板子
+	 */
+	public void autoGetArduinoId() {
+		String keyStr = "AUTO_GET_ARDUINO_ID_KEY" + IP;
+		// keyStr = "AUTO_GET_ARDUINO_ID_KEY/192.168.1.106";
+		Redis.set(keyStr, gameuid + "", 10);
+		System.out.println("设置自动匹配的IP:" + keyStr);
+	}
+
+	public static boolean getAutoGetArduionId(String ip, int arudinoid) {
+		String keyStr = "AUTO_GET_ARDUINO_ID_KEY" + ip;
+		System.out.println("查找自动匹配的IP:" + keyStr);
+		String tem = Redis.get(keyStr);
+		int gameuid = tem == null ? 0 : Integer.parseInt(tem);
+		if (gameuid > 0) {
+			System.out.println("自动匹配客户端成功：" + gameuid);
+			// 表示匹配成功
+			String sql = String.format(
+					"update users set client_id=%d where id=%d", arudinoid,
+					gameuid);
+			JDBC.query(sql);
+			Redis.del(keyStr);
+			UsersModel.sendError(ConstantCode.AUTO_GET_ARDUINO_ID_SUCCESS,
+					gameuid);
+			return true;
+		}
+		System.out.println("自动匹配客户端失败：" + arudinoid);
+		return false;
 	}
 }

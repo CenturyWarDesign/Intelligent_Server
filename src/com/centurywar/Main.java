@@ -101,6 +101,11 @@ public class Main {
 
 					// 把所有的指令下发
 					ArduinoControl.doAllCommand(arduinoModel.id);
+
+					// 自动匹配相应的客户端
+					UsersModel.getAutoGetArduionId(socket.getInetAddress()
+							.toString(), arduinoModel.id);
+
 					System.out.println(String.format(
 							"put in Arduino Haddle:%d now have: %d ",
 							arduinoModel.id, arduinoHandler.size()));

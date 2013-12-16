@@ -29,6 +29,19 @@ public class Redis {
 	}
 	
 	/**
+	 * 设置字段至Redis,有过期时间
+	 * 
+	 * @param key
+	 * @param value
+	 * @param ex
+	 * @return
+	 */
+	public static String set(String key, String value, int ex) {
+		initRedis();
+		return redis.setex(key, ex, value);
+	}
+
+	/**
 	 * 缓存至集合
 	 * 
 	 * @param set
