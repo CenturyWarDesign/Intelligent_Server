@@ -50,27 +50,27 @@ public class CheckPassword extends BaseControl {
 				Main.moveSocketInGlobal(gameuid + "", uid);
 				System.out.println("登陆验证完成：" + jsonObj);
 			}
+
 		}
 		sendToSocket(jsonObj, ConstantControl.ECHO_CHECK_USERNAME_PASSWORD);
 	}
 
 	public static int checkPassword(String username, String password) {
 		JSONObject obj = null;
-		try {
-			obj = JDBC.selectOne(String.format(
-					"select id from users where username='%s' and password='%s' limit 1",
-					username, 
-					password));
-		} catch (Exception e) {
-			e.printStackTrace();
-			return 0;
-		}
+		obj = JDBC
+				.selectOne(String
+						.format("select id from users where username='%s' and password='%s' limit 1",
+								username, password));
 		System.out.println("登陆验证，查询数据库的结果：" + obj);
+
 		if (!obj.isEmpty()) {
+			String sql = String.format(
+					"insert into applogin (time,account) values (%d,%d)",
+					getTime(), obj.getInt("id"));
+			JDBC.query(sql);
 			return obj.getInt("id");
 		}
 		return 0;
 	}
-
 
 }

@@ -47,7 +47,7 @@ public class ConstantControl {
 	// 人体传感器
 	public static String DEVICE_RENTI = "32";
 	// 光感
-	public static String DEVICE_LIGHT = "33";
+	public static String DEVICE_LIGHT_VALUE = "33";
 	// 红外接收
 	public static String DEVICE_RED_LIGHT_GET = "34";
 	// 重置所有状态

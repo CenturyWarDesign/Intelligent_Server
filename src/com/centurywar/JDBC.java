@@ -94,8 +94,8 @@ public class JDBC {
 			Statement st = (Statement) conn.createStatement();
 			String[] sqlarr = sql.split(";");
 			for (int i = 0; i < sqlarr.length; i++) {
-				st.execute(sqlarr[i]);
 				System.out.println("[query sql]" + sqlarr[i]);
+				st.execute(sqlarr[i]);
 			}
 			return true;
 		} catch (Exception e) {

@@ -21,38 +21,10 @@ public class ArduinoControl {
 		ArduinoModel.updateDateTran(message.length(), 0, id);
 		if (message.substring(0, 1).equals("r")) {
 			ArduinoControl.controlReturn(id, message);
-			return "";
-		}
-		String[] temp = null;
-		temp = message.trim().split("_");
-		// if (temp.length < 4) {
-		// System.out.println("参数输入错误：" + message);
-		// Main.socketWriteAll(id, id, "error message", false,
-		// ConstantControl.WRITE_ARDUINO_HANDLER);
-		// return "";
-		// }
-		if (temp[0].equals(ConstantControl.DEVICE_TEMPERATURE)) {
+		} else {
 			DeviceModel.updateDeviceByReturn(message, id);
 		}
-		// 这是火焰报警器
-		if (temp[0].equals(ConstantControl.DEVICE_HUOJING)) {
-			if (temp.length == 4) {
-				// System.out.println("参数输入错误：" + message);
-				// Main.socketWriteAll(id, id, "error message", false,
-				// ConstantControl.WRITE_ARDUINO_HANDLER);
-				// return "";
-				ArduinoModel u = new ArduinoModel(fromid);
-			}
-		}
-		// 重置所有板子所有状态
-		if (temp[0].equals(ConstantControl.DEVICE_RESET)) {
-			ArduinoModel.resetAllDevice(id);
-		}
-
-		// 这是人体传感器
-		if (temp[0].equals(ConstantControl.DEVICE_RENTI)) {
-			rentiControl(id);
-		}
+		ArduinoControl.doCommand(id, "100_1_1_1");
 		return "";
 	}
 

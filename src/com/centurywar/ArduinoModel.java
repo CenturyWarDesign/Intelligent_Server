@@ -96,7 +96,6 @@ public class ArduinoModel extends BaseModel {
 		int id = 0;
 		if (!obj.isEmpty()) {
 			id = obj.getInt("id");
-			getConnLog(id);
 		}
 		return id;
 

@@ -46,14 +46,39 @@ public class DeviceModel extends BaseModel {
 	public static boolean updateDeviceByReturn(String commandReturn,
 			int arduinoid) {
 		JSONObject temobj = getJSONStrFromCommand(commandReturn);
-		Double dou=temobj.getDouble("value");
-		String sql = String
-				.format("update user_device set value=%s where arduinoid=%d and pik=%d;",
-						dou.toString(), arduinoid,
-						temobj.getInt("pik"));
+		Double dou = temobj.getDouble("value");
+		String type = temobj.getString("type");
+		String sql;
+		boolean insert = false;
+		if (type.equals(ConstantControl.DEVICE_TEMPERATURE)) {
+			sql = String.format(
+					"update arduino set temperature=%s where id=%d;",
+					dou.toString(), arduinoid);
+			insert = true;
+		} else if (type.equals(ConstantControl.DEVICE_LIGHT_VALUE)) {
+			sql = String.format("update arduino set light=%s where id=%d;",
+					dou.toString(), arduinoid);
+			insert = true;
+		} else if (type.equals(ConstantControl.DEVICE_RENTI)) {
+			sql = String.format("update arduino set renti=%s where id=%d;",
+					dou.toString(), arduinoid);
+			insert = true;
+		} else {
+			sql = String
+					.format("update user_device set value=%s where arduinoid=%d and pik=%d;",
+							dou.toString(), arduinoid, temobj.getInt("pik"));
+		}
+		// 这是更新温度传感器加LOG的方法
+		String sql2 = String
+				.format("insert into inventory (type,time,value,BordID) values(%d,%d,%s,%d)",
+						Integer.parseInt(type), getTime(), dou, arduinoid);
 		JDBC.query(sql);
+		if (insert) {
+			JDBC.query(sql2);
+		}
 		return true;
 	}
+
 
 	/**
 	 * 返回的是温度进行更新
@@ -79,16 +104,10 @@ public class DeviceModel extends BaseModel {
 		JSONObject obj = new JSONObject();
 		obj.put("type", comArr[0]);
 		obj.put("pik", comArr[1]);
-		if (comArr[0].equals(ConstantControl.DEVICE_LIGTH)
-				|| comArr[0].equals(ConstantControl.DEVICE_PMW)) {
-			obj.put("value", comArr[2]);
-		} else if (comArr[0].equals(ConstantControl.DEVICE_TEMPERATURE)) {
+		if (comArr[0].equals(ConstantControl.DEVICE_TEMPERATURE)) {
 			obj.put("value", Float.parseFloat(comArr[2]));
-		}
- else if (comArr[0].equals(ConstantControl.DEVICE_RED_LIGHT_GET)) {
-			obj.put("value", 1);
-			obj.put("type", comArr[2]);
-			obj.put("date", comArr[3]);
+		} else {
+			obj.put("value", comArr[2]);
 		}
 		return obj;
 	}
