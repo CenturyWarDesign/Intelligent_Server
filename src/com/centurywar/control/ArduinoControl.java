@@ -23,8 +23,9 @@ public class ArduinoControl {
 			ArduinoControl.controlReturn(id, message);
 		} else {
 			DeviceModel.updateDeviceByReturn(message, id);
+			ArduinoControl.doCommand(id, "100_1_1_1");
 		}
-		ArduinoControl.doCommand(id, "100_1_1_1");
+
 		return "";
 	}
 
@@ -78,7 +79,7 @@ public class ArduinoControl {
 			try {
 				Thread.sleep(20);
 			} catch (Exception e) {
-				System.out.println(e.toString());
+				e.getStackTrace();
 			}
 		}
 	}

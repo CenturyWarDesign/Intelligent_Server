@@ -54,6 +54,22 @@ public class ConstantControl {
 	public static String DEVICE_LIGHT_VALUE = "33";
 	// 红外接收
 	public static String DEVICE_RED_LIGHT_GET = "34";
+
+	// 设置人体感应之后执行的内容
+	public static String DEVICE_SET_RENTI_CONTROL = "51";
+	// 设置人体感应持续时间
+	public static String DEVICE_SET_RENTI_CONTROL_LAST = "52";
+
+	// 设置光敏感应打开值
+	public static String DEVICE_SET_LIGHT_OPEN_CONTROL = "53";
+	// 设置光敏感应结束值
+	public static String DEVICE_SET_LIGHT_CLOSE_CONTROL = "54";
+
+	// 设置光敏感应关闭值
+	public static String DEVICE_SET_LIGHT_CONTROL = "55";
+	// 设置光敏感应持续时间
+	public static String DEVICE_SET_LIGHT_CONTROL_FINISH = "56";
+
 	// 重置所有状态
 	public static String DEVICE_RESET = "00";
 
