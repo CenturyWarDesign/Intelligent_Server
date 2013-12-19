@@ -20,6 +20,8 @@ public class ConstantCode {
 
 	// 自动获取arudinoid
 	public static int AUTO_GET_ARDUINO_ID_SUCCESS = 20005;
+	// 重新连接服务器成功
+	public static int RE_CONNECT_ID_SUCCESS = 20006;
 
 	// arduino 登录
 	public static int USER_ARDUINO_LOGIN = 30001;

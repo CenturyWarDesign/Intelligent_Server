@@ -2,6 +2,9 @@ package com.centurywar.control;
 
 import net.sf.json.JSONObject;
 
+import com.centurywar.Main;
+import com.centurywar.UsersModel;
+
 /**
  * @author Administrator 接收板子的请求字符串，进行数据分发组装。
  *         message格式：传感器类型_引脚_值_附加位（若值是温度20.5，则值为20，附加位为5）
@@ -29,9 +32,23 @@ public class MessageControl {
 				getJson.put("gameuid", id);
 				getJson.put("fromgameuid", fromid);
 				getJson.put("tem", tem);
+				// 如果是客户端重新连上的，根据sec直接转移到相应的里面
+				if (tem && getJson.containsKey("sec")
+						&& getJson.containsKey("username")
+						&& !getJson.getString("control").equals(
+						// 检查用户名及密码
+								ConstantControl.CHECK_USERNAME_PASSWORD)) {
+					String sec = getJson.getString("sec");
+					String username = getJson.getString("username");
+					UsersModel am = new UsersModel(username, sec);
+					Main.moveSocketInGlobal(id + "", am.gameuid);
+					// 发送板子上线通知到客户端
+					UsersModel.sendError(ConstantCode.RE_CONNECT_ID_SUCCESS,
+							am.gameuid);
+				}
 				controlBetch(getJson);
 			} catch (Exception e) {
-				System.out.println(e.toString());
+				e.printStackTrace();
 				return "";
 			}
 		} else {

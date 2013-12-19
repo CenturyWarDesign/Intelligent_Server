@@ -60,15 +60,25 @@ public class ConstantControl {
 	// 设置人体感应持续时间
 	public static String DEVICE_SET_RENTI_CONTROL_LAST = "52";
 
-	// 设置光敏感应打开值
+	// 设置光敏感应高于一定的值打开的引脚
 	public static String DEVICE_SET_LIGHT_OPEN_CONTROL = "53";
-	// 设置光敏感应结束值
+	// 设置光敏感应低于一定的值打开的引脚
 	public static String DEVICE_SET_LIGHT_CLOSE_CONTROL = "54";
 
-	// 设置光敏感应关闭值
+	// 设置光敏感应高于的值
 	public static String DEVICE_SET_LIGHT_CONTROL = "55";
-	// 设置光敏感应持续时间
+	// 设置光敏感应低于的值
 	public static String DEVICE_SET_LIGHT_CONTROL_FINISH = "56";
+
+	// 设置温度感应高于一定的值打开的引脚
+	public static String DEVICE_SET_TEM_OPEN_CONTROL = "57";
+	// 设置温度感应低于一定的值打开的引脚
+	public static String DEVICE_SET_TEM_CLOSE_CONTROL = "58";
+
+	// 设置温度感应高于的值
+	public static String DEVICE_SET_TEM_CONTROL = "59";
+	// 设置温度感应低于的值
+	public static String DEVICE_SET_TEM_CONTROL_FINISH = "60";
 
 	// 重置所有状态
 	public static String DEVICE_RESET = "00";
