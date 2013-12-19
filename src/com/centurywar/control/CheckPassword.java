@@ -40,8 +40,8 @@ public class CheckPassword extends BaseControl {
 			} else {
 				jsonObj.put("info", UsersModel.getInfo(uid));
 				jsonObj.put("device", UsersModel.getAllUserDevice(uid));
-				int ArduinoLoginTime = UsersModel.getLastArduinoLogin(uid);
-				jsonObj.put("last_arduino_login", getTime() - ArduinoLoginTime);
+				jsonObj.put("last_arduino_login",
+						getTime() - UsersModel.getLastArduinoLogin(uid));
 				jsonObj.put("sec", sec);
 				jsonObj.put("retCode", "0000");
 				jsonObj.put("memo", "登陆成功");

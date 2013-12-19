@@ -45,7 +45,24 @@ public class MessageControl {
 					// 发送板子上线通知到客户端
 					UsersModel.sendError(ConstantCode.RE_CONNECT_ID_SUCCESS,
 							am.gameuid);
+					return "";
 				}
+
+				// 如果是从后台返回前台的程序，会进入到这里面
+				if (tem == false
+						&& getJson.getString("control").equals(
+								ConstantControl.CHECK_USERNAME_PASSWORD)) {
+					getJson.put("info", UsersModel.getInfo(id));
+					getJson.put("device", UsersModel.getAllUserDevice(id));
+					getJson.put("last_arduino_login", BaseControl.getTime()
+							- UsersModel.getLastArduinoLogin(id));
+					getJson.put("retCode", "0000");
+					getJson.put("memo", "登陆成功");
+					BaseControl.sendToSocket(getJson,
+							ConstantControl.ECHO_CHECK_USERNAME_PASSWORD);
+					return "";
+				}
+
 				controlBetch(getJson);
 			} catch (Exception e) {
 				e.printStackTrace();
